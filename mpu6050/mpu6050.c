@@ -35,16 +35,10 @@ float AccErrorX, AccErrorY, GyroErrorX, GyroErrorY, GyroErrorZ;
 float elapsedTime, currentTime, previousTime;
 int c = 0;
 
-float Ax=0, Ay=0, Az=0;
-float Gx=0, Gy=0, Gz=0;
-
 int fd;
 
 short read_raw_data(int addr){
 	short high_byte,low_byte,value;
-  //	high_byte = wiringPiI2CReadReg8(fd, addr);
-	// low_byte = wiringPiI2CReadReg8(fd, addr+1);
-	// value = (high_byte << 8) | low_byte;
   value = wiringPiI2CReadReg16(fd, addr);
   value = ((value<<8)&0xff00)|((value>>8)&0x00ff);
 	return value;
@@ -65,7 +59,8 @@ void calculate_IMU_error() {
   GyroErrorX = 0.0;
   GyroErrorY = 0.0;
   GyroErrorZ = 0.0;
-
+  c = 0;
+  
   while (c < 200) {
 		/*Read raw value of Accelerometer and gyroscope from MPU6050*/
 		AccX = read_raw_data(ACCEL_XOUT_H) / (16384.0/2); // 4g
@@ -101,20 +96,10 @@ void calculate_IMU_error() {
 }
 
 void MPU6050_Init(){
-  // wiringPiI2CWriteReg8 (fd, PWR_MGMT_1, 0x80); // Write to power management register
-  // delay(100);
-  // wiringPiI2CWriteReg8 (fd, 0x68, 0x07);
-  // delay(100);
-  // wiringPiI2CWriteReg8 (fd, PWR_MGMT_1, 0x00); // Write to power managementregister
-
   wiringPiI2CWriteReg8 (fd, PWR_MGMT_1, 0x00);  // Write to power management register
-
   wiringPiI2CWriteReg8 (fd, GYRO_CONFIG, 0x00); // Write to Gyro Configuration register
   wiringPiI2CWriteReg8 (fd, ACCEL_CONFIG, 0x08);  // Write to Accel
-
-  // wiringPiI2CWriteReg8 (fd, SMPLRT_DIV, 0x07); /* Write to sample rate register */
-  wiringPiI2CWriteReg8 (fd, CONFIG, 0x03);    /* Write to Configuration register */
-  // wiringPiI2CWriteReg8 (fd, INT_ENABLE, 0x01); /*Write to interrupt enable register */
+  wiringPiI2CWriteReg8 (fd, CONFIG, 0x03);    // Set yo filter frequency of 44hz
   calculate_IMU_error();
   delay(20);
   }
@@ -122,13 +107,11 @@ void MPU6050_Init(){
 int main(){
   fd = wiringPiI2CSetup(Device_Address);   /*Initializes I2C with device Address*/
   MPU6050_Init();                    /* Initializes MPU6050 */
-  float yawsv = 0.0;
   yaw = 0.0;
   roll = 0.0;
   pitch = 0.0;
-  elapsedTime = 0.0;
+  // Set to current time to start
   currentTime = millis();
-  previousTime = 0.0;
 
   while(1)
   {
@@ -158,18 +141,13 @@ int main(){
     // Currently the raw values are in degrees per seconds, deg/s, so we need to multiply by sendonds (s) to get the angle in degrees
     gyroAngleX = gyroAngleX + GyroX * elapsedTime; // deg/s * s = deg
     gyroAngleY = gyroAngleY + GyroY * elapsedTime;
-    yawsv = yaw;
     yaw =  yaw + GyroZ * elapsedTime;
-    // printf("yawsv=%.3f \tyaw=%.3f \tGyroX=%.3f \telapsed=%.3f\n", yawsv, yaw, GyroX, elapsedTime);
 
     // Complementary filter - combine acceleromter and gyro angle values
     roll = 0.96 * gyroAngleX + 0.04 * accAngleX;
     pitch = 0.96 * gyroAngleY + 0.04 * accAngleY;
 
-    // printf("AccX=%.3f \tAccY=%.3f \tAccZ=%.3f\n", AccX, AccY, AccZ);
-    // printf("GyroX=%.3f \tGyroY=%.3f \tGyroZ=%.3f\n", GyroX, GyroY, GyroZ);
-    printf("roll=%.3f \tpitch=%.3f \tyaw=%.3f \telapsed=%.3f\n", roll ,pitch, yaw, elapsedTime);
-    // printf("\n Gx=%.3f °/s\tGy=%.3f °/s\tGz=%.3f °/s\tAx=%.3f g\tAy=%.3f g\tAz=%.3f g\n",Gx,Gy,Gz,Ax,Ay,Az);
+    printf("roll=%.3f \tpitch=%.3f \tyaw=%.3f \tGyroZ=%.3f \telapsed=%.3f\n", roll ,pitch, yaw, GyroZ, elapsedTime);
     delay(100);
   }
 	return 0;

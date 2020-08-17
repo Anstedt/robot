@@ -2,8 +2,8 @@
 
 # MPU6050 for balancing
 
-- Seems like something needs to be configured since the pitch as well
-  as other values work sometimes but other times do not.
-- The range always seems off somehow as well.
+- Works better now but has 2 issues:
+  1. Very slowly drifts
+  2. Uses current potions as zero when started
 
 # DRV8825 for motor control
