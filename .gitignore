@@ -1,3 +1,9 @@
 *.~*~
 *.pyc
 mpu
+Makefile
+CMakeCache.txt
+CMakeFiles
+.ninja_*
+*.ninja
+cmake_install.cmake
