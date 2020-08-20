@@ -9,6 +9,8 @@
 #include <stdio.h>
 #include <wiringPi.h>
 #include <math.h>
+#include "mpu6050.h"
+using namespace std;
 
 #define Device_Address 0x68	/*Device Address/Identifier for MPU6050*/
 
@@ -92,11 +94,18 @@ void calculate_IMU_error() {
   GyroErrorY = GyroErrorY / 200;
   GyroErrorZ = GyroErrorZ / 200;
   // Print the error values on the Serial Monitor
+  printf("AccX:%.3f \tAccY:%.3f \tAccZ:%.3f \tGyroX:%.3f \tGyroY:%.3f \tGyroZ:%.3f\n",AccX,AccY,AccZ, GyroX,GyroY,GyroZ);
   printf("M_PI:%.3f AEX:%.3f AEY:%.3f GyroErrorX:%.3f GyroErrorY:%.3f GyroErrorZ:%.3f\n", M_PI, AccErrorX, AccErrorY,GyroErrorX, GyroErrorY, GyroErrorZ);
 }
 
 void MPU6050_Init(){
-  wiringPiI2CWriteReg8 (fd, PWR_MGMT_1, 0x00);  // Write to power management register
+  wiringPiI2CWriteReg8 (fd, PWR_MGMT_1, 0x80); // Write to power management register
+  delay(100);
+  wiringPiI2CWriteReg8 (fd, 0x68, 0x07);
+  delay(100);
+  wiringPiI2CWriteReg8 (fd, PWR_MGMT_1, 0x00); // Write to power managementregister
+
+  // wiringPiI2CWriteReg8 (fd, PWR_MGMT_1, 0x00);  // Write to power management register
   wiringPiI2CWriteReg8 (fd, GYRO_CONFIG, 0x00); // Write to Gyro Configuration register
   wiringPiI2CWriteReg8 (fd, ACCEL_CONFIG, 0x08);  // Write to Accel
   wiringPiI2CWriteReg8 (fd, CONFIG, 0x03);    // Set yo filter frequency of 44hz
@@ -104,7 +113,7 @@ void MPU6050_Init(){
   delay(20);
   }
 
-int main(){
+int mpu_run(){
   fd = wiringPiI2CSetup(Device_Address);   /*Initializes I2C with device Address*/
   MPU6050_Init();                    /* Initializes MPU6050 */
   yaw = 0.0;
