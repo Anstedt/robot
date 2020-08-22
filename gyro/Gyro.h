@@ -1,7 +1,11 @@
 #ifndef GYRO_H
 #define GYRO_H
 
-class Gyro
+#include "../sys/Threads.h"
+
+using namespace std;
+
+class Gyro : public Threads
 {
 public:
   // Local Classes
@@ -12,6 +16,8 @@ public:
   // Static and friend functions
   // Memory management: copy constructor, destructor, operator=
   ~Gyro();
+protected:
+   int virtual Run(void); // Thread entry point
 private:
   // Local Classes
   // Constructors
@@ -24,5 +30,4 @@ private:
   // Data fields
   // Static (shared) class variables  
 };
-
 #endif
