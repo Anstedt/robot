@@ -9,8 +9,6 @@
 #include <stdio.h>
 #include <wiringPi.h>
 #include <math.h>
-#include "mpu6050.h"
-using namespace std;
 
 #define Device_Address 0x68	/*Device Address/Identifier for MPU6050*/
 
