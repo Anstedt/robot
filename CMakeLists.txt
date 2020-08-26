@@ -3,18 +3,21 @@ cmake_minimum_required(VERSION 3.1 FATAL_ERROR)
 
 project (robot)
 
-include_directories("${PROJECT_SOURCE_DIR}/mpu6050/}")
-include_directories("${PROJECT_SOURCE_DIR}/gyro/}")
-include_directories("${PROJECT_SOURCE_DIR}/sys/}")
-include_directories("${PROJECT_SOURCE_DIR}/balancer/}")
+include_directories("${PROJECT_SOURCE_DIR}/mpu6050")
+include_directories("${PROJECT_SOURCE_DIR}/gyro")
+include_directories("${PROJECT_SOURCE_DIR}/sys")
+include_directories("${PROJECT_SOURCE_DIR}/balancer")
+
+message("${PROJECT_SOURCE_DIR}")
 
 add_subdirectory(sys)
 add_subdirectory(gyro)
 add_subdirectory(mpu6050)
+add_subdirectory(balancer)
 
 add_executable(robot robot.cpp)
 
-target_link_libraries(robot mpu6050 wiringPi threads gyro pthread)
+target_link_libraries(robot mpu6050 wiringPi threads gyro mpu6050 pthread)
 
 # Additional C Compiler flags
 # Note: -Werror causes all warnings to be errors that will halt the build

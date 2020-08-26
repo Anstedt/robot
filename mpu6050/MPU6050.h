@@ -1,25 +1,27 @@
 #ifndef MPU6050_LIB
 #define MPU6050_LIB
 
-class MPU6050:
+class MPU6050
 {
 public:
   // Local Classes
   // Constructors
   MPU6050();
   // Mutators: non-const operations
-  bool calibrate(void);
-  void set_gyro_config(int register, in value);   // GYRO_CONFIG  = 0x00
-  void set_accel_config(int register, in value);  // ACCEL_CONFIG = 0x08
-  void set_filter_config(int register, in value); // CONFIG       = 0x03 ~43Hz
+  void set_defaults(void);
+  void calibrate(void);
+  void set_power_mgmt(int value);    // Set power management
+  void set_gyro_config(int value);   // GYRO_CONFIG  = 0x00
+  void set_accel_config(int value);  // ACCEL_CONFIG = 0x08
+  void set_filter_config(int value); // CONFIG       = 0x03 ~43Hz
   // Accessors: const operations
-  float get_gyro_X(void); // GYRO_XOUT_H
-  float get_gyro_Y(void); // GYRO_YOUT_H
-  float get_gyro_Z(void); // GYRO_ZOUT_H
-  bool  get_gyro_XY(float* x, float* y); // Similar to arduino code
-  float get_accel_X(void); // ACCEL_XOUT_H
-  float get_accel_Y(void); // ACCEL_YOUT_H
-  float get_accel_Z(void); // ACCEL_ZOUT_H Used by Arduino code but may be different for us
+  int get_gyro_X(void); // GYRO_XOUT_H
+  int get_gyro_Y(void); // GYRO_YOUT_H
+  int get_gyro_Z(void); // GYRO_ZOUT_H
+  void get_gyro_XY(int &x, int &y); // Similar to arduino code
+  int get_accel_X(void); // ACCEL_XOUT_H
+  int get_accel_Y(void); // ACCEL_YOUT_H
+  int get_accel_Z(void); // ACCEL_ZOUT_H Used by Arduino code but may be different for us
   // Static and friend functions
   // Memory management: copy constructor, destructor, operator=
   ~MPU6050();
@@ -29,12 +31,11 @@ private:
   // Constructors
   // Mutators: non-const operations
   // Accessors: const operations
-  short read_raw_data(int addr);
+  int read_raw_data(int addr);
   // Static and friend functions
   // Memory management
   MPU6050(const MPU6050&);
   MPU6050& operator=(const MPU6050& rhs);
-
   int device_fd;
   // DEBUG Howard may not be used here or should be on the stack
   // int accelerometer_data_raw;

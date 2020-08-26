@@ -4,7 +4,6 @@
 #include <stdio.h>
 #include <wiringPi.h>
 #include <math.h>
-#include "../mpu6050/mpu6050.h"
 #include "Gyro.h"
 
 #include <unistd.h>
@@ -23,12 +22,17 @@ Gyro::~Gyro()
 
 int Gyro::Run(void)
 {
-  cout << "Gyro:Run() in a separate thread" << std::endl;
+  int timing = millis();
+  
+  cout << "Gyro:Run() in a separate thread : " << timing << std::endl;
 
-  while(1)
+  for(int x=0; x < 1000; x++)
   {
-    cout << "Gyro:Run()" << std::endl;
-    usleep(10000);
+    cout << "Gyro:Run() x=" << x << std::endl;
+    usleep(1000);
   }
+
+  cout << "Gyro:Run() DONE in a separate thread : " << (millis() - timing) << std::endl;
+
   return(0);
 }

@@ -1,5 +1,5 @@
-#include "Balance.h"
-#include "../gyro/Gyro.h"
+#include "Balancer.h"
+#include "Gyro.h"
 
 using namespace std;
 

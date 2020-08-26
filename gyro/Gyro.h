@@ -1,7 +1,8 @@
 #ifndef GYRO_H
 #define GYRO_H
 
-#include "../sys/Threads.h"
+#include "Threads.h"
+#include "MPU6050.h"
 
 using namespace std;
 
@@ -17,9 +18,10 @@ public:
   // Memory management: copy constructor, destructor, operator=
   ~Gyro();
 protected:
-   int virtual Run(void); // Thread entry point
+   int Run(void); // Thread entry point
 private:
   // Local Classes
+  // MPU6050 mpu6050;
   // Constructors
   // Mutators: non-const operations
   // Accessors: const operations
@@ -28,6 +30,7 @@ private:
   Gyro(const Gyro&);
   Gyro& operator=(const Gyro& rhs);
   // Data fields
+
   // Static (shared) class variables  
 };
 #endif
