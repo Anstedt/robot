@@ -88,11 +88,41 @@ int MPU6050::get_gyro_Y(void)
   return(read_raw_data(GYRO_YOUT_H));
 }
 
+int MPU6050::get_gyro_Z(void)
+{
+  return(read_raw_data(GYRO_ZOUT_H));
+}
+
 void MPU6050::get_gyro_XY(int &x, int &y)
 {
   // Until we can do this with one coammd we will just use 2
   x = read_raw_data(MPU6050::GYRO_XOUT_H);
   y = read_raw_data(MPU6050::GYRO_YOUT_H);
+}
+
+int MPU6050::get_accel_X(void)
+{
+  return(read_raw_data(ACCEL_XOUT_H));
+}
+
+int MPU6050::get_accel_Y(void)
+{
+  return(read_raw_data(ACCEL_YOUT_H));
+}
+
+int MPU6050::get_accel_Z(void)
+{
+  return(read_raw_data(ACCEL_ZOUT_H));
+}
+
+long MPU6050::get_gyro_yaw_calibration_value()
+{
+  return(gyro_yaw_calibration_value);
+}
+
+long MPU6050::get_gyro_pitch_calibration_value()
+{
+  return(gyro_pitch_calibration_value);
 }
 
 int MPU6050::read_raw_data(int addr)

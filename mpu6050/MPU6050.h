@@ -22,6 +22,8 @@ public:
   int get_accel_X(void); // ACCEL_XOUT_H
   int get_accel_Y(void); // ACCEL_YOUT_H
   int get_accel_Z(void); // ACCEL_ZOUT_H Used by Arduino code but may be different for us
+  long get_gyro_yaw_calibration_value();
+  long get_gyro_pitch_calibration_value();
   // Static and friend functions
   // Memory management: copy constructor, destructor, operator=
   ~MPU6050();
