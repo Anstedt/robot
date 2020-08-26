@@ -26,12 +26,10 @@ int Gyro::Run(void)
   
   cout << "Gyro:Run() in a separate thread : " << timing << std::endl;
 
-  for(int x=0; x < 1000; x++)
-  {
-    cout << "Gyro:Run() x=" << x << std::endl;
-    usleep(1000);
-  }
+  mpu6050.set_defaults();
 
+  mpu6050.calibrate();
+  
   cout << "Gyro:Run() DONE in a separate thread : " << (millis() - timing) << std::endl;
 
   return(0);

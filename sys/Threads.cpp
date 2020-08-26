@@ -69,3 +69,8 @@ bool Threads::Activate(int policy, int priority)
 
   return status;
 }
+
+bool Threads::JoinThread()
+{
+  return(pthread_join(m_threadStruct, NULL));
+}

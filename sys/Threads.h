@@ -7,7 +7,7 @@ class Threads
 {
 public:
   bool Activate(int policy = SCHED_FIFO, int priority = 1);
-  bool JoinThread() { return(pthread_join(m_threadStruct, NULL)); };
+  bool JoinThread();
   virtual ~Threads();
 protected:
   Threads();

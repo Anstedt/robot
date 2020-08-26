@@ -12,12 +12,13 @@ using namespace std;
 MPU6050::MPU6050()
 {
   /*Initializes I2C with device Address*/
+  cout << "MPU6050::MPU6050()" << std::endl;
   device_fd = wiringPiI2CSetup(MPU6050::Device_Address);
 }
 
 MPU6050::~MPU6050()
 {
-  // Do nothing
+  cout << "MPU6050::~MPU6050()" << std::endl;
 }
 
 // Setup  defaults if the user request them
@@ -44,6 +45,8 @@ void MPU6050::calibrate(void)
     // Note the real could pulls both values from I2C in one call
     gyro_yaw_calibration_value   += get_gyro_X();
     gyro_pitch_calibration_value += get_gyro_Y();
+    // DEBUG cout << "gyro_yaw_calibration_value  =" << gyro_yaw_calibration_value << std::endl;
+    // DEBUG cout << "gyro_pitch_calibration_value=" << gyro_pitch_calibration_value << std::endl;
     //Wait for 3700 microseconds to simulate the main program loop time
     usleep(3700);                                                
   }
