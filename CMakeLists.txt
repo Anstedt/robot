@@ -17,7 +17,14 @@ add_subdirectory(balancer)
 
 add_executable(robot robot.cpp)
 
-target_link_libraries(robot mpu6050 wiringPi threads gyro mpu6050 pthread)
+target_link_libraries(robot mpu6050 threads pigpio rt gyro mpu6050 pthread)
+
+# robot needs to run as root
+add_custom_command(TARGET robot POST_BUILD
+  OUTPUT ${output}
+  COMMAND sudo chown root:pi robot
+  COMMAND sudo chmod ugoa+s robot
+  COMMENT "Hello")
 
 # Additional C Compiler flags
 # Note: -Werror causes all warnings to be errors that will halt the build

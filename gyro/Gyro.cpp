@@ -49,7 +49,7 @@ int Gyro::Run(void)
 
     m_angle_acc = asin((float)m_accelerometer_data_raw/8200.0)* 57.296;           //Calculate the current angle according to the accelerometer
 
-    if(m_start == 0 && m_angle_acc > -0.5&& m_angle_acc < 0.5){                     //If the accelerometer angle is almost 0
+    if(m_start == 0 && m_angle_acc > -0.5 && m_angle_acc < 0.5){                     //If the accelerometer angle is almost 0
       m_angle_gyro = m_angle_acc;                                                 //Load the accelerometer angle in the angle_gyro variable
       m_start = 1;                                                              //Set the start variable to start the PID controller
     }
@@ -70,7 +70,7 @@ int Gyro::Run(void)
 
     m_gyro_yaw_data_raw -= mpu6050.get_gyro_yaw_calibration_value();                          //Add the gyro calibration value
     //Uncomment the following line to make the compensation active
-    m_angle_gyro -= m_gyro_yaw_data_raw * 0.0000003;                            //Compensate the gyro offset when the robot is rotating
+    // m_angle_gyro -= m_gyro_yaw_data_raw * -0.0000003;                            //Compensate the gyro offset when the robot is rotating
 
     m_angle_gyro = m_angle_gyro * 0.9996 + m_angle_acc * 0.0004;                    //Correct the drift of the gyro angle with the accelerometer angle
 

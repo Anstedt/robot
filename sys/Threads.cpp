@@ -31,7 +31,7 @@ bool Threads::Activate(int policy, int priority)
   struct sched_param threadSchedParameters;
   threadSchedParameters.sched_priority = priority;
 
-  // DEBUG cout << policy << " : " << priority << " : " << sched_get_priority_max(policy) << " : " << sched_get_priority_max(policy) << std::endl;
+  cout << policy << " : " << priority << " : " << sched_get_priority_max(policy) << " : " << sched_get_priority_max(policy) << std::endl;
   
   // Get attribute struct for setting priority and policy
   if ((code = pthread_attr_init(&threadAttributes)) != 0)

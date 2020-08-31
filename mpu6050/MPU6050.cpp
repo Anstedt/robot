@@ -1,5 +1,5 @@
 #include <iostream>
-#include <wiringPiI2C.h>
+#include <pigpio.h>
 #include <stdlib.h>
 #include <stdio.h>
 #include <wiringPi.h>
@@ -11,13 +11,24 @@ using namespace std;
 
 MPU6050::MPU6050()
 {
-  /*Initializes I2C with device Address*/
+  // Initializes I2C with device Address
   cout << "MPU6050::MPU6050()" << std::endl;
-  device_fd = wiringPiI2CSetup(MPU6050::Device_Address);
+
+  if (gpioInitialise() < 0)
+  {
+    cout << "MPU6050::~MPU6050() pigpio initialization failed" << std::endl;
+  }
+
+  // RP uses bus 1
+  device_fd = i2cOpen(1, MPU6050::Device_Address, 0);
 }
 
 MPU6050::~MPU6050()
 {
+  i2cClose(device_fd);
+
+  gpioTerminate();
+
   cout << "MPU6050::~MPU6050()" << std::endl;
 }
 
@@ -39,6 +50,8 @@ void MPU6050::calibrate(void)
   gyro_yaw_calibration_value = 0;
   gyro_pitch_calibration_value = 0;
 
+  int timer = millis();
+  
   // Loop 500 times
   for(int counter = 0; counter < 500; counter++)
   {
@@ -48,11 +61,12 @@ void MPU6050::calibrate(void)
     // DEBUG cout << "gyro_yaw_calibration_value  =" << gyro_yaw_calibration_value << std::endl;
     // DEBUG cout << "gyro_pitch_calibration_value=" << gyro_pitch_calibration_value << std::endl;
     //Wait for 3700 microseconds to simulate the main program loop time
-    usleep(3700);                                                
+    usleep(600);                                                
   }
   gyro_pitch_calibration_value /= 500;                                      //Divide the total value by 500 to get the avarage gyro offset
   gyro_yaw_calibration_value /= 500;            
 
+  cout << "Loop time = " << float(((millis() - timer) / 500)) << std::endl;
   cout << "gyro_pitch_calibration_value=" << gyro_pitch_calibration_value << std::endl;
   cout << "gyro_yaw_calibration_value  =" << gyro_yaw_calibration_value << std::endl;
 }
@@ -60,22 +74,22 @@ void MPU6050::calibrate(void)
 // Set power management configs5
 void MPU6050::set_power_mgmt(int value)
 {
-  wiringPiI2CWriteReg8(device_fd, PWR_MGMT_1, value);
+  i2cWriteByteData(device_fd, PWR_MGMT_1, value);
 }
 
 void MPU6050::set_gyro_config(int value)
 {
-  wiringPiI2CWriteReg8(device_fd, GYRO_CONFIG, value);
+  i2cWriteByteData(device_fd, GYRO_CONFIG, value);
 }
 
 void MPU6050::set_accel_config(int value)
 {
-  wiringPiI2CWriteReg8(device_fd, ACCEL_CONFIG, value);
+  i2cWriteByteData(device_fd, ACCEL_CONFIG, value);
 }
 
 void MPU6050::set_filter_config(int value)
 {
-  wiringPiI2CWriteReg8(device_fd, CONFIG, value);
+  i2cWriteByteData(device_fd, CONFIG, value);
 }
 
 int MPU6050::get_gyro_X(void)
@@ -95,9 +109,15 @@ int MPU6050::get_gyro_Z(void)
 
 void MPU6050::get_gyro_XY(int &x, int &y)
 {
-  // Until we can do this with one coammd we will just use 2
+  // Until we can do this with one command we will just use 2
   x = read_raw_data(MPU6050::GYRO_XOUT_H);
   y = read_raw_data(MPU6050::GYRO_YOUT_H);
+
+  // HJA char buffer[4];
+  // HJA gets bot X and Y in one call
+  // HJA i2cReadBlockData(device_fd, GYRO_XOUT_H, buffer);
+  // HJA x = buffer[0]<<8|buffer[1];
+  // HJA y = buffer[2]<<8|buffer[3];
 }
 
 int MPU6050::get_accel_X(void)
@@ -127,12 +147,10 @@ long MPU6050::get_gyro_pitch_calibration_value()
 
 int MPU6050::read_raw_data(int addr)
 {
-  int high_byte;
-  int low_byte;
   short int value;
 
-  // int wiringPiI2CReadReg16 (int fd, int reg)
-  value = wiringPiI2CReadReg16(device_fd, addr);
+  value = i2cReadWordData(device_fd, addr);
   value = ((value<<8)&0xff00)|((value>>8)&0x00ff);
+
 	return value;
 }
