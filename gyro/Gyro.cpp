@@ -30,28 +30,32 @@ Gyro::~Gyro()
 
 int Gyro::Run(void)
 {
-  int timing = 0;
-  
+  int timer = 0;
+  int elapsed = 0;
   cout << "Gyro:Run() in a separate thread" << std::endl;
 
   mpu6050.set_defaults();
 
   mpu6050.calibrate();
 
-  timing = millis();
+  // Loops should take 4 ms
+  timer = millis() + 4;
+  elapsed = millis();
   
   for (int i = 0; i < 10000; i++)
   {
-    m_accelerometer_data_raw = mpu6050.get_accel_Z();                      //Combine the two bytes to make one integer
-    m_accelerometer_data_raw += m_acc_calibration_value;                          //Add the accelerometer calibration value
-    if(m_accelerometer_data_raw > 8200)m_accelerometer_data_raw = 8200;           //Prevent division by zero by limiting the acc data to +/-8200;
-    if(m_accelerometer_data_raw < -8200)m_accelerometer_data_raw = -8200;         //Prevent division by zero by limiting the acc data to +/-8200;
+    m_accelerometer_data_raw = mpu6050.get_accel_Z();                     //Combine the two bytes to make one integer
+    m_accelerometer_data_raw += m_acc_calibration_value;                  //Add the accelerometer calibration value
+    if(m_accelerometer_data_raw > 8200)m_accelerometer_data_raw = 8200;   //Prevent division by zero by limiting the acc data to +/-8200;
+    if(m_accelerometer_data_raw < -8200)m_accelerometer_data_raw = -8200; //Prevent division by zero by limiting the acc data to +/-8200;
 
-    m_angle_acc = asin((float)m_accelerometer_data_raw/8200.0)* 57.296;           //Calculate the current angle according to the accelerometer
-
-    if(m_start == 0 && m_angle_acc > -0.5 && m_angle_acc < 0.5){                     //If the accelerometer angle is almost 0
-      m_angle_gyro = m_angle_acc;                                                 //Load the accelerometer angle in the angle_gyro variable
-      m_start = 1;                                                              //Set the start variable to start the PID controller
+    m_angle_acc = asin((float)m_accelerometer_data_raw/8200.0)* 57.296;   //Calculate the current angle according to the accelerometer
+    
+    // if(m_start == 0 && m_angle_acc > -0.5 && m_angle_acc < 0.5) //If the accelerometer angle is almost 0
+    if(m_start == 0)
+    {                     
+      m_angle_gyro = m_angle_acc; //Load the accelerometer angle in the angle_gyro variable
+      m_start = 1; //Set the start variable to start the PID controller
     }
 
     // mpu6050.get_gyro_XY(m_gyro_yaw_data_raw, m_gyro_pitch_data_raw);
@@ -60,8 +64,8 @@ int Gyro::Run(void)
     m_gyro_yaw_data_raw = mpu6050.get_gyro_X();                           //Combine the two bytes to make one integer
     m_gyro_pitch_data_raw = mpu6050.get_gyro_Y();                         //Combine the two bytes to make one integer
   
-    m_gyro_pitch_data_raw -= mpu6050.get_gyro_pitch_calibration_value();                      //Add the gyro calibration value
-    m_angle_gyro += m_gyro_pitch_data_raw * 0.000031;                             //Calculate the traveled during this loop angle and add this to the angle_gyro variable
+    m_gyro_pitch_data_raw -= mpu6050.get_gyro_pitch_calibration_value();  //Add the gyro calibration value
+    m_angle_gyro += m_gyro_pitch_data_raw * 0.000031;                     //Calculate the traveled during this loop angle and add this to the angle_gyro variable
   
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     //MPU-6050 offset compensation
@@ -77,10 +81,13 @@ int Gyro::Run(void)
 
     m_angle_gyro = m_angle_gyro * 0.9996 + m_angle_acc * 0.0004;                    //Correct the drift of the gyro angle with the accelerometer angle
 
-    cout << "m_angle_gyro=" << m_angle_gyro << "  m_angle_acc=" << m_angle_acc << " m_gyro_yaw_data_raw=" << m_gyro_yaw_data_raw << " m_gyro_pitch_data_raw=" << m_gyro_pitch_data_raw << std::endl;
+    cout << "m_angle_gyro=" << m_angle_gyro << "\tm_angle_acc=" << m_angle_acc << "\tm_gyro_yaw_data_raw=" << m_gyro_yaw_data_raw << "\tm_gyro_pitch_data_raw=" << m_gyro_pitch_data_raw << std::endl;
+
+    while(timer > millis());
+    timer += 4;
   }
   
-  cout << "Gyro:Run() DONE in a separate thread : " << (millis() - timing) << std::endl;
+  cout << "Gyro:Run() DONE in a separate thread : " << (millis() - elapsed)/10000 << std::endl;
 
   return(0);
 }

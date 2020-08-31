@@ -50,7 +50,8 @@ void MPU6050::calibrate(void)
   gyro_yaw_calibration_value = 0;
   gyro_pitch_calibration_value = 0;
 
-  int timer = millis();
+  int timer = millis() + 4;
+  int elapsed = millis();
   
   // Loop 500 times
   for(int counter = 0; counter < 500; counter++)
@@ -61,12 +62,14 @@ void MPU6050::calibrate(void)
     // DEBUG cout << "gyro_yaw_calibration_value  =" << gyro_yaw_calibration_value << std::endl;
     // DEBUG cout << "gyro_pitch_calibration_value=" << gyro_pitch_calibration_value << std::endl;
     //Wait for 3700 microseconds to simulate the main program loop time
-    usleep(600);                                                
+    
+    while(timer > millis());
+    timer += 4;
   }
-  gyro_pitch_calibration_value /= 500;                                      //Divide the total value by 500 to get the avarage gyro offset
+  gyro_pitch_calibration_value /= 500; // Divide the total value by 500 to get the avarage gyro offset
   gyro_yaw_calibration_value /= 500;            
 
-  cout << "Loop time = " << float(((millis() - timer) / 500)) << std::endl;
+  cout << "Elapsed time = " << float(((millis() - elapsed) / 500)) << std::endl;
   cout << "gyro_pitch_calibration_value=" << gyro_pitch_calibration_value << std::endl;
   cout << "gyro_yaw_calibration_value  =" << gyro_yaw_calibration_value << std::endl;
 }
