@@ -17,7 +17,8 @@ add_subdirectory(balancer)
 
 add_executable(robot robot.cpp)
 
-target_link_libraries(robot mpu6050 threads pigpio rt gyro mpu6050 pthread)
+# wiringPi defines millis
+target_link_libraries(robot mpu6050 wiringPi threads pigpio rt gyro mpu6050 pthread)
 
 # robot needs to run as root
 add_custom_command(TARGET robot POST_BUILD

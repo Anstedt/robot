@@ -40,7 +40,7 @@ int Gyro::Run(void)
 
   timing = millis();
   
-  for (int i = 0; i < 1000; i++)
+  for (int i = 0; i < 10000; i++)
   {
     m_accelerometer_data_raw = mpu6050.get_accel_Z();                      //Combine the two bytes to make one integer
     m_accelerometer_data_raw += m_acc_calibration_value;                          //Add the accelerometer calibration value
@@ -53,7 +53,10 @@ int Gyro::Run(void)
       m_angle_gyro = m_angle_acc;                                                 //Load the accelerometer angle in the angle_gyro variable
       m_start = 1;                                                              //Set the start variable to start the PID controller
     }
-  
+
+    // mpu6050.get_gyro_XY(m_gyro_yaw_data_raw, m_gyro_pitch_data_raw);
+    
+    
     m_gyro_yaw_data_raw = mpu6050.get_gyro_X();                           //Combine the two bytes to make one integer
     m_gyro_pitch_data_raw = mpu6050.get_gyro_Y();                         //Combine the two bytes to make one integer
   
@@ -74,7 +77,7 @@ int Gyro::Run(void)
 
     m_angle_gyro = m_angle_gyro * 0.9996 + m_angle_acc * 0.0004;                    //Correct the drift of the gyro angle with the accelerometer angle
 
-    cout << "m_angle_gyro=" << m_angle_gyro << "  m_angle_acc=" << m_angle_acc << std::endl;
+    cout << "m_angle_gyro=" << m_angle_gyro << "  m_angle_acc=" << m_angle_acc << " m_gyro_yaw_data_raw=" << m_gyro_yaw_data_raw << " m_gyro_pitch_data_raw=" << m_gyro_pitch_data_raw << std::endl;
   }
   
   cout << "Gyro:Run() DONE in a separate thread : " << (millis() - timing) << std::endl;
