@@ -21,7 +21,7 @@ protected:
    int Run(void); // Thread entry point
 private:
   // Local Classes
-  MPU6050 mpu6050;
+  MPU6050* p_mpu6050;
   // Constructors
   // Mutators: non-const operations
   // Accessors: const operations

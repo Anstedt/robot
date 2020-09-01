@@ -2,7 +2,6 @@
 #include <pigpio.h>
 #include <stdlib.h>
 #include <stdio.h>
-#include <wiringPi.h>
 #include <math.h>
 #include "MPU6050.h"
 #include <unistd.h> // for usleep()
@@ -14,20 +13,21 @@ MPU6050::MPU6050()
   // Initializes I2C with device Address
   cout << "MPU6050::MPU6050()" << std::endl;
 
-  if (gpioInitialise() < 0)
-  {
-    cout << "MPU6050::~MPU6050() pigpio initialization failed" << std::endl;
-  }
-
   // RP uses bus 1
   device_fd = i2cOpen(1, MPU6050::Device_Address, 0);
 }
 
 MPU6050::~MPU6050()
 {
+  // Should not need this but stops i2cClose from complaining on shutdown
+  if (gpioInitialise() < 0)
+  {
+    cout << "~MPU6050 pigpio initialization failed" << std::endl;
+  }
+  
   i2cClose(device_fd);
 
-  gpioTerminate();
+  gpioTerminate(); // Now that the MPU6050 is gone we can close pigpio
 
   cout << "MPU6050::~MPU6050()" << std::endl;
 }
@@ -50,8 +50,8 @@ void MPU6050::calibrate(void)
   gyro_yaw_calibration_value = 0;
   gyro_pitch_calibration_value = 0;
 
-  int timer = millis() + 4;
-  int elapsed = millis();
+  uint32_t timer = gpioTick() + (uint32_t)4000;
+  uint32_t elapsed = gpioTick();
   
   // Loop 500 times
   for(int counter = 0; counter < 500; counter++)
@@ -63,13 +63,13 @@ void MPU6050::calibrate(void)
     // DEBUG cout << "gyro_pitch_calibration_value=" << gyro_pitch_calibration_value << std::endl;
     //Wait for 3700 microseconds to simulate the main program loop time
     
-    while(timer > millis());
-    timer += 4;
+    while(timer > gpioTick());
+    timer += (uint32_t)4000;
   }
   gyro_pitch_calibration_value /= 500; // Divide the total value by 500 to get the avarage gyro offset
   gyro_yaw_calibration_value /= 500;            
 
-  cout << "Elapsed time = " << float(((millis() - elapsed) / 500)) << std::endl;
+  cout << "Elapsed time = " << float(((gpioTick() - elapsed) / 500)) << "us" << std::endl;
   cout << "gyro_pitch_calibration_value=" << gyro_pitch_calibration_value << std::endl;
   cout << "gyro_yaw_calibration_value  =" << gyro_yaw_calibration_value << std::endl;
 }

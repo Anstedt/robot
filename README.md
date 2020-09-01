@@ -1,11 +1,22 @@
 # Robot
 
+## ToDo
+- Use calibrated data for calls to MPU6050
+  - Set a flag when calibration has completed so all function that use
+    calibrated data can check if we are calibrated first
+- Clean up all loop counters and timers.
+  - Example calibration should be same rate as callers rate in Gyro
+- Pull data all at once so that it is all synchronized as spelled out
+  in data sheet
+- Determine how acc_calibration_value was found in original code
+- Migrate to usleep() or gpioDelay(uint32_t micros). Note that both
+  may do busy loops for time less than 100us.
+
 ## Migrating to c++
-- Minor code updates to start migration to C++, code is mostly C yet.
-- Also notice how C++ exceptions are turned off, see CMakeLists.txt
+- Notice how C++ exceptions are turned off, see CMakeLists.txt
   compiler option CMAKE_CXX_FLAGS. This is to improve performance as
-  exceptions can, in some cases, slow the code down drastically and we
-  are trying to build a real-time robot control system.
+  exceptions can slow the code down drastically and we are trying to
+  build a real-time robot control system.
 
 ## Option 1: use cmake and Ninja for the build
 - Install cmake
