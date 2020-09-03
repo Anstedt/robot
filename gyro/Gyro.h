@@ -31,10 +31,8 @@ private:
   Gyro& operator=(const Gyro& rhs);
   // Data fields
   int m_start;
-  int m_acc_calibration_value;
   int m_gyro_pitch_data_raw;
   int m_gyro_yaw_data_raw;
-  int m_accelerometer_data_raw;
   float m_angle_acc;
   float m_angle_gyro;
   // Static (shared) class variables  

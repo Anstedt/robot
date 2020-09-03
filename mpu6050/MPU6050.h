@@ -15,15 +15,13 @@ public:
   void set_accel_config(int value);  // ACCEL_CONFIG = 0x08
   void set_filter_config(int value); // CONFIG       = 0x03 ~43Hz
   // Accessors: const operations
-  int get_gyro_X(void); // GYRO_XOUT_H
-  int get_gyro_Y(void); // GYRO_YOUT_H
-  int get_gyro_Z(void); // GYRO_ZOUT_H
-  void get_gyro_XY(int &x, int &y); // Similar to arduino code
-  int get_accel_X(void); // ACCEL_XOUT_H
-  int get_accel_Y(void); // ACCEL_YOUT_H
-  int get_accel_Z(void); // ACCEL_ZOUT_H Used by Arduino code but may be different for us
-  long get_gyro_yaw_calibration_value();
-  long get_gyro_pitch_calibration_value();
+  int get_gyro_X_cal(void); // GYRO_XOUT_H, calibrated
+  int get_gyro_Y_cal(void); // GYRO_YOUT_H, calibrated
+  int get_gyro_Z_cal(void); // GYRO_ZOUT_H, calibrated
+  void get_gyro_XY_cal(int &x, int &y); // Similar to arduino code
+  int get_accel_X_cal(void); // ACCEL_XOUT_H, calibrated
+  int get_accel_Y_cal(void); // ACCEL_YOUT_H, calibrated
+  int get_accel_Z_cal(void); // ACCEL_ZOUT_H Used by Arduino code but may be different for us
   // Static and friend functions
   // Memory management: copy constructor, destructor, operator=
   ~MPU6050();
@@ -33,26 +31,30 @@ private:
   // Constructors
   // Mutators: non-const operations
   // Accessors: const operations
+  int get_gyro_X(void); // GYRO_XOUT_H
+  int get_gyro_Y(void); // GYRO_YOUT_H
+  int get_gyro_Z(void); // GYRO_ZOUT_H
+  int get_accel_X(void); // ACCEL_XOUT_H
+  int get_accel_Y(void); // ACCEL_YOUT_H
+  int get_accel_Z(void); // ACCEL_ZOUT_H Used by Arduino code but may be different for us
+  int get_accel_cal(int addr);
   int read_raw_data(int addr);
   // Static and friend functions
-  // Memory management
+  // Memory management1
   MPU6050(const MPU6050&);
   MPU6050& operator=(const MPU6050& rhs);
   int device_fd;
-  // DEBUG Howard may not be used here or should be on the stack
-  // int accelerometer_data_raw;
-  // float angle_acc;
-  // float angle_gyro;
-  // int gyro_pitch_data_raw, gyro_yaw_data_raw;
+  bool m_calibrated;
 
-  // PID code not here?
+  // HJA PID code not here?
   float self_balance_pid_setpoint;
   float pid_error_temp, pid_i_mem, pid_setpoint, pid_output, pid_last_d_error;
   float pid_output_left, pid_output_right;
 
   // Data fields
-  long gyro_yaw_calibration_value;
-  long gyro_pitch_calibration_value;
+  int m_acc_calibration_value;
+  long m_gyro_yaw_calibration_value;
+  long m_gyro_pitch_calibration_value;
   // constants
   static const int Device_Address = 0x68;	/*Device Address/Identifier for MPU6050*/
   static const int SMPLRT_DIV     = 0x19;
