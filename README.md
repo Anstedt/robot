@@ -1,5 +1,7 @@
 # Robot
 
+# Migrate to GitHub for Rick
+
 ## ToDo
 - Use calibrated data for calls to MPU6050
   - Set a flag when calibration has completed so all function that use
