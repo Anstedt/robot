@@ -1,6 +1,7 @@
 #ifndef GYRO_H
 #define GYRO_H
 
+/* INCLUDE ********************************************************************/
 #include "Threads.h"
 #include "MPU6050.h"
 
@@ -13,6 +14,9 @@ public:
   // Constructors
   Gyro();
   // Mutators: non-const operations
+  // void myfunc(int pitch, int yaw, float angle_acc, float angle_gyro)
+  // RegisterForCallback(myfunc)
+  bool RegisterForCallback(void (*func)(int pitch, int yaw, float angle_acc, float angle_gyro));
   // Accessors: const operations
   // Static and friend functions
   // Memory management: copy constructor, destructor, operator=
@@ -30,6 +34,7 @@ private:
   Gyro(const Gyro&);
   Gyro& operator=(const Gyro& rhs);
   // Data fields
+  void* m_callback;
   int m_start;
   int m_gyro_pitch_data_raw;
   int m_gyro_yaw_data_raw;
