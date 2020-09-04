@@ -35,4 +35,6 @@ Step Pulse duration STEP Low  Min: 1.9μs, no max
 int Motor::Run(void)
 {
   cout << "Motor:Run() in a separate thread" << std::endl;
+
+  return(0);
 }

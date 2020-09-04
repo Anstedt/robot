@@ -4,6 +4,7 @@
 /* INCLUDE ********************************************************************/
 #include "Threads.h"
 #include "MPU6050.h"
+#include <functional>
 
 using namespace std;
 
@@ -16,7 +17,9 @@ public:
   // Mutators: non-const operations
   // void myfunc(int pitch, int yaw, float angle_acc, float angle_gyro)
   // RegisterForCallback(myfunc)
-  bool RegisterForCallback(void (*func)(int pitch, int yaw, float angle_acc, float angle_gyro));
+  // int pitch, int yaw, float angle_acc, float angle_gyro
+  // HJA bool RegisterForCallback(std::function<void(int, int, float, float)>callback);
+  bool RegisterForCallback(std::function<void(int)> callback);
   // Accessors: const operations
   // Static and friend functions
   // Memory management: copy constructor, destructor, operator=
