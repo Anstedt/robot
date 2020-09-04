@@ -19,7 +19,7 @@ add_subdirectory(motor)
 
 add_executable(robot robot.cpp)
 
-target_link_libraries(robot mpu6050 threads pigpio rt gyro motor pthread)
+target_link_libraries(robot balancer gyro motor mpu6050 pigpio threads rt pthread)
 
 # robot needs to run as root
 add_custom_command(TARGET robot POST_BUILD

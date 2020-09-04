@@ -37,7 +37,7 @@ private:
   Gyro(const Gyro&);
   Gyro& operator=(const Gyro& rhs);
   // Data fields
-  void* m_callback;
+  std::function<void(int)> m_callback;
   int m_start;
   int m_gyro_pitch_data_raw;
   int m_gyro_yaw_data_raw;

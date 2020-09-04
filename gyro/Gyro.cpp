@@ -11,6 +11,7 @@ using namespace std;
 
 Gyro::Gyro()
 {
+  m_callback = 0;
   m_start = 0;
   m_gyro_pitch_data_raw = 0;
   m_gyro_yaw_data_raw = 0;
@@ -37,6 +38,16 @@ Gyro::~Gyro()
 
   cout << "Gyro::~Gyro()" <<std::endl;
 };
+
+/*------------------------------------------------------------------------------
+FUNCTION:      bool Gyro::RegisterForCallback(std::function<void(int)> callback)
+------------------------------------------------------------------------------*/
+bool Gyro::RegisterForCallback(std::function<void(int)> callback)
+{
+  m_callback = callback;
+
+  return(true);
+}
 
 #define GYRO_LOOPS 10000
 
