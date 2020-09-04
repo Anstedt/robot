@@ -2,15 +2,13 @@
 	MPU6050 Interfacing with Raspberry Pi
 */
 
-/* gcc -o mpu mpu6050.c -lwiringPi -lm */
+/* gcc -o mpu mpu6050.demo.c -lwiringPi -lm */
 
 #include <wiringPiI2C.h>
 #include <stdlib.h>
 #include <stdio.h>
 #include <wiringPi.h>
 #include <math.h>
-#include "mpu6050.h"
-using namespace std;
 
 #define Device_Address 0x68	/*Device Address/Identifier for MPU6050*/
 
@@ -113,7 +111,7 @@ void MPU6050_Init(){
   delay(20);
   }
 
-int mpu_run(){
+int main(){
   fd = wiringPiI2CSetup(Device_Address);   /*Initializes I2C with device Address*/
   MPU6050_Init();                    /* Initializes MPU6050 */
   yaw = 0.0;

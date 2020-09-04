@@ -15,6 +15,8 @@ void* Threads::ThreadRun(void* This)
 {
   Threads* pThread = (Threads *)This;
 
+  cout << "pThread=" << pThread << std::endl;
+
   pThread->Run();
 
   return(NULL);
@@ -25,12 +27,11 @@ bool Threads::Activate(int policy, int priority)
   bool status = false;
 
   int code = 0;
-  pthread_t threadStruct;
   pthread_attr_t threadAttributes;
   struct sched_param threadSchedParameters;
   threadSchedParameters.sched_priority = priority;
 
-  // DEBUG cout << policy << " : " << priority << " : " << sched_get_priority_max(policy) << " : " << sched_get_priority_max(policy) << std::endl;
+  cout << policy << " : " << priority << " : " << sched_get_priority_max(policy) << " : " << sched_get_priority_max(policy) << std::endl;
   
   // Get attribute struct for setting priority and policy
   if ((code = pthread_attr_init(&threadAttributes)) != 0)
@@ -51,7 +52,7 @@ bool Threads::Activate(int policy, int priority)
     status = false;
   }
   // Create the thread, which starts the Runner function defined by the derived class
-  else if ((code = pthread_create(&threadStruct, &threadAttributes, ThreadRun, (void*)this)) != 0 )
+  else if ((code = pthread_create(&m_threadStruct, &threadAttributes, ThreadRun, (void*)this)) != 0 )
   {
     cout << "FAILED: pthread_create code=" << code << std::endl;
     status = false;
@@ -67,4 +68,9 @@ bool Threads::Activate(int policy, int priority)
   }
 
   return status;
+}
+
+bool Threads::JoinThread()
+{
+  return(pthread_join(m_threadStruct, NULL));
 }

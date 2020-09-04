@@ -1,15 +1,20 @@
 #include <iostream>
-#include "mpu6050/mpu6050.h"
-// #include "gyro/Gyro.h"
+#include <pigpio.h>
+#include "gyro/Gyro.h"
+#include <unistd.h>
 
 int main(int argc, char *argv[])
 {
-  std::cout << "Hello Howie" << std::endl;
+  std::cout << "Hello Robbie" << std::endl;
 
-  // Gyro gyro;
+  Gyro* p_gyro = new Gyro();
 
-  // gyro.Activate();
+  p_gyro->Activate();
+
+  // Wait for the thread to finish
+  p_gyro->JoinThread();
+
+  delete p_gyro;
   
-  // Run the mpu6050 and capture the return
-  return(mpu_run());
+  return(0);
 }
