@@ -1,16 +1,15 @@
 # Robot
 
+## Callbacks implemented so listener can get Gyro data as soon as it is produced
+
 ## ToDo
-- Use calibrated data for calls to MPU6050
-  - Set a flag when calibration has completed so all function that use
-    calibrated data can check if we are calibrated first
+- Gyro callback data needs to be fed to motor
+- Motor does nothing at this time, add motor control
 - Clean up all loop counters and timers.
   - Example calibration should be same rate as callers rate in Gyro
 - Pull data all at once so that it is all synchronized as spelled out
   in data sheet
 - Determine how acc_calibration_value was found in original code
-- Migrate to usleep() or gpioDelay(uint32_t micros). Note that both
-  may do busy loops for time less than 100us.
 
 ## Migrating to c++
 - Notice how C++ exceptions are turned off, see CMakeLists.txt

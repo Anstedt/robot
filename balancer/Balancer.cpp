@@ -19,6 +19,7 @@ Balancer::Balancer()
   
   m_gyro = new Gyro();
 
+  // Resisters Balancer::CallBack(), including passed parameters, with the Gyro
   using namespace std::placeholders; // for `_1, _2, _3, _4`
   m_gyro->RegisterForCallback(std::bind(&Balancer::CallBack, this, _1, _2, _3, _4));
                               

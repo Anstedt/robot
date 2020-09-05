@@ -41,9 +41,12 @@ Gyro::~Gyro()
 
 /*------------------------------------------------------------------------------
 FUNCTION:      bool Gyro::RegisterForCallback(std::function<void(int)> callback)
+
+Use the C++ functional interface to register a callback with 4 parameters
 ------------------------------------------------------------------------------*/
 bool Gyro::RegisterForCallback(std::function<void(int, int, float, float)> callback)
 {
+  // We only allow one callback but a vector of callbacks could be used if needed
   if (m_callback == 0)
   {
     m_callback = callback;
