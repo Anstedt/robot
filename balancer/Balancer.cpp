@@ -1,6 +1,7 @@
 #include <iostream>
 
 #include "Balancer.h"
+#include <functional>
 
 using namespace std;
 
@@ -18,8 +19,8 @@ Balancer::Balancer()
   
   m_gyro = new Gyro();
 
-  using namespace std::placeholders; // for `_1`
-  m_gyro->RegisterForCallback(std::bind(&Balancer::CallBack, this, _1));
+  using namespace std::placeholders; // for `_1, _2, _3, _4`
+  m_gyro->RegisterForCallback(std::bind(&Balancer::CallBack, this, _1, _2, _3, _4));
                               
   m_gyro->Activate();
 
@@ -41,8 +42,7 @@ Balancer::~Balancer()
 /*------------------------------------------------------------------------------
 FUNCTION:      Balancer::CallBack(int pitch, int yaw, float angle_acc, float angle_gyro);
 ------------------------------------------------------------------------------*/
-// HJA void Balancer::CallBack(int pitch, int yaw, float angle_acc, float angle_gyro)
-void Balancer::CallBack(int pitch)
+void Balancer::CallBack(int gyro_yaw_data_raw, int gyro_pitch_data_raw, float angle_gyro, float angle_acc)
 {
-  cout << pitch << std::endl;
+  cout << "Angle Gyro=" << angle_gyro << "\tAngle Accelerometer=" << angle_acc << "\tGyro Yaw=" << gyro_yaw_data_raw << "\tGyro Pitch=" << gyro_pitch_data_raw << std::endl;
 }

@@ -19,7 +19,7 @@ public:
   // RegisterForCallback(myfunc)
   // int pitch, int yaw, float angle_acc, float angle_gyro
   // HJA bool RegisterForCallback(std::function<void(int, int, float, float)>callback);
-  bool RegisterForCallback(std::function<void(int)> callback);
+  bool RegisterForCallback(std::function<void(int, int, float, float)> callback);
   // Accessors: const operations
   // Static and friend functions
   // Memory management: copy constructor, destructor, operator=
@@ -37,7 +37,7 @@ private:
   Gyro(const Gyro&);
   Gyro& operator=(const Gyro& rhs);
   // Data fields
-  std::function<void(int)> m_callback;
+  std::function<void(int, int, float, float)> m_callback;
   int m_start;
   int m_gyro_pitch_data_raw;
   int m_gyro_yaw_data_raw;

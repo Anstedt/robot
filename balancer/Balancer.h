@@ -30,7 +30,7 @@ private:
   // Accessors: const operations
   // static void* CallBackRun(void* This, int pitch, int yaw, float angle_acc, float angle_gyro);
   // HJA void CallBack(int pitch, int yaw, float angle_acc, float angle_gyro);
-  void CallBack(int);
+  void CallBack(int, int, float, float);
   // Static and friend functions
   // Memory management
   Balancer(const Balancer&);
