@@ -83,7 +83,7 @@ RETURNS:       None
 ------------------------------------------------------------------------------*/
 bool Motor::AddGyroData(int pitch, int yaw, float angle_acc, float angle_gyro)
 {
-  cout << "Angle Gyro=" << angle_gyro << "\tAngle Accelerometer=" << angle_acc << "\tGyro Yaw=" << yaw << "\tGyro Pitch=" << pitch << std::endl;
+  cout << "Angle Gyro=" << angle_gyro << "\tAngle Accel=" << angle_acc << "\tGyro Yaw=" << yaw << "\tGyro Pitch=" << pitch << std::endl;
 
   return(m_angle_gyro_fifo.push_back(angle_gyro));
 }
@@ -189,10 +189,14 @@ int Motor::Run(void)
       }
       // Convert the angle to steps based on the current chopper mode
       m_motor_steps_to_go = AngleToSteps(motor_angle_cmd);
+
+      cout << "Fifo Angle=" << motor_angle_cmd << " Direction=" << m_motor_dir << " steps_to_go=" << m_motor_steps_to_go << std::endl;
     }
+
     // Run the motor while we have more steps
-    while(--m_motor_steps_to_go >= 0)
+    if(m_motor_steps_to_go > 0)
     {
+      m_motor_steps_to_go--;
       // Pulse high is always the same
       gpioWrite(m_motor_pulse_gpio, 1);
 
@@ -203,9 +207,17 @@ int Motor::Run(void)
       // Now do the low pulse
       gpioWrite(m_motor_pulse_gpio, 1);
       gpioDelay(m_pulse_low_us);
+
+      cout << "steps_to_go=" << m_motor_steps_to_go << " pulse_low_us=" << m_pulse_low_us << " pulse_high_us="  << m_pulse_high_us<< std::endl;
+    }
+    else
+    {
+      // If we have no data, sleep some waiting on new data, using 2ms which is
+      // half gyro rate.
+      gpioDelay(2000);
     }
     
   }
-  
+
   return(0);
 }
