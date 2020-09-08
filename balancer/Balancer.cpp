@@ -14,7 +14,9 @@ FUNCTION:      Balancer::Balancer()
 ------------------------------------------------------------------------------*/
 Balancer::Balancer()
 {
-  m_motor = new Motor(); // Motor uses Gyro data so start it first
+  MotorModeGPIO mode_array = {14,15,18};
+      
+  m_motor = new Motor(200, 21, 20, mode_array, 5); // Motor uses Gyro data so start it first
   m_motor->Activate();
   
   m_gyro = new Gyro();

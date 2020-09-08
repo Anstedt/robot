@@ -6,13 +6,13 @@ using namespace std;
 
 #define MOTOR_LOOPS 10000
 
-struct motor_mode[7]
+struct MotorMode
 {
   int pin_0;
   int pin_1;
   int pin_2;
   int multiplier;
-} = {
+} motor_mode[7] = {
   {0,0,0, 1},   // Full
   {1,0,0, 2},   // Half
   {0,1,0, 4},   // 1/4
@@ -31,14 +31,20 @@ ARGUMENTS: steps_rev = number of steps for 1 full revolution, mode = 0
            mode = default stepper/chop mode for the motor
            revs_per_min = revolutions per minute
 ------------------------------------------------------------------------------*/
-Motor::Motor(int steps_rev, int pulse_gpio, int dir_gpio, int(&mode_gpio)[3], int mode, int revs_per_min)
+Motor::Motor(int steps_rev, int pulse_gpio, int dir_gpio, const MotorModeGPIO& mode_gpio, int mode, int revs_per_min)
 {
   cout << "Motor::Motor()" <<std::endl;
 
   m_motor_steps_rev = steps_rev;
   m_motor_pulse_gpio = pulse_gpio;
   m_motor_dir_gpio = dir_gpio;
-  m_motor_mode_gpio = mode_gpio;
+
+  int i = 0;
+  for (int pin: mode_gpio)
+  {
+    m_motor_mode_gpio[i++] = pin;
+  }
+  
   m_motor_revs_per_min = revs_per_min;
 
   m_motor_mode = mode;
@@ -56,9 +62,9 @@ Motor::Motor(int steps_rev, int pulse_gpio, int dir_gpio, int(&mode_gpio)[3], in
   gpioSetMode(m_motor_dir_gpio, PI_OUTPUT);     // direction pin
 
   // Mode gpio pins
-  gpioSetMode(mode_gpio[0], PI_OUTPUT); // mode pin 0
-  gpioSetMode(mode_gpio[1], PI_OUTPUT); // mode pin 1
-  gpioSetMode(mode_gpio[2], PI_OUTPUT); // mode pin 2
+  gpioSetMode(m_motor_mode_gpio[0], PI_OUTPUT); // mode pin 0
+  gpioSetMode(m_motor_mode_gpio[1], PI_OUTPUT); // mode pin 1
+  gpioSetMode(m_motor_mode_gpio[2], PI_OUTPUT); // mode pin 2
 
   // Now set the motor mode
   SetMotorMode(mode);
@@ -78,15 +84,17 @@ RETURNS:       None
 bool Motor::AddGyroData(int pitch, int yaw, float angle_acc, float angle_gyro)
 {
   cout << "Angle Gyro=" << angle_gyro << "\tAngle Accelerometer=" << angle_acc << "\tGyro Yaw=" << yaw << "\tGyro Pitch=" << pitch << std::endl;
-    
-  m_angle_gyro_fifo.push_back(angle_gyro);
+
+  return(m_angle_gyro_fifo.push_back(angle_gyro));
 }
 
 /*------------------------------------------------------------------------------
 FUNCTION:      Motor::SetMotorMode(int mode)
 ------------------------------------------------------------------------------*/
-Motor::SetMotorMode(int mode)
+bool Motor::SetMotorMode(int mode)
 {
+  bool status = false;
+  
   // Mode must be 5 or less
   if (mode < 0 || mode > 5)
   {
@@ -96,15 +104,18 @@ Motor::SetMotorMode(int mode)
   else
   {
     m_motor_mode = mode;
+    status = true;
   }
 
-  gpioWrite(mode_gpio[0], motor_mode[m_motor_mode].pin_0);
-  gpioWrite(mode_gpio[1], motor_mode[m_motor_mode].pin_1);
-  gpioWrite(mode_gpio[2], motor_mode[m_motor_mode].pin_2);    
+  gpioWrite(m_motor_mode_gpio[0], motor_mode[m_motor_mode].pin_0);
+  gpioWrite(m_motor_mode_gpio[1], motor_mode[m_motor_mode].pin_1);
+  gpioWrite(m_motor_mode_gpio[2], motor_mode[m_motor_mode].pin_2);    
+
+  return(status);
 }
 
 /*------------------------------------------------------------------------------
-FUNCTION:      Motor:get_pulse_low_time(int pulse_up)
+FUNCTION:      Motor::GetPulseLowTime(int pulse_up)
 PURPOSE:       Calculate the pulse down time for:
                - Pulse Up Time
                - m_motor_revs_per_min
@@ -114,15 +125,29 @@ PURPOSE:       Calculate the pulse down time for:
 ARGUMENTS:     None
 RETURNS:       time in usec to delay
 ------------------------------------------------------------------------------*/
-int Motor:get_pulse_low_time(int pulse_high_us)
+int Motor::GetPulseLowTime(int pulse_high_us)
 {
   int usecs_per_rev = (60/m_motor_revs_per_min)*1000000; // Covert to microseconds per rev
-  int pulses_per_rev =  motor_mode[3].multiplier * m_motor_steps_rev;
+  int pulses_per_rev =  motor_mode[m_motor_mode].multiplier * m_motor_steps_rev;
   int usecs_per_pulse = usecs_per_rev / pulses_per_rev;
 
   // Since we know how long the total pulse should be the low is just the total
   // minus the high pulse
   return(usecs_per_pulse - pulse_high_us);
+}
+
+/*------------------------------------------------------------------------------
+FUNCTION:      int Motor::AngleToSteps(float angle)
+RETURNS:       None
+------------------------------------------------------------------------------*/
+int Motor::AngleToSteps(float angle)
+{
+  int pulses_per_rev =  motor_mode[m_motor_mode].multiplier * m_motor_steps_rev;
+
+  // pulses for 1 revolution are the number of pulses needed for 1 revolution
+  // 1 revolution is 360 degrees
+  // So if we need to turn say 60 degrees we need (60/360) of the pulses
+  return(pulses_per_rev * (angle / 360));
 }
 
 /*------------------------------------------------------------------------------
@@ -163,7 +188,7 @@ int Motor::Run(void)
         m_motor_dir = 1;
       }
       // Convert the angle to steps based on the current chopper mode
-      m_motor_steps_to_go = angle_to_steps(motor_angle_cmd);
+      m_motor_steps_to_go = AngleToSteps(motor_angle_cmd);
     }
     // Run the motor while we have more steps
     while(--m_motor_steps_to_go >= 0)
@@ -173,7 +198,7 @@ int Motor::Run(void)
 
       // Pulse the motor high then use the actual pulse time to determine the
       // pulse low time
-      m_pulse_low_us = get_pulse_low_time(gpioDelay(m_pulse_high_us));
+      m_pulse_low_us = GetPulseLowTime(gpioDelay(m_pulse_high_us));
 
       // Now do the low pulse
       gpioWrite(m_motor_pulse_gpio, 1);
