@@ -4,7 +4,9 @@
 
 using namespace std;
 
-#define MOTOR_LOOPS 10000
+#define MOTOR_LOOPS 50000
+#define MOTOR_CW  1
+#define MOTOR_CCW 0
 
 struct MotorMode
 {
@@ -33,17 +35,14 @@ ARGUMENTS: steps_rev = number of steps for 1 full revolution, mode = 0
 ------------------------------------------------------------------------------*/
 Motor::Motor(int steps_rev, int pulse_gpio, int dir_gpio, const MotorModeGPIO& mode_gpio, int mode, int revs_per_min)
 {
-  cout << "Motor::Motor()" <<std::endl;
+  cout << "Motor::Motor()" << std::endl;
 
   m_motor_steps_rev = steps_rev;
   m_motor_pulse_gpio = pulse_gpio;
   m_motor_dir_gpio = dir_gpio;
 
-  int i = 0;
-  for (int pin: mode_gpio)
-  {
-    m_motor_mode_gpio[i++] = pin;
-  }
+  // Copy the gpio mode pin array
+  std::copy(std::begin(mode_gpio), std::end(mode_gpio), std::begin(m_motor_mode_gpio));
   
   m_motor_revs_per_min = revs_per_min;
 
@@ -68,6 +67,9 @@ Motor::Motor(int steps_rev, int pulse_gpio, int dir_gpio, const MotorModeGPIO& m
 
   // Now set the motor mode
   SetMotorMode(mode);
+
+  // Default the direction to CW
+  gpioWrite(m_motor_dir_gpio, MOTOR_CW);
 }
 
 Motor::~Motor()
@@ -127,13 +129,16 @@ RETURNS:       time in usec to delay
 ------------------------------------------------------------------------------*/
 int Motor::GetPulseLowTime(int pulse_high_us)
 {
-  int usecs_per_rev = (60/m_motor_revs_per_min)*1000000; // Covert to microseconds per rev
+  int usecs_per_rev = (60*1000000)/m_motor_revs_per_min; // Convert to microseconds per rev
   int pulses_per_rev =  motor_mode[m_motor_mode].multiplier * m_motor_steps_rev;
   int usecs_per_pulse = usecs_per_rev / pulses_per_rev;
 
   // Since we know how long the total pulse should be the low is just the total
   // minus the high pulse
-  return(usecs_per_pulse - pulse_high_us);
+  if ((usecs_per_pulse - pulse_high_us) < 0)
+    return(m_pulse_high_us); // Never go negative
+  else
+    return(usecs_per_pulse - pulse_high_us);
 }
 
 /*------------------------------------------------------------------------------
@@ -180,17 +185,20 @@ int Motor::Run(void)
 
       if (motor_angle_cmd < 0)
       {
-        m_motor_dir = -1;
+        m_motor_dir = MOTOR_CCW;
         motor_angle_cmd *= -1;
       }
       else
       {
-        m_motor_dir = 1;
+        m_motor_dir = MOTOR_CW;
       }
       // Convert the angle to steps based on the current chopper mode
       m_motor_steps_to_go = AngleToSteps(motor_angle_cmd);
 
-      cout << "Fifo Angle=" << motor_angle_cmd << " Direction=" << m_motor_dir << " steps_to_go=" << m_motor_steps_to_go << std::endl;
+      // Set the direction based on the requested angle
+      gpioWrite(m_motor_dir_gpio, m_motor_dir);
+      
+      cout << " Fifo Angle=" << motor_angle_cmd << " Direction=" << m_motor_dir << " steps_to_go=" << m_motor_steps_to_go << std::endl;
     }
 
     // Run the motor while we have more steps
@@ -205,19 +213,20 @@ int Motor::Run(void)
       m_pulse_low_us = GetPulseLowTime(gpioDelay(m_pulse_high_us));
 
       // Now do the low pulse
-      gpioWrite(m_motor_pulse_gpio, 1);
+      gpioWrite(m_motor_pulse_gpio, 0);
       gpioDelay(m_pulse_low_us);
 
-      cout << "steps_to_go=" << m_motor_steps_to_go << " pulse_low_us=" << m_pulse_low_us << " pulse_high_us="  << m_pulse_high_us<< std::endl;
+      cout << " steps_to_go=" << m_motor_steps_to_go << " pulse_low_us=" << m_pulse_low_us << " pulse_high_us="  << m_pulse_high_us<< std::endl;
     }
     else
     {
       // If we have no data, sleep some waiting on new data, using 2ms which is
       // half gyro rate.
-      gpioDelay(2000);
-    }
-    
+      gpioDelay(500);
+    }    
   }
 
+  cout << "Motor::Run return" << std::endl;
+      
   return(0);
 }
