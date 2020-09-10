@@ -80,12 +80,12 @@ Motor::~Motor()
 }
 
 /*------------------------------------------------------------------------------
-FUNCTION:      Motor::AddGyroData(int pitch, int yaw, float angle_acc, float angle_gyro)
+FUNCTION:      Motor::AddGyroData(int pitch, int yaw, float angle_gyro, float angle_acc)
 RETURNS:       None
 ------------------------------------------------------------------------------*/
-bool Motor::AddGyroData(int pitch, int yaw, float angle_acc, float angle_gyro)
+bool Motor::AddGyroData(int pitch, int yaw, float angle_gyro, float angle_acc)
 {
-  cout << "Angle Gyro=" << angle_gyro << "\tAngle Accel=" << angle_acc << "\tGyro Yaw=" << yaw << "\tGyro Pitch=" << pitch << std::endl;
+  cout << "Angle Gyro=" << angle_gyro << "\tAngle Accel=" << angle_acc << "\tGyro Pitch=" << pitch << "\tGyro Yaw=" << yaw << std::endl;
 
   return(m_angle_gyro_fifo.push_back(angle_gyro));
 }
@@ -175,7 +175,7 @@ int Motor::Run(void)
   
   cout << "Motor:Run() in a separate thread" << std::endl;
   
-  for (int i = 0; i < MOTOR_LOOPS; i++)
+  while (ThreadRunning())
   {
     // If we have new data, update motor control variables
     if (!m_angle_gyro_fifo.empty())
@@ -185,12 +185,12 @@ int Motor::Run(void)
 
       if (motor_angle_cmd < 0)
       {
-        m_motor_dir = MOTOR_CCW;
+        m_motor_dir = MOTOR_CW;
         motor_angle_cmd *= -1;
       }
       else
       {
-        m_motor_dir = MOTOR_CW;
+        m_motor_dir = MOTOR_CCW;
       }
       // Convert the angle to steps based on the current chopper mode
       m_motor_steps_to_go = AngleToSteps(motor_angle_cmd);
@@ -215,8 +215,7 @@ int Motor::Run(void)
       // Now do the low pulse
       gpioWrite(m_motor_pulse_gpio, 0);
       gpioDelay(m_pulse_low_us);
-
-      cout << " steps_to_go=" << m_motor_steps_to_go << " pulse_low_us=" << m_pulse_low_us << " pulse_high_us="  << m_pulse_high_us<< std::endl;
+      cout << " steps_to_go=" << m_motor_steps_to_go << " pulse_low_us=" << m_pulse_low_us << " pulse_high_us="  << m_pulse_high_us << std::endl;
     }
     else
     {
@@ -225,8 +224,8 @@ int Motor::Run(void)
       gpioDelay(500);
     }    
   }
-
+  
   cout << "Motor::Run return" << std::endl;
       
-  return(0);
+  return(ThreadReturn());
 }

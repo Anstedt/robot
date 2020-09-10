@@ -103,7 +103,7 @@ int Gyro::Run(void)
 
     if (m_callback)
     {
-      m_callback(m_gyro_yaw_data_raw, m_gyro_pitch_data_raw, m_angle_gyro, m_angle_acc);
+      m_callback(m_gyro_pitch_data_raw, m_gyro_yaw_data_raw, m_angle_gyro, m_angle_acc);
     }
     
     // CallBack now has all data
