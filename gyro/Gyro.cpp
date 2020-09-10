@@ -11,6 +11,7 @@ using namespace std;
 
 Gyro::Gyro()
 {
+  m_callback = 0;
   m_start = 0;
   m_gyro_pitch_data_raw = 0;
   m_gyro_yaw_data_raw = 0;
@@ -37,6 +38,22 @@ Gyro::~Gyro()
 
   cout << "Gyro::~Gyro()" <<std::endl;
 };
+
+/*------------------------------------------------------------------------------
+FUNCTION:      bool Gyro::RegisterForCallback(std::function<void(int)> callback)
+
+Use the C++ functional interface to register a callback with 4 parameters
+------------------------------------------------------------------------------*/
+bool Gyro::RegisterForCallback(std::function<void(int, int, float, float)> callback)
+{
+  // We only allow one callback but a vector of callbacks could be used if needed
+  if (m_callback == 0)
+  {
+    m_callback = callback;
+  }
+  
+  return(true);
+}
 
 #define GYRO_LOOPS 10000
 
@@ -84,7 +101,13 @@ int Gyro::Run(void)
     m_angle_gyro -= m_gyro_yaw_data_raw * 0.0000003;                  //Compensate the gyro offset when the robot is rotating
     m_angle_gyro = m_angle_gyro * 0.9996 + m_angle_acc * 0.0004;      //Correct the drift of the gyro angle with the accelerometer angle
 
-    cout << "Angle Gyro=" << m_angle_gyro << "\tAngle Accelerometer=" << m_angle_acc << "\tGyro Yaw=" << m_gyro_yaw_data_raw << "\tGyro Pitch=" << m_gyro_pitch_data_raw << std::endl;
+    if (m_callback)
+    {
+      m_callback(m_gyro_yaw_data_raw, m_gyro_pitch_data_raw, m_angle_gyro, m_angle_acc);
+    }
+    
+    // CallBack now has all data
+    // cout << "Angle Gyro=" << m_angle_gyro << "\tAngle Accelerometer=" << m_angle_acc << "\tGyro Yaw=" << m_gyro_yaw_data_raw << "\tGyro Pitch=" << m_gyro_pitch_data_raw << std::endl;
 
     while(timer > gpioTick());
     timer += 4000;

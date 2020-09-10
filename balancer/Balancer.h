@@ -2,6 +2,9 @@
 #define BALANCER_H
 
 /* INCLUDE ********************************************************************/
+#include "Gyro.h"
+#include "Motor.h"
+
 /* CLASSES ********************************************************************/
 /*------------------------------------------------------------------------------
 CLASS:	       Balancer
@@ -25,11 +28,16 @@ private:
   // Constructors
   // Mutators: non-const operations
   // Accessors: const operations
+  // static void* CallBackRun(void* This, int pitch, int yaw, float angle_acc, float angle_gyro);
+  // HJA void CallBack(int pitch, int yaw, float angle_acc, float angle_gyro);
+  void CallBack(int, int, float, float);
   // Static and friend functions
   // Memory management
   Balancer(const Balancer&);
   Balancer& operator=(const Balancer& rhs);
   // Data fields
+  Gyro* m_gyro;
+  Motor* m_motor;
   // Static (shared) class variables
 };
 /* GLOBALS ********************************************************************/
