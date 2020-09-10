@@ -3,6 +3,7 @@
 #include "Balancer.h"
 #include <functional>
 
+#include <pigpio.h>
 #include <unistd.h>
 
 using namespace std;
@@ -31,6 +32,19 @@ Balancer::Balancer()
 
   // Wait for the thread to finish
   cout << "Balancer Gyro->JoinThread" << std::endl;
+
+  for(int countdown = 60; countdown > 0; countdown--)
+  {
+    cout << "Countdown=" << countdown << std::endl;
+    sleep(1);
+  }
+
+  m_gyro->StopThreadRun();
+  while(!m_gyro->ThreadStopped())
+  {
+    cout << "Waiting for Gyro to stop" << std::endl;
+    sleep(1);
+  }
   m_gyro->JoinThread();
 
   cout << "Balancer delete Gyro" << std::endl;
@@ -55,6 +69,8 @@ FUNCTION:      Balancer::~Balancer()
 ------------------------------------------------------------------------------*/
 Balancer::~Balancer()
 {
+  cout << "~Balancer IS RUNNING gpioTerminate" << std::endl;
+  gpioTerminate(); // Now that the MPU6050 is gone we can close pigpio
 }
 
 /*------------------------------------------------------------------------------

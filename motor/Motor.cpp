@@ -4,7 +4,6 @@
 
 using namespace std;
 
-#define MOTOR_LOOPS 50000
 #define MOTOR_CW  1
 #define MOTOR_CCW 0
 
