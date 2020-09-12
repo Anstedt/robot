@@ -5,8 +5,11 @@
 
 #include <pigpio.h>
 #include <unistd.h>
+#include <signal.h>
 
 using namespace std;
+
+static sigset_t sigs_to_catch;
 
 /* CLASSES ********************************************************************/
 /* GLOBALS ********************************************************************/
@@ -17,6 +20,19 @@ FUNCTION:      Balancer::Balancer()
 ------------------------------------------------------------------------------*/
 Balancer::Balancer()
 {
+  int       sig_caught; // signal caught
+    
+  // Signals turn off control-c, etc
+	sigemptyset(&sigs_to_catch);	
+	sigaddset(&sigs_to_catch, SIGINT);
+  sigaddset(&sigs_to_catch, SIGTERM);
+  sigaddset(&sigs_to_catch, SIGSEGV);
+
+  if (pthread_sigmask(SIG_BLOCK, &sigs_to_catch, NULL) != 0)
+  {
+    std::cout << "main::pthread_sigmask() failed" << std::endl;
+  }
+     
   MotorModeGPIO mode_array = {14,15,18};
       
   m_motor = new Motor(200, 21, 20, mode_array, 5, 30); // Motor uses Gyro data so start it first
@@ -30,21 +46,19 @@ Balancer::Balancer()
                               
   m_gyro->Activate(SCHED_FIFO, 1);
 
-  // Wait for the thread to finish
-  cout << "Balancer Gyro->JoinThread" << std::endl;
-
-  for(int countdown = 60; countdown > 0; countdown--)
-  {
-    cout << "Countdown=" << countdown << std::endl;
-    sleep(1);
-  }
-
+  // Wait for a signal to stop, normally control-c
+  cout << "Waiting for signal" << std::endl;  
+  sigwait(&sigs_to_catch, &sig_caught);
+ 
+  // Now that we got a signal is is time to shutdown
   m_gyro->StopThreadRun();
   while(!m_gyro->ThreadStopped())
   {
     cout << "Waiting for Gyro to stop" << std::endl;
     sleep(1);
   }
+
+  cout << "Balancer Gyro->JoinThread" << std::endl;
   m_gyro->JoinThread();
 
   cout << "Balancer delete Gyro" << std::endl;

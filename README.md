@@ -8,7 +8,6 @@
   - Default motor speed
   - Turning on debug
   - Setting motor mode
-- Add control-c handler
 - Before using accel Z get an average. Maybe in the Calibrate function
   - While running do not allow large jumps in accel Z to get into the
     current location. Vibrations cause serious gyrations in accel Z.
