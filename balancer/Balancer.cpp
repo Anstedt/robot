@@ -19,8 +19,8 @@ Balancer::Balancer()
 {
   MotorModeGPIO mode_array = {14,15,18};
       
-  m_motor = new Motor(200, 21, 20, mode_array, 5, 120); // Motor uses Gyro data so start it first
-  m_motor->Activate();
+  m_motor = new Motor(200, 21, 20, mode_array, 5, 30); // Motor uses Gyro data so start it first
+  m_motor->Activate(SCHED_FIFO, 1); // Make the motor the highest priority
   
   m_gyro = new Gyro();
 
@@ -28,7 +28,7 @@ Balancer::Balancer()
   using namespace std::placeholders; // for `_1, _2, _3, _4`
   m_gyro->RegisterForCallback(std::bind(&Balancer::CallBack, this, _1, _2, _3, _4));
                               
-  m_gyro->Activate();
+  m_gyro->Activate(SCHED_FIFO, 1);
 
   // Wait for the thread to finish
   cout << "Balancer Gyro->JoinThread" << std::endl;
