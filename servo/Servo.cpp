@@ -14,6 +14,12 @@ Servo::Servo()
   
   cout << "Servo::Servo()" << std::endl;
 
+  // Should not need this but stops i2cClose from complaining on shutdown
+  if (gpioInitialise() < 0)
+  {
+    cout << "~MPU6050 pigpio initialization failed" << std::endl;
+  }
+
   // RP uses bus 1
   device_fd = i2cOpen(1, Servo::Device_Address, 0);
 
@@ -23,8 +29,10 @@ Servo::Servo()
   WriteByte(Servo::MODE1, Servo::ALLCALL);
   gpioDelay(0.005 * 1000000); // Micro seconds, wait for oscillator
   
-  mode1 = ReadWord(Servo::MODE1);
+  mode1 = ReadByte(Servo::MODE1);
+  cout << "READ mode1=" << mode1 << std::endl;
   mode1 = mode1 & ~SLEEP;  // wake up (reset sleep)
+  cout << "mode1=" << mode1 << "~SLEEP=" << ~SLEEP << std::endl;
   WriteByte(Servo::MODE1, mode1);
 
   gpioDelay(0.005 * 1000000); // Micro seconds, wait for oscillator 
@@ -35,6 +43,12 @@ FUNCTION: Servo::~Servo()
 ------------------------------------------------------------------------------*/
 Servo::~Servo()
 {
+  // Should not need this but stops i2cClose from complaining on shutdown
+  if (gpioInitialise() < 0)
+  {
+    cout << "~MPU6050 pigpio initialization failed" << std::endl;
+  }
+
   i2cClose(device_fd);
 
   gpioTerminate(); // Now that the MPU6050 is gone we can close pigpio
