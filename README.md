@@ -3,10 +3,20 @@
 ## Callbacks implemented so listener can get Gyro data as soon as it is produced
 
 ## ToDo
-- Gyro callback data needs to be fed to motor
-- Motor does nothing at this time, add motor control
-- Clean up all loop counters and timers.
-  - Example calibration should be same rate as callers rate in Gyro
+- Add a command line interface for setting:
+  - Run duration
+  - Default motor speed
+  - Turning on debug
+  - Setting motor mode
+- Before using accel Z get an average. Maybe in the Calibrate function
+  - While running do not allow large jumps in accel Z to get into the
+    current location. Vibrations cause serious gyrations in accel Z.
+- Add a speed interface so balancer can more smoothly control the
+  motor. May be able to use this to more smoothly get to the final
+  location. Rick is thinking of this as well by having ramping
+  functions for startup and shutdown. He is thinking of adding this to
+  the driver itself. Might be the right thing to do.
+
 - Pull data all at once so that it is all synchronized as spelled out
   in data sheet
 - Determine how acc_calibration_value was found in original code
