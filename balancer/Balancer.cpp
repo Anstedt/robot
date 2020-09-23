@@ -28,6 +28,7 @@ Balancer::Balancer()
   sigaddset(&sigs_to_catch, SIGTERM);
   sigaddset(&sigs_to_catch, SIGSEGV);
 
+  // Block all above signals from all spawned threads 
   if (pthread_sigmask(SIG_BLOCK, &sigs_to_catch, NULL) != 0)
   {
     std::cout << "main::pthread_sigmask() failed" << std::endl;
@@ -45,9 +46,10 @@ Balancer::Balancer()
   m_gyro->RegisterForCallback(std::bind(&Balancer::CallBack, this, _1, _2, _3, _4));
                               
   m_gyro->Activate(SCHED_FIFO, 1);
-
-  // Wait for a signal to stop, normally control-c
+  
   cout << "Waiting for signal" << std::endl;  
+  // But the Balancer thread, main and in our case, waits on those signals to
+  // catch them. Wait for a signal to stop, normally control-c
   sigwait(&sigs_to_catch, &sig_caught);
  
   // Now that we got a signal is is time to shutdown

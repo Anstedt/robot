@@ -1,6 +1,7 @@
 #include <iostream>
 #include <pigpio.h>
 #include "Servo.h"
+#include <math.h>
 
 using namespace std;
 
@@ -85,6 +86,37 @@ void Servo::set_pwm_freq(int freq_hz)
   gpioDelay(0.005 * 1000000); // Micro seconds, wait for oscillator
 
   WriteByte(Servo::MODE1, oldmode | 0x80);
+}
+
+/*------------------------------------------------------------------------------
+FUNCTION:      bool Servo::set_servo_angle(channel, degrees)
+------------------------------------------------------------------------------*/
+bool Servo::set_servo_angle(int channel, int degrees)
+{
+  bool success = false;
+
+  float slope;
+  int output;
+  
+  // If degrees is in range
+  if (degrees >=0 && degrees <= 180)
+  {
+    // slope = (output_end - output_start) / (input_end - input_start);
+    slope = float(Servo::SERVOMAX - Servo::SERVOMIN) / float(180 - 0);
+    // output = output_start + round(slope * (input - input_start))
+    output = Servo::SERVOMIN + round(slope * (degrees - 0));
+
+    cout << "channel=" << channel << " degrees=" << degrees << " slope=" << slope << " output=" << output << std::endl;
+    success = true;
+  }
+  else
+  {
+    cout << "Angle =" << degrees << " out of range (0-180)" << std::endl;
+  }
+
+  set_pwm(channel, 0, output);
+
+  return(success);
 }
 
 /*------------------------------------------------------------------------------
