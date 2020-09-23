@@ -39,7 +39,8 @@ MPU6050::~MPU6050()
 {
   i2cClose(device_fd);
 
-  gpioTerminate(); // Now that the MPU6050 is gone we can close pigpio
+  cout << "~MPU6050 NOT RUNNING gpioTerminate" << std::endl;
+  // gpioTerminate(); // Now that the MPU6050 is gone we can close pigpio
 
   cout << "MPU6050::~MPU6050()" << std::endl;
 }

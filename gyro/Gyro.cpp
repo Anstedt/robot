@@ -34,7 +34,8 @@ Gyro::~Gyro()
 {
   delete p_mpu6050;
   
-  gpioTerminate(); // Now that the MPU6050 is gone we can close pigpio
+  cout << "~GYRO NOT RUNNING gpioTerminate" << std::endl;
+  // gpioTerminate(); // Now that the MPU6050 is gone we can close pigpio
 
   cout << "Gyro::~Gyro()" <<std::endl;
 };
@@ -55,8 +56,6 @@ bool Gyro::RegisterForCallback(std::function<void(int, int, float, float)> callb
   return(true);
 }
 
-#define GYRO_LOOPS 10000
-
 int Gyro::Run(void)
 {
   uint32_t timer = 0;
@@ -68,11 +67,11 @@ int Gyro::Run(void)
 
   p_mpu6050->calibrate();
 
-  // Loops should take 4 ms
+  // Each loop should take 4 ms
   timer = gpioTick() + 4000; // gpioTick is in micro seconds
   elapsed = gpioTick();
 
-  for (int i = 0; i < GYRO_LOOPS; i++)
+  while (ThreadRunning())
   {
     m_angle_acc = asin((float)(p_mpu6050->get_accel_Z_cal())/8200.0)* 57.296; //Calculate the current angle according to the accelerometer
 
@@ -103,7 +102,7 @@ int Gyro::Run(void)
 
     if (m_callback)
     {
-      m_callback(m_gyro_yaw_data_raw, m_gyro_pitch_data_raw, m_angle_gyro, m_angle_acc);
+      m_callback(m_gyro_pitch_data_raw, m_gyro_yaw_data_raw, m_angle_gyro, m_angle_acc);
     }
     
     // CallBack now has all data
@@ -113,7 +112,7 @@ int Gyro::Run(void)
     timer += 4000;
   }
 
-  cout << "Gyro:Run() DONE in a separate thread : " << (gpioTick() - elapsed)/GYRO_LOOPS << "us" << std::endl;
+  cout << "Gyro:Run() DONE in a separate thread : " << (gpioTick() - elapsed) << "us" << std::endl;
 
-  return(0);
+  return(ThreadReturn());
 }

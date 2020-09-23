@@ -4,9 +4,9 @@
 
 using namespace std;
 
-#define MOTOR_LOOPS 50000
 #define MOTOR_CW  1
 #define MOTOR_CCW 0
+#define PULSE_LOW_TIME_US 4
 
 struct MotorMode
 {
@@ -48,8 +48,9 @@ Motor::Motor(int steps_rev, int pulse_gpio, int dir_gpio, const MotorModeGPIO& m
 
   m_motor_mode = mode;
   m_motor_steps_to_go = 0;
-  m_pulse_high_us = 4;
-  m_pulse_low_us = 0;
+  // high is always this number of us. Can go as low as 1.9us
+  m_pulse_high_us = PULSE_LOW_TIME_US;
+  m_pulse_low_us = 0; // Is variable based on requested speed
   
   if (gpioInitialise() < 0)
   {
@@ -80,12 +81,12 @@ Motor::~Motor()
 }
 
 /*------------------------------------------------------------------------------
-FUNCTION:      Motor::AddGyroData(int pitch, int yaw, float angle_acc, float angle_gyro)
+FUNCTION:      Motor::AddGyroData(int pitch, int yaw, float angle_gyro, float angle_acc)
 RETURNS:       None
 ------------------------------------------------------------------------------*/
-bool Motor::AddGyroData(int pitch, int yaw, float angle_acc, float angle_gyro)
+bool Motor::AddGyroData(int pitch, int yaw, float angle_gyro, float angle_acc)
 {
-  cout << "Angle Gyro=" << angle_gyro << "\tAngle Accel=" << angle_acc << "\tGyro Yaw=" << yaw << "\tGyro Pitch=" << pitch << std::endl;
+  cout << "Angle Gyro=" << angle_gyro << "\tAngle Accel=" << angle_acc << "\tGyro Pitch=" << pitch << "\tGyro Yaw=" << yaw << std::endl;
 
   return(m_angle_gyro_fifo.push_back(angle_gyro));
 }
@@ -175,7 +176,7 @@ int Motor::Run(void)
   
   cout << "Motor:Run() in a separate thread" << std::endl;
   
-  for (int i = 0; i < MOTOR_LOOPS; i++)
+  while (ThreadRunning())
   {
     // If we have new data, update motor control variables
     if (!m_angle_gyro_fifo.empty())
@@ -185,12 +186,12 @@ int Motor::Run(void)
 
       if (motor_angle_cmd < 0)
       {
-        m_motor_dir = MOTOR_CCW;
+        m_motor_dir = MOTOR_CW;
         motor_angle_cmd *= -1;
       }
       else
       {
-        m_motor_dir = MOTOR_CW;
+        m_motor_dir = MOTOR_CCW;
       }
       // Convert the angle to steps based on the current chopper mode
       m_motor_steps_to_go = AngleToSteps(motor_angle_cmd);
@@ -205,18 +206,17 @@ int Motor::Run(void)
     if(m_motor_steps_to_go > 0)
     {
       m_motor_steps_to_go--;
-      // Pulse high is always the same
+      // Pulse high time is always the same
       gpioWrite(m_motor_pulse_gpio, 1);
 
-      // Pulse the motor high then use the actual pulse time to determine the
-      // pulse low time
+      // Delay Time High: Pulse the motor high then use the actual pulse time to
+      // determine the pulse low time.
       m_pulse_low_us = GetPulseLowTime(gpioDelay(m_pulse_high_us));
 
-      // Now do the low pulse
+      // Delay Time Low: Now do the low pulse
       gpioWrite(m_motor_pulse_gpio, 0);
       gpioDelay(m_pulse_low_us);
-
-      cout << " steps_to_go=" << m_motor_steps_to_go << " pulse_low_us=" << m_pulse_low_us << " pulse_high_us="  << m_pulse_high_us<< std::endl;
+      cout << " steps_to_go=" << m_motor_steps_to_go << " pulse_low_us=" << m_pulse_low_us << " pulse_high_us="  << m_pulse_high_us << std::endl;
     }
     else
     {
@@ -225,8 +225,8 @@ int Motor::Run(void)
       gpioDelay(500);
     }    
   }
-
+  
   cout << "Motor::Run return" << std::endl;
       
-  return(0);
+  return(ThreadReturn());
 }

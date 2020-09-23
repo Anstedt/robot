@@ -5,6 +5,8 @@ using namespace std;
 
 Threads::Threads()
 {
+  m_running = false;
+  m_stopped = true;
 }
 
 Threads::~Threads()
@@ -25,7 +27,8 @@ void* Threads::ThreadRun(void* This)
 bool Threads::Activate(int policy, int priority)
 {
   bool status = false;
-
+  m_running = true;
+  
   int code = 0;
   pthread_attr_t threadAttributes;
   struct sched_param threadSchedParameters;
@@ -73,4 +76,19 @@ bool Threads::Activate(int policy, int priority)
 bool Threads::JoinThread()
 {
   return(pthread_join(m_threadStruct, NULL));
+}
+
+bool Threads::ThreadRunning()
+{
+  return(m_running);
+}
+
+void Threads::StopThreadRun()
+{
+  m_running = false;
+}
+
+bool Threads::ThreadStopped()
+{
+  return(m_stopped); // True if thread stopped
 }
