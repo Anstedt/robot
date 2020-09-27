@@ -1,8 +1,26 @@
 # Robot
 
-## Basic Servo interface working for a PCA9685 16 Channel 12 Bit PWM Servo Driver
+## Controller
+- Creates and controls the robot, constructed from robot.c::main()
+- Currently is creates but has no control yet
 
-## Callbacks implemented so listener can get Gyro data as soon as it is produced
+## Status
+- robot
+  - Signals
+- Controller - just a shell at this time, needs controller interfaces and commands
+  - Balancer - needs pid, motion commands, dual motor testing, balance testing
+    - Motor - works
+    - DRV8825 - works but should be a Linux driver
+    - Gyro - works but needs Z averaging on startup
+    - MPU6050 - works and tested
+  - Legs
+    - Leg - works but may need interfaces added
+    - Joint - works but may need interfaces added
+    - Servo - works but may need interfaces added
+      - Interfaces to PCA9685 16 Channel 12 Bit PWM Servo Driver
+  - Threads - works and tested
+
+## The robot needs to run as root but cmake takes care of this during the build
 
 ## ToDo
 - Add a command line interface for setting:
@@ -22,6 +40,9 @@
 - Pull data all at once so that it is all synchronized as spelled out
   in data sheet
 - Determine how acc_calibration_value was found in original code
+
+## Data Flow Diagram of the Robot Code
+![Robot](Robot.png)
 
 ## Migrating to c++
 - Notice how C++ exceptions are turned off, see CMakeLists.txt
@@ -49,15 +70,7 @@
   - $ cmake . # you need the '.'
   - $ make
 - Run the robot
-  - $ robot
+  - $ ./robot
 
 - To start over with cmake run the following
-$ rm -rf rules.ninja CMakeCache.txt */CMakeCache.txt CMakeFiles */CMakeFiles -r build.ninja .ninja_* cmake_install.cmake */cmake_install.cmake */lib*.a
-
-## MPU6050 for balancing
-
-- Works better now but has 2 issues:
-  1. Very slowly drifts
-  2. Uses current potions as zero when started
-
-## DRV8825 for motor control
+  - $ rm -rf rules.ninja CMakeCache.txt */CMakeCache.txt CMakeFiles */CMakeFiles -r build.ninja .ninja_* cmake_install.cmake */cmake_install.cmake */lib*.a
