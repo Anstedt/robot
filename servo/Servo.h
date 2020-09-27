@@ -11,12 +11,13 @@ class Servo
 public:
   // Local Classes
   // Constructors
-  Servo();
+  Servo(int servo_min = Servo::SERVOMIN, int servo_max = Servo::SERVOMAX);
   // Mutators: non-const operations
   void set_pwm_freq(int freq_hz);
   bool set_servo_angle(int channel, int degrees);
   void set_pwm(int channel, int on, int off);
   void set_all_pwm(int on, int off);
+  void set_min_max_pwm(int min_pwm, int max_pwm);
   // Accessors: const operations
   // Static and friend functions
   // Servo Values
@@ -40,6 +41,9 @@ private:
   Servo(const Servo&);
   Servo& operator=(const Servo& rhs);
   int device_fd;
+  int m_min_pwd;
+  int m_max_pwd;
+  float m_slope_pwd;
   // Constants
   static const int Device_Address = 0x40;	// Device Address/Identifier for PCA9685
   // Registers

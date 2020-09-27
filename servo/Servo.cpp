@@ -9,11 +9,17 @@ using namespace std;
 FUNCTION:      Servo::Servo()
 ARGUMENTS:     servo_num 0...15
 ------------------------------------------------------------------------------*/
-Servo::Servo()
+Servo::Servo(int min_pwd, int max_pwd)
 {
   int mode1;
-  
+
   cout << "Servo::Servo()" << std::endl;
+
+  // We only need to calculate the slope if m_min_pwd or m_max_pwd change
+  // slope = (output_end - output_start) / (input_end - input_start);
+  m_min_pwd = min_pwd;
+  m_max_pwd = max_pwd;  
+  m_slope_pwd = float(m_max_pwd - m_min_pwd) / float(180 - 0);
 
   // Should not need this but stops i2cClose from complaining on shutdown
   if (gpioInitialise() < 0)
@@ -94,19 +100,15 @@ FUNCTION:      bool Servo::set_servo_angle(channel, degrees)
 bool Servo::set_servo_angle(int channel, int degrees)
 {
   bool success = false;
-
-  float slope;
   int output;
   
   // If degrees is in range
   if (degrees >=0 && degrees <= 180)
   {
-    // slope = (output_end - output_start) / (input_end - input_start);
-    slope = float(Servo::SERVOMAX - Servo::SERVOMIN) / float(180 - 0);
     // output = output_start + round(slope * (input - input_start))
-    output = Servo::SERVOMIN + round(slope * (degrees - 0));
+    output = m_min_pwd + round(m_slope_pwd * (degrees - 0));
 
-    cout << "channel=" << channel << " degrees=" << degrees << " slope=" << slope << " output=" << output << std::endl;
+    cout << "channel=" << channel << " degrees=" << degrees << " slope=" << m_slope_pwd << " output=" << output << std::endl;
     success = true;
   }
   else
@@ -139,6 +141,16 @@ void Servo::set_all_pwm(int on, int off)
   WriteByte(Servo::ALL_LED_ON_H, on >> 8);
   WriteByte(Servo::ALL_LED_OFF_L, off & 0xFF);
   WriteByte(Servo::ALL_LED_OFF_H, off >> 8);
+}
+/*------------------------------------------------------------------------------
+FUNCTION: Servo::set_min_max_pwm(int min_pwm, int max_pwm)
+------------------------------------------------------------------------------*/
+void Servo::set_min_max_pwm(int min_pwm, int max_pwm)
+{
+  // We only need to calculate the slope if m_min_pwd or m_max_pwd change
+  m_min_pwd = min_pwm;
+  m_max_pwd = max_pwm;  
+  m_slope_pwd = float(m_max_pwd - m_min_pwd) / float(180 - 0);
 }
 
 /*------------------------------------------------------------------------------

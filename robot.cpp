@@ -1,5 +1,5 @@
 #include <iostream>
-#include "Balancer.h"
+#include "Controller.h"
 #include "Servo.h"
 
 #include <unistd.h>
@@ -28,9 +28,9 @@ int main(int argc, char *argv[])
   }
   // Signals are now off so we can create threads
 
-  Servo * p_servo = new Servo();
+  // Servo * p_servo = new Servo();
 
-  Balancer* p_balancer = new Balancer();
+  Controller* p_controller = new Controller();
 
   // Now we can wait for a signal to stop us
   cout << "Waiting for signal" << std::endl;
@@ -41,9 +41,9 @@ int main(int argc, char *argv[])
   cout << "Caught Signal=" << sig_caught << std::endl;
   
   // Got a signal so shut things down
-  delete p_balancer;
+  delete p_controller;
 
-  delete p_servo;
+  // delete p_servo;
 
   return(0);
 }
