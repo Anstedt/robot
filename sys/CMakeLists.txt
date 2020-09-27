@@ -1,1 +1,1 @@
-add_library(threads Threads.cpp)
+add_library(threads Threads)

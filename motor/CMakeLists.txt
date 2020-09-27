@@ -1,1 +1,1 @@
-add_library(motor Motor.cpp)
+add_library(motor Motor)

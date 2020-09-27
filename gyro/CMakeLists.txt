@@ -1,1 +1,1 @@
-add_library(gyro Gyro.cpp)
+add_library(gyro Gyro)

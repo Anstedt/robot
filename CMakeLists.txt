@@ -9,6 +9,7 @@ include_directories("${PROJECT_SOURCE_DIR}/sys")
 include_directories("${PROJECT_SOURCE_DIR}/balancer")
 include_directories("${PROJECT_SOURCE_DIR}/motor")
 include_directories("${PROJECT_SOURCE_DIR}/servo")
+include_directories("${PROJECT_SOURCE_DIR}/legs")
 
 message("${PROJECT_SOURCE_DIR}")
 
@@ -18,10 +19,11 @@ add_subdirectory(mpu6050)
 add_subdirectory(balancer)
 add_subdirectory(motor)
 add_subdirectory(servo)
+add_subdirectory(legs)
 
 add_executable(robot robot.cpp)
 
-target_link_libraries(robot balancer gyro motor mpu6050 servo pigpio threads rt pthread)
+target_link_libraries(robot balancer gyro motor mpu6050 servo legs pigpio threads rt pthread)
 
 # robot needs to run as root
 add_custom_command(TARGET robot POST_BUILD

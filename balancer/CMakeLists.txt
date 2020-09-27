@@ -1,1 +1,1 @@
-add_library(balancer Balancer.cpp)
+add_library(balancer Balancer)

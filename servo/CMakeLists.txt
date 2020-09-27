@@ -1,1 +1,1 @@
-add_library(servo Servo.cpp)
+add_library(servo Servo)
