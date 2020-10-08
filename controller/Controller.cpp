@@ -21,6 +21,7 @@ Controller::Controller()
   
   m_balancer = new Balancer();
   m_legs = new Legs();
+  m_legs->Stand();
 }
 
 /*------------------------------------------------------------------------------

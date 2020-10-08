@@ -22,8 +22,9 @@ class Leg
 public:
   // Local Classes
   // Constructors
-  Leg();
+  Leg(int chan_hip, int min_pulse_hip, int max_pulse_hip, int chan_knee, int min_pulse_knee, int max_pulse_knee);
   // Mutators: non-const operations
+  bool Stand();
   // Accessors: const operations
   // Static and friend functions
   // Memory management: copy constructor, destructor, operator=

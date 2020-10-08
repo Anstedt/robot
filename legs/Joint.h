@@ -21,8 +21,9 @@ class Joint : public Servo
 public:
   // Local Classes
   // Constructors
-  Joint();
+  Joint(int channel, int min_pulse, int max_pulse);
   // Mutators: non-const operations
+  bool Stand();
   // Accessors: const operations
   // Static and friend functions
   // Memory management: copy constructor, destructor, operator=
@@ -37,6 +38,8 @@ private:
   Joint(const Joint&);
   Joint& operator=(const Joint& rhs);
   // Data fields
+  const int m_default_freq = 60;
+  int m_channel;
   // Static (shared) class variables
 };
 #endif /* JOINT_H */
