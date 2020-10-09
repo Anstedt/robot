@@ -24,6 +24,7 @@ public:
   Joint(int channel, int min_pulse, int max_pulse);
   // Mutators: non-const operations
   bool Stand();
+  bool Angle(int angle);
   // Accessors: const operations
   // Static and friend functions
   // Memory management: copy constructor, destructor, operator=

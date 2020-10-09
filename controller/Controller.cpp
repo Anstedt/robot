@@ -10,6 +10,7 @@ PURPOSE: Creates and controls the Balancer/Motor and the Legs
 /* INCLUDE ********************************************************************/
 #include "Controller.h"
 #include <iostream>
+#include <unistd.h>
 
 /* METHODS ********************************************************************/
 /*------------------------------------------------------------------------------
@@ -21,7 +22,22 @@ Controller::Controller()
   
   m_balancer = new Balancer();
   m_legs = new Legs();
+
+  cout << "Stand for 6 seconds" << std::endl;
   m_legs->Stand();
+  sleep(6);
+
+  cout << "Kneel for 6 seconds" << std::endl;
+  m_legs->Kneel();
+  sleep(6);
+ 
+  cout << "Crouch for 6 seconds" << std::endl;
+  m_legs->Crouch();
+  sleep(6);  
+
+  cout << "Stand for 6 seconds" << std::endl;
+  m_legs->Stand();
+  sleep(6);
 }
 
 /*------------------------------------------------------------------------------

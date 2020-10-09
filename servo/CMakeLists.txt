@@ -1,1 +1,1 @@
-add_library(servo Servo)
+add_library(servo Servo PCA9685)

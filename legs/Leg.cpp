@@ -36,3 +36,23 @@ bool Leg::Stand()
 
   return(m_hip.Stand() && m_knee.Stand());
 }
+
+/*------------------------------------------------------------------------------
+FUNCTION: bool Leg::Kneel()
+------------------------------------------------------------------------------*/
+bool Leg::Kneel()
+{
+  std::cout << "Leg::Kneel()" << std::endl;
+
+  return(m_hip.Angle(0) && m_knee.Angle(180));
+}
+
+/*------------------------------------------------------------------------------
+FUNCTION: bool Leg::Crouch()
+------------------------------------------------------------------------------*/
+bool Leg::Crouch()
+{
+  std::cout << "Leg::Crouch()" << std::endl;
+
+  return(m_hip.Angle(180) && m_knee.Angle(0));
+}

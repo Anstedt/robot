@@ -36,3 +36,13 @@ bool Joint::Stand()
 
   return(set_servo_angle(m_channel, 90));
 }
+
+/*------------------------------------------------------------------------------
+FUNCTION: bool Angle()
+------------------------------------------------------------------------------*/
+bool Joint::Angle(int angle)
+{
+  std::cout << "Legs::Angle(" << angle << ") m_channel=" << m_channel << std::endl;
+
+  return(set_servo_angle(m_channel, angle));
+}

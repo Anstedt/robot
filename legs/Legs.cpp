@@ -32,3 +32,24 @@ bool Legs::Stand()
   
   return(m_left.Stand() && m_right.Stand());
 }
+
+/*------------------------------------------------------------------------------
+FUNCTION: bool Legs::Kneel()
+------------------------------------------------------------------------------*/
+bool Legs::Kneel()
+{
+  std::cout << "Legs::Kneel()" << std::endl;
+  
+  return(m_left.Kneel() && m_right.Kneel());
+}
+
+/*------------------------------------------------------------------------------
+FUNCTION: bool Legs::Crouch()
+------------------------------------------------------------------------------*/
+bool Legs::Crouch()
+{
+  std::cout << "Legs::Crouch()" << std::endl;
+  
+  return(m_left.Crouch() && m_right.Crouch());
+}
+

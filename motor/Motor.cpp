@@ -86,7 +86,7 @@ RETURNS:       None
 ------------------------------------------------------------------------------*/
 bool Motor::AddGyroData(int pitch, int yaw, float angle_gyro, float angle_acc)
 {
-  cout << "Angle Gyro=" << angle_gyro << "\tAngle Accel=" << angle_acc << "\tGyro Pitch=" << pitch << "\tGyro Yaw=" << yaw << std::endl;
+  // cout << "Angle Gyro=" << angle_gyro << "\tAngle Accel=" << angle_acc << "\tGyro Pitch=" << pitch << "\tGyro Yaw=" << yaw << std::endl;
 
   return(m_angle_gyro_fifo.push_back(angle_gyro));
 }
@@ -199,7 +199,7 @@ int Motor::Run(void)
       // Set the direction based on the requested angle
       gpioWrite(m_motor_dir_gpio, m_motor_dir);
       
-      cout << " Fifo Angle=" << motor_angle_cmd << " Direction=" << m_motor_dir << " steps_to_go=" << m_motor_steps_to_go << std::endl;
+      // cout << " Fifo Angle=" << motor_angle_cmd << " Direction=" << m_motor_dir << " steps_to_go=" << m_motor_steps_to_go << std::endl;
     }
 
     // Run the motor while we have more steps
@@ -216,7 +216,7 @@ int Motor::Run(void)
       // Delay Time Low: Now do the low pulse
       gpioWrite(m_motor_pulse_gpio, 0);
       gpioDelay(m_pulse_low_us);
-      cout << " steps_to_go=" << m_motor_steps_to_go << " pulse_low_us=" << m_pulse_low_us << " pulse_high_us="  << m_pulse_high_us << std::endl;
+      // cout << " steps_to_go=" << m_motor_steps_to_go << " pulse_low_us=" << m_pulse_low_us << " pulse_high_us="  << m_pulse_high_us << std::endl;
     }
     else
     {
