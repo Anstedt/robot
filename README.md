@@ -44,6 +44,9 @@
 ## Data Flow Diagram of the Robot Code
 ![Robot](Robot.png)
 
+## Electrical Harware Design
+![Robot-HW](Robot-HW.png)
+
 ## Migrating to c++
 - Notice how C++ exceptions are turned off, see CMakeLists.txt
   compiler option CMAKE_CXX_FLAGS. This is to improve performance as
