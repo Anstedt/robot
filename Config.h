@@ -6,6 +6,7 @@ PURPOSE:  Hardware based configs for the robot
 #ifndef CONFIG_H
 #define CONFIG_H
 
+// Motor Constants
 const int MOTORS_STEPS_PER_REV = 200;
 const int MOTORS_MODE_DEFAULT  = 5;
 const int MOTORS_RPM_DEFAULT   = 1;
