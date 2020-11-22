@@ -1,3 +1,4 @@
+#include "Config.h"
 #include <iostream>
 
 #include "Balancer.h"
@@ -14,9 +15,14 @@ FUNCTION:      Balancer::Balancer()
 ------------------------------------------------------------------------------*/
 Balancer::Balancer()
 {
-  MotorModeGPIO mode_array = {14,15,18};
+  MotorModeGPIO mode_array = {MOTOR1_GPIO_MODE_0,
+                              MOTOR1_GPIO_MODE_1,
+                              MOTOR1_GPIO_MODE_2};
 
-  m_motor = new Motor(200, 21, 20, mode_array, 5, 30); // Motor uses Gyro data so start it first
+  // Motor uses Gyro data so start it first
+  m_motor = new Motor(MOTORS_STEPS_PER_REV, MOTOR1_GPIO_STEP, MOTOR1_GPIO_DIR,
+                      mode_array, MOTORS_MODE_DEFAULT, MOTORS_RPM_DEFAULT);
+
   m_motor->Activate(SCHED_FIFO, 1); // Make the motor the highest priority
 
   m_gyro = new Gyro();
