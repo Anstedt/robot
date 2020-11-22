@@ -3,6 +3,7 @@ FILE: Legs.cpp
 *******************************************************************************/
 
 /* INCLUDE ********************************************************************/
+#include "Config.h"
 #include "Legs.h"
 #include <iostream>
 
@@ -11,8 +12,8 @@ FILE: Legs.cpp
 FUNCTION: Legs::Legs()
 ------------------------------------------------------------------------------*/
 Legs::Legs()
-  : m_left(Legs::l_chan_hip, Legs::l_min_pulse_hip, Legs::l_max_pulse_hip, Legs::l_chan_knee, Legs::l_min_pulse_knee, Legs::l_max_pulse_knee),
-    m_right(Legs::r_chan_hip, Legs::r_min_pulse_hip, Legs::r_max_pulse_hip, Legs::r_chan_knee, Legs::r_min_pulse_knee, Legs::r_max_pulse_knee)
+  : m_left(L_CHAN_HIP, L_MIN_PULSE_HIP, L_MAX_PULSE_HIP, L_CHAN_KNEE, L_MIN_PULSE_KNEE, L_MAX_PULSE_KNEE),
+    m_right(R_CHAN_HIP, R_MIN_PULSE_HIP, R_MAX_PULSE_HIP, R_CHAN_KNEE, R_MIN_PULSE_KNEE, R_MAX_PULSE_KNEE)
 {
 }
 

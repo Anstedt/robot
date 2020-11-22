@@ -23,6 +23,21 @@ const int MOTOR2_GPIO_MODE_0   = -1;
 const int MOTOR2_GPIO_MODE_1   = -1;
 const int MOTOR2_GPIO_MODE_2   = -1;
 
+// Leg Constants, 4 leg joints
+const int L_CHAN_HIP       = 0;
+const int L_MIN_PULSE_HIP  = 170;
+const int L_MAX_PULSE_HIP  = 600;
 
+const int L_CHAN_KNEE      = 1;
+const int L_MIN_PULSE_KNEE = 130;
+const int L_MAX_PULSE_KNEE = 550;
+
+const int R_CHAN_HIP       = 2;
+const int R_MIN_PULSE_HIP  = 150;
+const int R_MAX_PULSE_HIP  = 600;
+
+const int R_CHAN_KNEE      = 3;
+const int R_MIN_PULSE_KNEE = 150;
+const int R_MAX_PULSE_KNEE = 600;
 
 #endif /* CONFIG_H */
