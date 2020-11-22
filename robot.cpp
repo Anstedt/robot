@@ -1,6 +1,6 @@
 #include <iostream>
 #include "Controller.h"
-#include "Servo.h"
+#include "PCA9685.h"
 
 #include <unistd.h>
 #include <signal.h>
@@ -28,7 +28,8 @@ int main(int argc, char *argv[])
   }
   // Signals are now off so we can create threads
 
-  // Servo * p_servo = new Servo();
+  // Do this here so we initialize PCA9685
+  PCA9685::Instance();
 
   Controller* p_controller = new Controller();
 

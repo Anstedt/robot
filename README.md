@@ -1,5 +1,14 @@
 # Robot
 
+### Legs
+
+- Currently contain all Joint information such as channel and pulse
+  min/max.  This seems like the wrong place but all other places need
+  this information and cannot have it embedded since there are
+  multiple objects, such as 2 legs.
+
+- Right leg joints are now roughly correct for 0, 90 and 180 degress.
+
 ## Controller
 - Creates and controls the robot, constructed from robot.c::main()
 - Currently is creates but has no control yet
