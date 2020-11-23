@@ -86,6 +86,8 @@ int Gyro::Run(void)
     m_gyro_yaw_data_raw = p_mpu6050->get_gyro_X_cal();
     m_gyro_pitch_data_raw = p_mpu6050->get_gyro_Y_cal();
 
+    // From data sheet: LSB is 131 LSB/degrees/second and we a reading 250 times per second
+    // 0.000031 = 1/(131*250)
     m_angle_gyro += m_gyro_pitch_data_raw * 0.000031; //Calculate the traveled during this loop angle and add this to the angle_gyro variable
 
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
