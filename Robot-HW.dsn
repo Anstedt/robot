@@ -11,12 +11,12 @@ download the executable.-->
 			<GUIDES horiz='7' vert='5'/>
 			<TITLE>Robot</TITLE>
 			<AUTHOR>Howard J. Anstedt</AUTHOR>
-			<REVISION>4.0</REVISION>
+			<REVISION>6.0</REVISION>
 			<DOCNUMBER></DOCNUMBER>
 			<ORGANISATION></ORGANISATION>
 			<SHEETS>1 of 1</SHEETS>
 			<SHOWS>1</SHOWS>
-			<DATE>10/13/2020</DATE>
+			<DATE>11/21/2020</DATE>
 			<GRID spacing='50.00000' snap='1'/>
 		</DETAILS>
 		<FONT id='1'>
@@ -62,7 +62,7 @@ download the executable.-->
 		<FONT id='6'>
 			<HEIGHT>-13</HEIGHT>
 			<WIDTH>6</WIDTH>
-			<WEIGHT>700</WEIGHT>
+			<WEIGHT>400</WEIGHT>
 			<ITALIC>0</ITALIC>
 			<UNDERLINE>0</UNDERLINE>
 			<STRIKEOUT>0</STRIKEOUT>
@@ -73,7 +73,7 @@ download the executable.-->
 			<HEIGHT>-13</HEIGHT>
 			<WIDTH>6</WIDTH>
 			<WEIGHT>700</WEIGHT>
-			<ITALIC>255</ITALIC>
+			<ITALIC>0</ITALIC>
 			<UNDERLINE>0</UNDERLINE>
 			<STRIKEOUT>0</STRIKEOUT>
 			<CHARSET>0</CHARSET>
@@ -219,6 +219,16 @@ download the executable.-->
 			<CHARSET>0</CHARSET>
 			<FACENAME>Arial Narrow</FACENAME>
 		</FONT>
+		<FONT id='22'>
+			<HEIGHT>-13</HEIGHT>
+			<WIDTH>6</WIDTH>
+			<WEIGHT>700</WEIGHT>
+			<ITALIC>0</ITALIC>
+			<UNDERLINE>0</UNDERLINE>
+			<STRIKEOUT>0</STRIKEOUT>
+			<CHARSET>0</CHARSET>
+			<FACENAME>Arial</FACENAME>
+		</FONT>
 		<STYLE id='4'>
 			<STYLE>0</STYLE>
 			<COLOR>000000</COLOR>
@@ -246,7 +256,7 @@ download the executable.-->
 			<INDEX>0</INDEX>
 			<COLOR>FFFFFF</COLOR>
 		</FILL>
-		<FILL id='3'>
+		<FILL id='4'>
 			<INDEX>0</INDEX>
 			<COLOR>AFFFFF</COLOR>
 		</FILL>
@@ -279,7 +289,7 @@ download the executable.-->
 			</FIELD>
 			<REF_POINT power='0' part='0' pos='154.00000,119.00000'/>
 			<TinyCAD>
-				<TEXT pos='126.00000,36.00000' direction='3' font='5' color='000000'>40-Pin Connector</TEXT>
+				<TEXT pos='126.00000,36.00000' direction='3' font='6' color='000000'>40-Pin Connector</TEXT>
 				<RECTANGLE a='123.00000,30.00000' b='150.00000,119.00000' style='4' fill='0'/>
 				<PIN pos='120.00000,39.00000' which='1' elec='0' direction='3' part='0' number='1' show='3' length='30' number_pos='0' centre_name='0'></PIN>
 				<PIN pos='153.00000,39.00000' which='1' elec='0' direction='2' part='0' number='2' show='3' length='30' number_pos='0' centre_name='0'></PIN>
@@ -449,7 +459,7 @@ download the executable.-->
 				<PIN pos='32.00000,23.00000' which='0' elec='4' direction='2' part='0' number='1' show='0' length='15' number_pos='0' centre_name='0'></PIN>
 				<PIN pos='19.00000,23.00000' which='0' elec='4' direction='3' part='0' number='2' show='0' length='15' number_pos='0' centre_name='0'></PIN>
 				<ELLIPSE a='22.40000,26.00000' b='28.40000,20.00000' style='4' fill='2'/>
-				<TEXT pos='24.20000,24.60000' direction='3' font='5' color='000000'>M</TEXT>
+				<TEXT pos='24.20000,24.60000' direction='3' font='6' color='000000'>M</TEXT>
 			</TinyCAD>
 		</SYMBOLDEF>
 		<SYMBOLDEF id='3'>
@@ -1031,70 +1041,73 @@ download the executable.-->
 		<WIRE a='180.00000,85.00000' b='185.00000,85.00000'/>
 		<WIRE a='180.00000,89.00000' b='198.00000,89.00000'/>
 		<WIRE a='198.00000,89.00000' b='198.00000,85.00000'/>
-		<SYMBOL id='3' pos='131.00000,133.00000' part='0' rotate='4' can_scale='0' show_power='0' scale_x='1.00000' scale_y='0.80488'>
-			<FIELD type='0' description='Ref' value='DVR8825' show='1' pos='-17.00000,-30.60000'/>
-			<FIELD type='0' description='Name' value='MotorDriver' show='1' pos='-17.00000,-34.00000'/>
+		<SYMBOL id='3' pos='250.00000,117.00000' part='0' rotate='4' can_scale='1' show_power='0' scale_x='1.15385' scale_y='0.68293'>
+			<FIELD type='0' description='Ref' value='DVR8825' show='1' pos='-18.00000,-31.60000'/>
+			<FIELD type='0' description='Name' value='MotorDriver 1' show='1' pos='-21.00000,-29.00000'/>
 			<FIELD type='2' description='$$SPICE_PROLOG_PRIORITY' value='5' show='0' pos='0.00000,0.00000'/>
 			<FIELD type='2' description='$$SPICE_EPILOG_PRIORITY' value='5' show='0' pos='0.00000,0.00000'/>
 			<FIELD type='1' description='Package' value='package name for PCB layout' show='0' pos='1.00000,-17.40000'/>
-			<FIELD type='3' description='PIN' value='SLEEP' show='1' pos='-15.00000,-10.20000'/>
-			<FIELD type='3' description='PIN' value='M0' show='1' pos='-11.00000,-26.80000'/>
-			<FIELD type='3' description='PIN' value='M1' show='1' pos='-11.00000,-23.40000'/>
-			<FIELD type='3' description='PIN' value='M2' show='1' pos='-11.00000,-19.00000'/>
-			<FIELD type='3' description='RESET' value='RESET' show='1' pos='-15.00000,-14.60000'/>
-			<FIELD type='3' description='PIN' value='STEP' show='1' pos='-14.00000,-6.20000'/>
-			<FIELD type='3' description='PIN' value='DIR' show='1' pos='-12.00000,-2.80000'/>
+			<FIELD type='3' description='PIN' value='SLEEP' show='1' pos='-20.00000,-8.20000'/>
+			<FIELD type='3' description='PIN' value='M0' show='1' pos='-20.00000,-21.80000'/>
+			<FIELD type='3' description='PIN' value='M1' show='1' pos='-20.00000,-18.40000'/>
+			<FIELD type='3' description='PIN' value='M2' show='1' pos='-20.00000,-15.00000'/>
+			<FIELD type='3' description='RESET' value='RESET' show='1' pos='-20.00000,-11.60000'/>
+			<FIELD type='3' description='PIN' value='STEP' show='1' pos='-20.00000,-5.20000'/>
+			<FIELD type='3' description='PIN' value='DIR' show='1' pos='-20.00000,-1.80000'/>
+			<FIELD type='3' description='PIN' value='GND Logic' show='1' pos='-15.00000,-1.60000'/>
+			<FIELD type='3' description='PIN' value='VMOT' show='1' pos='-11.00000,-25.60000'/>
+			<FIELD type='3' description='PIN' value='GND VMOT' show='1' pos='-16.00000,-22.20000'/>
 		</SYMBOL>
 		<WIRE a='147.00000,81.00000' b='145.00000,81.00000'/>
-		<RECTANGLE a='33.00000,49.00000' b='57.00000,63.00000' style='5' fill='0'/>
-		<TEXT pos='34.00000,54.00000' direction='3' font='4' color='000000'>12V Power Supply</TEXT>
-		<TEXT pos='153.00000,158.00000' direction='3' font='3' color='000000'>GND</TEXT>
-		<TEXT pos='153.00000,130.00000' direction='3' font='3' color='000000'>GND</TEXT>
-		<TEXT pos='153.00000,98.00000' direction='3' font='3' color='000000'>GND</TEXT>
-		<TEXT pos='168.00000,90.00000' direction='3' font='3' color='000000'>GND</TEXT>
-		<TEXT pos='168.00000,106.00000' direction='3' font='3' color='000000'>GND</TEXT>
-		<TEXT pos='168.00000,118.00000' direction='3' font='3' color='000000'>GND</TEXT>
-		<TEXT pos='168.00000,138.00000' direction='3' font='3' color='000000'>GND</TEXT>
-		<TEXT pos='168.00000,146.00000' direction='3' font='3' color='000000'>GND</TEXT>
-		<TEXT pos='171.00000,82.00000' direction='3' font='3' color='0000FF'>5V</TEXT>
-		<TEXT pos='171.00000,86.00000' direction='3' font='3' color='0000FF'>5V</TEXT>
-		<TEXT pos='153.00000,82.00000' direction='3' font='3' color='4080FF'>3.3V</TEXT>
-		<TEXT pos='153.00000,114.00000' direction='3' font='3' color='4080FF'>3.3V</TEXT>
-		<TEXT pos='164.00000,94.00000' direction='3' font='3' color='A00000'>GPIO14</TEXT>
+		<RECTANGLE a='224.00000,49.00000' b='248.00000,63.00000' style='5' fill='0'/>
+		<TEXT pos='225.00000,53.00000' direction='3' font='5' color='000000'>12V Power Supply</TEXT>
+		<TEXT pos='153.00000,158.00000' direction='3' font='4' color='000000'>GND</TEXT>
+		<TEXT pos='153.00000,130.00000' direction='3' font='4' color='000000'>GND</TEXT>
+		<TEXT pos='153.00000,98.00000' direction='3' font='4' color='000000'>GND</TEXT>
+		<TEXT pos='168.00000,90.00000' direction='3' font='4' color='000000'>GND</TEXT>
+		<TEXT pos='168.00000,106.00000' direction='3' font='4' color='000000'>GND</TEXT>
+		<TEXT pos='168.00000,118.00000' direction='3' font='4' color='000000'>GND</TEXT>
+		<TEXT pos='168.00000,138.00000' direction='3' font='4' color='000000'>GND</TEXT>
+		<TEXT pos='168.00000,146.00000' direction='3' font='4' color='000000'>GND</TEXT>
+		<TEXT pos='171.00000,82.00000' direction='3' font='4' color='0000FF'>5V</TEXT>
+		<TEXT pos='171.00000,86.00000' direction='3' font='4' color='0000FF'>5V</TEXT>
+		<TEXT pos='153.00000,82.00000' direction='3' font='4' color='4080FF'>3.3V</TEXT>
+		<TEXT pos='153.00000,114.00000' direction='3' font='4' color='4080FF'>3.3V</TEXT>
+		<TEXT pos='164.00000,94.00000' direction='3' font='22' color='004000'>GPIO14</TEXT>
 		<TEXT pos='164.00000,98.00000' direction='3' font='17' color='404000'>GPIO15</TEXT>
-		<TEXT pos='164.00000,102.00000' direction='3' font='16' color='404000'>GPIO18</TEXT>
-		<TEXT pos='165.00000,154.00000' direction='3' font='7' color='40FF00'>GPIO20</TEXT>
-		<TEXT pos='165.00000,158.00000' direction='3' font='9' color='40FF00'>GPIO21</TEXT>
-		<TEXT pos='153.00000,86.00000' direction='3' font='3' color='FF0080'>SDA</TEXT>
-		<TEXT pos='153.00000,90.00000' direction='3' font='3' color='FF0080'>SCL</TEXT>
-		<TEXT pos='153.00000,154.00000' direction='3' font='3' color='808000'>GPIO26</TEXT>
-		<TEXT pos='153.00000,150.00000' direction='3' font='12' color='40FF00'>GPIO19</TEXT>
-		<TEXT pos='153.00000,146.00000' direction='3' font='3' color='808000'>GPIO13</TEXT>
-		<TEXT pos='153.00000,142.00000' direction='3' font='3' color='808000'>GPIO6</TEXT>
-		<TEXT pos='153.00000,138.00000' direction='3' font='3' color='808000'>GPIO5</TEXT>
-		<TEXT pos='153.00000,126.00000' direction='3' font='13' color='40FF00'>GPIO11</TEXT>
-		<TEXT pos='153.00000,122.00000' direction='3' font='14' color='40FF00'>GPIO9</TEXT>
-		<TEXT pos='153.00000,118.00000' direction='3' font='15' color='40FF00'>GPIO10</TEXT>
-		<TEXT pos='153.00000,110.00000' direction='3' font='3' color='808000'>GPIO22</TEXT>
-		<TEXT pos='153.00000,106.00000' direction='3' font='3' color='808000'>GPIO27</TEXT>
-		<TEXT pos='153.00000,102.00000' direction='3' font='3' color='808000'>GPIO17</TEXT>
-		<TEXT pos='153.00000,94.00000' direction='3' font='3' color='808000'>GPIO4</TEXT>
-		<TEXT pos='164.00000,110.00000' direction='3' font='3' color='808000'>GPIO23</TEXT>
-		<TEXT pos='164.00000,114.00000' direction='3' font='3' color='808000'>GPIO24</TEXT>
-		<TEXT pos='164.00000,122.00000' direction='3' font='3' color='808000'>GPIO25</TEXT>
-		<TEXT pos='164.00000,126.00000' direction='3' font='11' color='40FF00'>GPIO8</TEXT>
-		<TEXT pos='164.00000,130.00000' direction='3' font='10' color='40FF00'>GPIO7</TEXT>
-		<TEXT pos='164.00000,142.00000' direction='3' font='3' color='808000'>GPIO12</TEXT>
-		<TEXT pos='165.00000,150.00000' direction='3' font='8' color='40FF00'>GPIO16</TEXT>
-		<RECTANGLE a='99.00000,124.00000' b='81.00000,107.00000' style='5' fill='0'/>
-		<TEXT pos='93.80000,111.00000' direction='3' font='6' color='000000'>B2</TEXT>
-		<TEXT pos='93.80000,115.00000' direction='3' font='6' color='000000'>B1</TEXT>
-		<TEXT pos='93.80000,119.00000' direction='3' font='6' color='000000'>A1</TEXT>
-		<TEXT pos='93.80000,123.00000' direction='3' font='6' color='000000'>A2</TEXT>
-		<TEXT pos='85.00000,122.92000' direction='0' font='21' color='000000'>Stepper Motor</TEXT>
+		<TEXT pos='164.00000,102.00000' direction='3' font='3' color='808000'>GPIO18</TEXT>
+		<TEXT pos='165.00000,154.00000' direction='3' font='8' color='40FF00'>GPIO20</TEXT>
+		<TEXT pos='165.00000,158.00000' direction='3' font='10' color='40FF00'>GPIO21</TEXT>
+		<TEXT pos='153.00000,86.00000' direction='3' font='4' color='FF0080'>SDA</TEXT>
+		<TEXT pos='153.00000,90.00000' direction='3' font='4' color='FF0080'>SCL</TEXT>
+		<TEXT pos='153.00000,154.00000' direction='3' font='4' color='808000'>GPIO26</TEXT>
+		<TEXT pos='153.00000,150.00000' direction='3' font='13' color='40FF00'>GPIO19</TEXT>
+		<TEXT pos='153.00000,146.00000' direction='3' font='4' color='808000'>GPIO13</TEXT>
+		<TEXT pos='153.00000,142.00000' direction='3' font='4' color='808000'>GPIO6</TEXT>
+		<TEXT pos='153.00000,138.00000' direction='3' font='4' color='808000'>GPIO5</TEXT>
+		<TEXT pos='153.00000,126.00000' direction='3' font='14' color='40FF00'>GPIO11</TEXT>
+		<TEXT pos='153.00000,122.00000' direction='3' font='15' color='40FF00'>GPIO9</TEXT>
+		<TEXT pos='153.00000,118.00000' direction='3' font='16' color='40FF00'>GPIO10</TEXT>
+		<TEXT pos='153.00000,110.00000' direction='3' font='4' color='808000'>GPIO22</TEXT>
+		<TEXT pos='153.00000,106.00000' direction='3' font='4' color='808000'>GPIO27</TEXT>
+		<TEXT pos='153.00000,102.00000' direction='3' font='4' color='808000'>GPIO17</TEXT>
+		<TEXT pos='153.00000,94.00000' direction='3' font='4' color='808000'>GPIO4</TEXT>
+		<TEXT pos='164.00000,110.00000' direction='3' font='4' color='808000'>GPIO23</TEXT>
+		<TEXT pos='164.00000,114.00000' direction='3' font='4' color='808000'>GPIO24</TEXT>
+		<TEXT pos='164.00000,122.00000' direction='3' font='4' color='808000'>GPIO25</TEXT>
+		<TEXT pos='164.00000,126.00000' direction='3' font='12' color='40FF00'>GPIO8</TEXT>
+		<TEXT pos='164.00000,130.00000' direction='3' font='11' color='40FF00'>GPIO7</TEXT>
+		<TEXT pos='164.00000,142.00000' direction='3' font='4' color='808000'>GPIO12</TEXT>
+		<TEXT pos='165.00000,150.00000' direction='3' font='9' color='40FF00'>GPIO16</TEXT>
+		<RECTANGLE a='257.00000,95.00000' b='275.00000,110.00000' style='5' fill='0'/>
+		<TEXT pos='259.00000,109.00000' direction='3' font='7' color='000000'>A2</TEXT>
+		<TEXT pos='259.00000,106.00000' direction='3' font='7' color='000000'>A1</TEXT>
+		<TEXT pos='259.00000,102.00000' direction='3' font='7' color='000000'>B1</TEXT>
+		<TEXT pos='259.00000,99.00000' direction='3' font='7' color='000000'>B2</TEXT>
+		<TEXT pos='274.08000,110.24000' direction='0' font='21' color='000000'>Stepper Motor</TEXT>
 		<WIRE a='182.00000,81.00000' b='183.00000,81.00000'/>
-		<WIRE a='126.00000,81.00000' b='133.00000,81.00000'/>
-		<WIRE a='133.00000,81.00000' b='133.00000,70.00000'/>
+		<WIRE a='126.00000,77.00000' b='133.00000,77.00000'/>
+		<WIRE a='133.00000,77.00000' b='133.00000,70.00000'/>
 		<WIRE a='133.00000,70.00000' b='182.00000,70.00000'/>
 		<WIRE a='182.00000,70.00000' b='182.00000,81.00000'/>
 		<WIRE a='180.00000,81.00000' b='182.00000,81.00000'/>
@@ -1113,15 +1126,8 @@ download the executable.-->
 			<HINT pin='1' net='57'/>
 			<HINT pin='2' net='56'/>
 		</SYMBOL>
-		<POLYGON pos='31.00000,21.00000' style='5' fill='0' polygon='0'>
-			<POINT pos='0.00000,0.00000' arc='0'/>
-			<POINT pos='31.00000,0.00000' arc='0'/>
-			<POINT pos='31.00000,15.00000' arc='0'/>
-			<POINT pos='0.00000,15.00000' arc='0'/>
-			<POINT pos='0.00000,0.00000' arc='0'/>
-		</POLYGON>
-		<TEXT pos='33.00000,30.00000' direction='3' font='18' color='000000'>12V to 5V Regulator</TEXT>
-		<SYMBOL id='4' pos='49.00000,43.00000' part='0' rotate='7' can_scale='0' show_power='0' scale_x='1.00000' scale_y='1.00000'>
+		<TEXT pos='222.28000,29.48000' direction='3' font='18' color='000000'>12V to 5V Regulator</TEXT>
+		<SYMBOL id='4' pos='239.00000,43.00000' part='0' rotate='7' can_scale='0' show_power='0' scale_x='1.00000' scale_y='1.00000'>
 			<FIELD type='0' description='Ref' value='K?' show='0' pos='-6.00000,2.00000'/>
 			<FIELD type='0' description='Name' value='5V' show='1' pos='-6.00000,-7.00000'/>
 			<FIELD type='1' description='Package' value='STB_2_L' show='0' pos='-6.00000,4.40000'/>
@@ -1136,7 +1142,7 @@ download the executable.-->
 			<HINT pin='1' net='59'/>
 			<HINT pin='2' net='58'/>
 		</SYMBOL>
-		<SYMBOL id='4' pos='49.00000,49.00000' part='0' rotate='3' can_scale='0' show_power='0' scale_x='1.00000' scale_y='1.00000'>
+		<SYMBOL id='4' pos='239.00000,49.00000' part='0' rotate='3' can_scale='0' show_power='0' scale_x='1.00000' scale_y='1.00000'>
 			<FIELD type='0' description='Ref' value='K?' show='0' pos='-6.00000,2.00000'/>
 			<FIELD type='0' description='Name' value='12V' show='1' pos='-6.00000,-7.00000'/>
 			<FIELD type='1' description='Package' value='STB_2_L' show='0' pos='-6.00000,4.40000'/>
@@ -1159,7 +1165,7 @@ download the executable.-->
 			<POINT pos='0.00000,0.00000' arc='0'/>
 		</POLYGON>
 		<TEXT pos='151.00000,59.00000' direction='3' font='18' color='000000'>12V to 5V Regulator</TEXT>
-		<SYMBOL id='4' pos='149.00000,59.00000' part='0' rotate='0' can_scale='0' show_power='0' scale_x='1.00000' scale_y='1.00000'>
+		<SYMBOL id='4' pos='224.00000,59.00000' part='0' rotate='0' can_scale='0' show_power='0' scale_x='1.00000' scale_y='1.00000'>
 			<FIELD type='0' description='Ref' value='K?' show='0' pos='1.00000,-4.00000'/>
 			<FIELD type='0' description='Name' value='5V' show='0' pos='1.00000,-4.00000'/>
 			<FIELD type='1' description='Package' value='STB_2_L' show='0' pos='1.00000,-1.60000'/>
@@ -1186,7 +1192,7 @@ download the executable.-->
 			<HINT pin='3' net='67'/>
 			<HINT pin='4' net='68'/>
 		</SYMBOL>
-		<NOTE_TEXT a='148.00000,24.00000' b='205.00000,46.00000' direction='3' style='6' fill='3' font='19' color='FF0000' border_style='1'>GPIO have Alternate modes
+		<NOTE_TEXT a='51.00000,146.00000' b='108.00000,168.00000' direction='3' style='6' fill='4' font='19' color='FF0000' border_style='1'>GPIO have Alternate modes
 - GPIO-Alternates in light green are also SPI
 - GPIO-Alternates in deep green are also  UART
 
@@ -1194,61 +1200,16 @@ NOTE
 Motors share the same chopper control lines so
 they cannot be controlled independently
 </NOTE_TEXT>
-		<WIRE a='133.00000,106.00000' b='129.00000,106.00000'/>
-		<WIRE a='135.00000,110.00000' b='129.00000,110.00000'/>
-		<WIRE a='137.00000,114.00000' b='128.00000,114.00000'/>
-		<SYMBOL id='6' pos='131.00000,171.00000' part='0' rotate='4' can_scale='0' show_power='0' scale_x='1.00000' scale_y='0.80488'>
-			<FIELD type='0' description='Ref' value='DVR8825' show='1' pos='-17.00000,-30.60000'/>
-			<FIELD type='0' description='Name' value='MotorDriver' show='1' pos='-17.00000,-34.00000'/>
-			<FIELD type='2' description='$$SPICE_PROLOG_PRIORITY' value='5' show='0' pos='0.00000,0.00000'/>
-			<FIELD type='2' description='$$SPICE_EPILOG_PRIORITY' value='5' show='0' pos='0.00000,0.00000'/>
-			<FIELD type='1' description='Package' value='package name for PCB layout' show='0' pos='1.00000,-17.40000'/>
-			<FIELD type='3' description='PIN' value='SLEEP' show='1' pos='-15.00000,-10.20000'/>
-			<FIELD type='3' description='PIN' value='M0' show='1' pos='-11.00000,-26.80000'/>
-			<FIELD type='3' description='PIN' value='M1' show='1' pos='-11.00000,-23.40000'/>
-			<FIELD type='3' description='PIN' value='M2' show='1' pos='-11.00000,-19.00000'/>
-			<FIELD type='3' description='RESET' value='RESET' show='1' pos='-15.00000,-14.60000'/>
-			<FIELD type='3' description='PIN' value='STEP' show='1' pos='-14.00000,-6.20000'/>
-			<FIELD type='3' description='PIN' value='DIR' show='1' pos='-12.00000,-2.80000'/>
-		</SYMBOL>
 		<WIRE a='147.00000,153.00000' b='146.00000,153.00000'/>
-		<WIRE a='137.00000,114.00000' b='137.00000,152.00000'/>
-		<WIRE a='137.00000,109.00000' b='137.00000,114.00000'/>
-		<WIRE a='137.00000,152.00000' b='128.00000,152.00000'/>
-		<WIRE a='135.00000,110.00000' b='135.00000,147.00000'/>
-		<WIRE a='135.00000,147.00000' b='128.00000,147.00000'/>
-		<WIRE a='133.00000,106.00000' b='133.00000,143.00000'/>
-		<WIRE a='133.00000,101.00000' b='133.00000,106.00000'/>
-		<WIRE a='133.00000,143.00000' b='128.00000,143.00000'/>
-		<WIRE a='141.00000,156.00000' b='141.00000,160.00000'/>
-		<WIRE a='141.00000,160.00000' b='128.00000,160.00000'/>
-		<WIRE a='141.00000,156.00000' b='128.00000,156.00000'/>
-		<WIRE a='141.00000,122.00000' b='141.00000,156.00000'/>
-		<WIRE a='141.00000,122.00000' b='128.00000,122.00000'/>
-		<WIRE a='141.00000,118.00000' b='128.00000,118.00000'/>
-		<WIRE a='108.00000,109.00000' b='108.00000,110.00000'/>
-		<WIRE a='108.00000,110.00000' b='99.00000,110.00000'/>
-		<WIRE a='108.00000,114.00000' b='99.00000,114.00000'/>
-		<WIRE a='108.00000,118.00000' b='99.00000,118.00000'/>
-		<WIRE a='107.00000,122.00000' b='99.00000,122.00000'/>
-		<RECTANGLE a='98.00000,162.00000' b='80.00000,145.00000' style='5' fill='0'/>
-		<TEXT pos='92.80000,149.00000' direction='3' font='6' color='000000'>B2</TEXT>
-		<TEXT pos='92.80000,153.00000' direction='3' font='6' color='000000'>B1</TEXT>
-		<TEXT pos='92.80000,157.00000' direction='3' font='6' color='000000'>A1</TEXT>
-		<TEXT pos='92.80000,161.00000' direction='3' font='6' color='000000'>A2</TEXT>
-		<TEXT pos='84.00000,160.92000' direction='0' font='21' color='000000'>Stepper Motor</TEXT>
-		<WIRE a='107.00000,148.00000' b='98.00000,148.00000'/>
-		<WIRE a='107.00000,152.00000' b='98.00000,152.00000'/>
-		<WIRE a='107.00000,156.00000' b='98.00000,156.00000'/>
-		<WIRE a='106.00000,160.00000' b='98.00000,160.00000'/>
-		<WIRE a='147.00000,85.00000' b='126.00000,85.00000'/>
-		<WIRE a='147.00000,89.00000' b='126.00000,89.00000'/>
-		<WIRE a='126.00000,93.00000' b='135.00000,93.00000'/>
-		<WIRE a='135.00000,93.00000' b='135.00000,97.00000'/>
+		<WIRE a='248.00000,104.00000' b='257.00000,104.00000'/>
+		<WIRE a='248.00000,100.00000' b='257.00000,100.00000'/>
+		<WIRE a='249.00000,97.00000' b='257.00000,97.00000'/>
+		<WIRE a='126.00000,92.00000' b='135.00000,92.00000'/>
+		<WIRE a='135.00000,92.00000' b='135.00000,97.00000'/>
 		<WIRE a='135.00000,97.00000' b='147.00000,97.00000'/>
-		<SYMBOL id='6' pos='93.00000,92.00000' part='0' rotate='0' can_scale='1' show_power='0' scale_x='1.00000' scale_y='0.68293'>
-			<FIELD type='0' description='Ref' value='MPU6050' show='1' pos='-17.00000,-42.60000'/>
-			<FIELD type='0' description='Name' value='AccelGyro' show='1' pos='-17.00000,-46.00000'/>
+		<SYMBOL id='6' pos='91.00000,96.00000' part='0' rotate='0' can_scale='1' show_power='0' scale_x='1.00000' scale_y='0.68293'>
+			<FIELD type='0' description='Ref' value='MPU6050' show='1' pos='-18.00000,-29.60000'/>
+			<FIELD type='0' description='Name' value='AccelGyro' show='1' pos='-18.00000,-33.00000'/>
 			<FIELD type='2' description='$$SPICE_PROLOG_PRIORITY' value='5' show='0' pos='0.00000,0.00000'/>
 			<FIELD type='2' description='$$SPICE_EPILOG_PRIORITY' value='5' show='0' pos='0.00000,0.00000'/>
 			<FIELD type='1' description='Package' value='package name for PCB layout' show='0' pos='1.00000,-30.40000'/>
@@ -1272,8 +1233,8 @@ they cannot be controlled independently
 			<FIELD type='3' description='Other' value='SDA' show='1' pos='-18.00000,-12.80000'/>
 			<FIELD type='3' description='Other' value='SCL' show='1' pos='-18.00000,-7.40000'/>
 		</SYMBOL>
-		<TEXT pos='73.00000,41.00000' direction='3' font='20' color='0000FF'>Connections from the PCA9685 to the servos are not shown</TEXT>
-		<SYMBOL id='4' pos='64.00000,59.00000' part='0' rotate='4' can_scale='0' show_power='0' scale_x='1.00000' scale_y='1.00000'>
+		<TEXT pos='61.00000,55.00000' direction='3' font='20' color='0000FF'>Connections from the PCA9685 to the servos are not shown</TEXT>
+		<SYMBOL id='4' pos='187.00000,59.00000' part='0' rotate='4' can_scale='0' show_power='0' scale_x='1.00000' scale_y='1.00000'>
 			<FIELD type='0' description='Ref' value='K?' show='0' pos='1.00000,-4.00000'/>
 			<FIELD type='0' description='Name' value='5V' show='0' pos='1.00000,-4.00000'/>
 			<FIELD type='1' description='Package' value='STB_2_L' show='0' pos='1.00000,-1.60000'/>
@@ -1288,9 +1249,9 @@ they cannot be controlled independently
 			<HINT pin='1' net='64'/>
 			<HINT pin='2' net='63'/>
 		</SYMBOL>
-		<WIRE a='64.00000,55.00000' b='142.00000,55.00000'/>
-		<WIRE a='142.00000,57.00000' b='64.00000,57.00000'/>
-		<SYMBOL id='4' pos='47.00000,70.00000' part='0' rotate='6' can_scale='0' show_power='0' scale_x='1.00000' scale_y='1.00000'>
+		<WIRE a='187.00000,55.00000' b='217.00000,55.00000'/>
+		<WIRE a='217.00000,57.00000' b='187.00000,57.00000'/>
+		<SYMBOL id='4' pos='239.00000,69.00000' part='0' rotate='6' can_scale='0' show_power='0' scale_x='1.00000' scale_y='1.00000'>
 			<FIELD type='0' description='Ref' value='K?' show='0' pos='-6.00000,2.00000'/>
 			<FIELD type='0' description='Name' value='POWER' show='1' pos='-6.00000,-7.00000'/>
 			<FIELD type='1' description='Package' value='STB_2_L' show='0' pos='-6.00000,4.40000'/>
@@ -1307,15 +1268,7 @@ they cannot be controlled independently
 			<HINT pin='1' net='57'/>
 			<HINT pin='2' net='56'/>
 		</SYMBOL>
-		<WIRE a='45.00000,70.00000' b='45.00000,102.00000'/>
-		<WIRE a='45.00000,102.00000' b='108.00000,102.00000'/>
-		<WIRE a='45.00000,102.00000' b='45.00000,140.00000'/>
-		<WIRE a='45.00000,140.00000' b='106.00000,140.00000'/>
-		<WIRE a='43.00000,106.00000' b='43.00000,143.00000'/>
-		<WIRE a='43.00000,143.00000' b='106.00000,143.00000'/>
-		<WIRE a='43.00000,106.00000' b='108.00000,106.00000'/>
-		<WIRE a='43.00000,70.00000' b='43.00000,106.00000'/>
-		<SYMBOL id='4' pos='69.00000,31.00000' part='0' rotate='4' can_scale='0' show_power='0' scale_x='1.00000' scale_y='1.00000'>
+		<SYMBOL id='4' pos='221.00000,30.00000' part='0' rotate='1' can_scale='0' show_power='0' scale_x='1.00000' scale_y='1.00000'>
 			<FIELD type='0' description='Ref' value='K?' show='0' pos='1.00000,-4.00000'/>
 			<FIELD type='0' description='Name' value='5V' show='0' pos='1.00000,-4.00000'/>
 			<FIELD type='1' description='Package' value='STB_2_L' show='0' pos='1.00000,-1.60000'/>
@@ -1330,57 +1283,166 @@ they cannot be controlled independently
 			<HINT pin='1' net='64'/>
 			<HINT pin='2' net='63'/>
 		</SYMBOL>
-		<WIRE a='69.00000,27.00000' b='120.00000,27.00000'/>
-		<WIRE a='120.00000,27.00000' b='120.00000,62.00000'/>
-		<WIRE a='69.00000,29.00000' b='118.00000,29.00000'/>
-		<WIRE a='118.00000,29.00000' b='118.00000,62.00000'/>
 		<JUNCTION pos='182.00000,81.00000'/>
-		<WIRE a='147.00000,101.00000' b='133.00000,101.00000'/>
-		<WIRE a='147.00000,105.00000' b='135.00000,105.00000'/>
-		<WIRE a='135.00000,105.00000' b='135.00000,110.00000'/>
-		<WIRE a='147.00000,109.00000' b='137.00000,109.00000'/>
-		<WIRE a='147.00000,117.00000' b='144.00000,117.00000'/>
-		<WIRE a='144.00000,117.00000' b='144.00000,126.00000'/>
-		<WIRE a='144.00000,126.00000' b='128.00000,126.00000'/>
-		<WIRE a='147.00000,121.00000' b='145.00000,121.00000'/>
-		<WIRE a='145.00000,121.00000' b='145.00000,130.00000'/>
-		<WIRE a='145.00000,130.00000' b='128.00000,130.00000'/>
-		<JUNCTION pos='133.00000,106.00000'/>
-		<JUNCTION pos='135.00000,110.00000'/>
-		<JUNCTION pos='137.00000,114.00000'/>
-		<JUNCTION pos='141.00000,122.00000'/>
-		<JUNCTION pos='141.00000,156.00000'/>
-		<WIRE a='147.00000,113.00000' b='141.00000,113.00000'/>
-		<WIRE a='141.00000,118.00000' b='141.00000,122.00000'/>
-		<JUNCTION pos='141.00000,118.00000'/>
-		<WIRE a='141.00000,113.00000' b='141.00000,118.00000'/>
-		<WIRE a='180.00000,109.00000' b='188.00000,109.00000'/>
-		<WIRE a='188.00000,109.00000' b='188.00000,168.00000'/>
-		<WIRE a='188.00000,168.00000' b='128.00000,168.00000'/>
-		<WIRE a='180.00000,113.00000' b='184.00000,113.00000'/>
-		<WIRE a='184.00000,113.00000' b='184.00000,164.00000'/>
-		<WIRE a='184.00000,164.00000' b='128.00000,164.00000'/>
-		<WIRE a='90.00000,65.00000' b='104.00000,65.00000'/>
-		<WIRE a='104.00000,65.00000' b='104.00000,77.00000'/>
+		<WIRE a='90.00000,69.00000' b='104.00000,69.00000'/>
+		<WIRE a='104.00000,69.00000' b='104.00000,77.00000'/>
 		<WIRE a='104.00000,77.00000' b='107.00000,77.00000'/>
-		<WIRE a='90.00000,69.00000' b='102.00000,69.00000'/>
-		<WIRE a='102.00000,69.00000' b='102.00000,92.00000'/>
+		<WIRE a='90.00000,73.00000' b='102.00000,73.00000'/>
+		<WIRE a='102.00000,73.00000' b='102.00000,92.00000'/>
 		<WIRE a='102.00000,92.00000' b='108.00000,92.00000'/>
-		<WIRE a='90.00000,72.00000' b='99.00000,72.00000'/>
-		<WIRE a='99.00000,72.00000' b='99.00000,87.00000'/>
+		<WIRE a='90.00000,76.00000' b='99.00000,76.00000'/>
+		<WIRE a='99.00000,76.00000' b='99.00000,87.00000'/>
 		<WIRE a='99.00000,87.00000' b='108.00000,87.00000'/>
-		<WIRE a='90.00000,76.00000' b='96.00000,76.00000'/>
-		<WIRE a='96.00000,76.00000' b='96.00000,82.00000'/>
+		<WIRE a='90.00000,80.00000' b='96.00000,80.00000'/>
+		<WIRE a='96.00000,80.00000' b='96.00000,82.00000'/>
 		<WIRE a='96.00000,82.00000' b='108.00000,82.00000'/>
-		<JUNCTION pos='45.00000,102.00000'/>
-		<JUNCTION pos='43.00000,106.00000'/>
-		<WIRE a='105.00000,129.00000' b='102.00000,129.00000'/>
-		<WIRE a='102.00000,168.00000' b='102.00000,174.00000'/>
-		<WIRE a='102.00000,174.00000' b='193.00000,174.00000'/>
-		<WIRE a='193.00000,174.00000' b='193.00000,105.00000'/>
-		<WIRE a='193.00000,105.00000' b='180.00000,105.00000'/>
-		<JUNCTION pos='102.00000,168.00000'/>
-		<WIRE a='102.00000,168.00000' b='107.00000,168.00000'/>
-		<WIRE a='102.00000,129.00000' b='102.00000,168.00000'/>
+		<SYMBOL id='7' pos='92.00000,133.00000' part='0' rotate='0' can_scale='1' show_power='0' scale_x='1.00000' scale_y='0.80769'>
+			<FIELD type='0' description='Ref' value='MotorDrive' show='0' pos='1.00000,-21.60000'/>
+			<FIELD type='0' description='Name' value='Motor Drive Board Connector' show='1' pos='-25.00000,-24.00000'/>
+			<FIELD type='2' description='$$SPICE_PROLOG_PRIORITY' value='5' show='0' pos='0.00000,0.00000'/>
+			<FIELD type='2' description='$$SPICE_EPILOG_PRIORITY' value='5' show='0' pos='0.00000,0.00000'/>
+			<FIELD type='1' description='Package' value='package name for PCB layout' show='0' pos='1.00000,-19.20000'/>
+			<FIELD type='3' description='PIN1' value='GPIO17 - M0' show='1' pos='-39.00000,-17.60000'/>
+			<FIELD type='3' description='PIN2' value='GPIO27 - M1' show='1' pos='-39.00000,-14.20000'/>
+			<FIELD type='3' description='PIN3' value='GPIO22 - M2' show='1' pos='-39.00000,-9.80000'/>
+			<FIELD type='3' description='PIN4' value='3.3V - RESET/SLEEP' show='1' pos='-46.00000,-5.60000'/>
+			<FIELD type='3' description='PIN5' value='GPIO10 - Motor 1 STEP' show='1' pos='-48.00000,-1.60000'/>
+			<FIELD type='3' description='PIN6' value='GPIO18 - Motor 1 DIR' show='1' pos='1.00000,-17.20000'/>
+			<FIELD type='3' description='PIN7' value='GND - Common GND' show='1' pos='1.00000,-13.80000'/>
+			<FIELD type='3' description='PIN8' value='GPIO23 - Motor 2 DIR' show='1' pos='1.00000,-9.60000'/>
+			<FIELD type='3' description='PIN9' value='GPIO24 - Motor 2 STEP' show='1' pos='1.00000,-5.60000'/>
+			<FIELD type='3' description='PIN10' value='NC' show='1' pos='1.00000,-1.60000'/>
+		</SYMBOL>
+		<WIRE a='128.00000,82.00000' b='137.00000,82.00000'/>
+		<WIRE a='137.00000,82.00000' b='137.00000,85.00000'/>
+		<WIRE a='137.00000,85.00000' b='147.00000,85.00000'/>
+		<WIRE a='128.00000,87.00000' b='137.00000,87.00000'/>
+		<WIRE a='137.00000,87.00000' b='137.00000,89.00000'/>
+		<WIRE a='137.00000,89.00000' b='147.00000,89.00000'/>
+		<WIRE a='180.00000,101.00000' b='214.00000,101.00000'/>
+		<WIRE a='214.00000,101.00000' b='214.00000,114.00000'/>
+		<WIRE a='214.00000,114.00000' b='222.00000,114.00000'/>
+		<WIRE a='180.00000,105.00000' b='193.00000,105.00000'/>
+		<WIRE a='193.00000,105.00000' b='193.00000,122.00000'/>
+		<WIRE a='193.00000,122.00000' b='253.00000,122.00000'/>
+		<WIRE a='253.00000,122.00000' b='253.00000,114.00000'/>
+		<WIRE a='253.00000,114.00000' b='243.00000,114.00000'/>
+		<WIRE a='147.00000,101.00000' b='134.00000,101.00000'/>
+		<WIRE a='134.00000,101.00000' b='134.00000,175.00000'/>
+		<WIRE a='134.00000,175.00000' b='207.00000,175.00000'/>
+		<WIRE a='207.00000,140.00000' b='207.00000,94.00000'/>
+		<WIRE a='207.00000,94.00000' b='223.00000,94.00000'/>
+		<WIRE a='147.00000,105.00000' b='137.00000,105.00000'/>
+		<WIRE a='137.00000,105.00000' b='137.00000,172.00000'/>
+		<WIRE a='137.00000,172.00000' b='203.00000,172.00000'/>
+		<WIRE a='203.00000,143.00000' b='203.00000,97.00000'/>
+		<WIRE a='203.00000,97.00000' b='223.00000,97.00000'/>
+		<WIRE a='147.00000,109.00000' b='140.00000,109.00000'/>
+		<WIRE a='140.00000,109.00000' b='140.00000,168.00000'/>
+		<WIRE a='140.00000,168.00000' b='200.00000,168.00000'/>
+		<WIRE a='200.00000,146.00000' b='200.00000,100.00000'/>
+		<WIRE a='200.00000,100.00000' b='224.00000,100.00000'/>
+		<WIRE a='147.00000,113.00000' b='143.00000,113.00000'/>
+		<WIRE a='143.00000,113.00000' b='143.00000,163.00000'/>
+		<WIRE a='143.00000,163.00000' b='196.00000,163.00000'/>
+		<WIRE a='196.00000,163.00000' b='196.00000,104.00000'/>
+		<WIRE a='218.00000,104.00000' b='223.00000,104.00000'/>
+		<JUNCTION pos='218.00000,104.00000'/>
+		<WIRE a='196.00000,104.00000' b='218.00000,104.00000'/>
+		<WIRE a='218.00000,104.00000' b='218.00000,107.00000'/>
+		<WIRE a='218.00000,107.00000' b='223.00000,107.00000'/>
+		<WIRE a='147.00000,117.00000' b='130.00000,117.00000'/>
+		<WIRE a='130.00000,117.00000' b='130.00000,179.00000'/>
+		<WIRE a='130.00000,179.00000' b='211.00000,179.00000'/>
+		<WIRE a='211.00000,179.00000' b='211.00000,111.00000'/>
+		<WIRE a='211.00000,111.00000' b='223.00000,111.00000'/>
+		<SYMBOL id='3' pos='250.00000,163.00000' part='0' rotate='4' can_scale='1' show_power='0' scale_x='1.15385' scale_y='0.68293'>
+			<FIELD type='0' description='Ref' value='DVR8825' show='1' pos='-19.00000,-31.60000'/>
+			<FIELD type='0' description='Name' value='MotorDriver 2' show='1' pos='-21.00000,-29.00000'/>
+			<FIELD type='2' description='$$SPICE_PROLOG_PRIORITY' value='5' show='0' pos='0.00000,0.00000'/>
+			<FIELD type='2' description='$$SPICE_EPILOG_PRIORITY' value='5' show='0' pos='0.00000,0.00000'/>
+			<FIELD type='1' description='Package' value='package name for PCB layout' show='0' pos='1.00000,-17.40000'/>
+			<FIELD type='3' description='PIN' value='SLEEP' show='1' pos='-20.00000,-8.20000'/>
+			<FIELD type='3' description='PIN' value='M0' show='1' pos='-20.00000,-21.80000'/>
+			<FIELD type='3' description='PIN' value='M1' show='1' pos='-20.00000,-18.40000'/>
+			<FIELD type='3' description='PIN' value='M2' show='1' pos='-20.00000,-15.00000'/>
+			<FIELD type='3' description='RESET' value='RESET' show='1' pos='-20.00000,-11.60000'/>
+			<FIELD type='3' description='PIN' value='STEP' show='1' pos='-20.00000,-5.20000'/>
+			<FIELD type='3' description='PIN' value='DIR' show='1' pos='-20.00000,-1.80000'/>
+			<FIELD type='3' description='PIN' value='GND Logic' show='1' pos='-15.00000,-1.60000'/>
+			<FIELD type='3' description='PIN' value='VMOT' show='1' pos='-11.00000,-25.60000'/>
+			<FIELD type='3' description='PIN' value='GND VMOT' show='1' pos='-16.00000,-22.20000'/>
+		</SYMBOL>
+		<WIRE a='235.00000,69.00000' b='235.00000,77.00000'/>
+		<WIRE a='235.00000,77.00000' b='264.00000,77.00000'/>
+		<WIRE a='264.00000,77.00000' b='264.00000,94.00000'/>
+		<WIRE a='264.00000,94.00000' b='246.00000,94.00000'/>
+		<WIRE a='237.00000,69.00000' b='272.00000,69.00000'/>
+		<WIRE a='272.00000,69.00000' b='272.00000,90.00000'/>
+		<WIRE a='272.00000,90.00000' b='247.00000,90.00000'/>
+		<WIRE a='247.00000,107.00000' b='257.00000,107.00000'/>
+		<WIRE a='257.00000,107.00000' b='257.00000,104.00000'/>
+		<WIRE a='180.00000,109.00000' b='191.00000,109.00000'/>
+		<WIRE a='191.00000,109.00000' b='191.00000,160.00000'/>
+		<WIRE a='191.00000,160.00000' b='223.00000,160.00000'/>
+		<WIRE a='180.00000,113.00000' b='188.00000,113.00000'/>
+		<WIRE a='188.00000,113.00000' b='188.00000,157.00000'/>
+		<WIRE a='188.00000,157.00000' b='224.00000,157.00000'/>
+		<WIRE a='223.00000,146.00000' b='200.00000,146.00000'/>
+		<WIRE a='200.00000,168.00000' b='200.00000,146.00000'/>
+		<WIRE a='223.00000,140.00000' b='207.00000,140.00000'/>
+		<JUNCTION pos='207.00000,140.00000'/>
+		<WIRE a='207.00000,175.00000' b='207.00000,140.00000'/>
+		<JUNCTION pos='200.00000,146.00000'/>
+		<WIRE a='223.00000,143.00000' b='203.00000,143.00000'/>
+		<JUNCTION pos='203.00000,143.00000'/>
+		<WIRE a='203.00000,172.00000' b='203.00000,143.00000'/>
+		<JUNCTION pos='218.00000,107.00000'/>
+		<WIRE a='218.00000,107.00000' b='218.00000,150.00000'/>
+		<WIRE a='218.00000,150.00000' b='223.00000,150.00000'/>
+		<JUNCTION pos='218.00000,150.00000'/>
+		<WIRE a='218.00000,150.00000' b='218.00000,153.00000'/>
+		<WIRE a='218.00000,153.00000' b='223.00000,153.00000'/>
+		<JUNCTION pos='253.00000,122.00000'/>
+		<WIRE a='253.00000,122.00000' b='253.00000,160.00000'/>
+		<WIRE a='253.00000,160.00000' b='248.00000,160.00000'/>
+		<RECTANGLE a='256.00000,141.00000' b='274.00000,156.00000' style='5' fill='0'/>
+		<TEXT pos='258.00000,155.00000' direction='3' font='7' color='000000'>A2</TEXT>
+		<TEXT pos='258.00000,152.00000' direction='3' font='7' color='000000'>A1</TEXT>
+		<TEXT pos='258.00000,148.00000' direction='3' font='7' color='000000'>B1</TEXT>
+		<TEXT pos='258.00000,145.00000' direction='3' font='7' color='000000'>B2</TEXT>
+		<TEXT pos='273.08000,156.24000' direction='0' font='21' color='000000'>Stepper Motor</TEXT>
+		<WIRE a='256.00000,153.00000' b='256.00000,150.00000'/>
+		<WIRE a='246.00000,143.00000' b='256.00000,143.00000'/>
+		<WIRE a='246.00000,146.00000' b='256.00000,146.00000'/>
+		<WIRE a='246.00000,150.00000' b='256.00000,150.00000'/>
+		<WIRE a='246.00000,153.00000' b='256.00000,153.00000'/>
+		<JUNCTION pos='264.00000,94.00000'/>
+		<WIRE a='264.00000,94.00000' b='277.00000,94.00000'/>
+		<WIRE a='277.00000,94.00000' b='277.00000,140.00000'/>
+		<WIRE a='277.00000,140.00000' b='247.00000,140.00000'/>
+		<JUNCTION pos='272.00000,90.00000'/>
+		<WIRE a='272.00000,90.00000' b='282.00000,90.00000'/>
+		<WIRE a='282.00000,90.00000' b='282.00000,136.00000'/>
+		<WIRE a='282.00000,136.00000' b='246.00000,136.00000'/>
+		<POLYGON pos='221.00000,20.00000' style='5' fill='0' polygon='0'>
+			<POINT pos='0.00000,0.00000' arc='0'/>
+			<POINT pos='31.00000,0.00000' arc='0'/>
+			<POINT pos='31.00000,15.00000' arc='0'/>
+			<POINT pos='0.00000,15.00000' arc='0'/>
+			<POINT pos='0.00000,0.00000' arc='0'/>
+		</POLYGON>
+		<WIRE a='120.00000,62.00000' b='120.00000,28.00000'/>
+		<JUNCTION pos='120.00000,62.00000'/>
+		<WIRE a='120.00000,66.00000' b='120.00000,62.00000'/>
+		<WIRE a='214.00000,28.00000' b='219.00000,28.00000'/>
+		<JUNCTION pos='214.00000,28.00000'/>
+		<WIRE a='120.00000,28.00000' b='214.00000,28.00000'/>
+		<WIRE a='214.00000,26.00000' b='118.00000,26.00000'/>
+		<JUNCTION pos='214.00000,26.00000'/>
+		<WIRE a='219.00000,26.00000' b='214.00000,26.00000'/>
+		<WIRE a='118.00000,62.00000' b='118.00000,67.00000'/>
+		<JUNCTION pos='118.00000,62.00000'/>
+		<WIRE a='118.00000,26.00000' b='118.00000,62.00000'/>
 	</TinyCAD>
 </TinyCADSheets>
