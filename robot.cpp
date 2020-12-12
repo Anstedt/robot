@@ -1,6 +1,7 @@
 #include <iostream>
 #include "Controller.h"
 #include "PCA9685.h"
+#include "keypress.h"
 
 #include <unistd.h>
 #include <signal.h>
@@ -28,6 +29,8 @@ int main(int argc, char *argv[])
   }
   // Signals are now off so we can create threads
 
+  cout << "keypress=" << getkey() << std::endl;
+  
   // Do this here so we initialize PCA9685
   PCA9685::Instance();
 
