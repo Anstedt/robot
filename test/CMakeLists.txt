@@ -1,1 +1,1 @@
-add_library(test keypress)
+add_library(test TestMod keypress)
