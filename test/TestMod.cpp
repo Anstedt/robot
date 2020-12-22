@@ -4,14 +4,46 @@ PURPOSE: Upper level test interface
 *******************************************************************************/
 
 /* INCLUDE ********************************************************************/
-#include <iostream>
-
 #include "TestMod.h"
 
 /* METHODS ********************************************************************/
-void Funcs::AddFunc(void (*function)())
+
+void Funcs::AddFunc(void (*function)(), string str)
 {
-  m_funcs.push_back(function);
+  // FuncDesc fd = {function, str};
+  
+  // FuncDesc a (function, str);
+
+  // get<0>(a);
+  
+  // get<1>(a);
+  
+  m_funcDesc.push_back(FuncDesc {function, str});
+  
+    
+  // m_funcs.push_back(function);
+  // m_strings.push_back(str);
+}
+
+int TestMod::AddIncDec(void (*function)(), string description)
+{
+  m_incdec.AddFunc(function, description);
+
+  return(m_incdec.Size());
+}
+
+int TestMod::AddSelect(void (*function)(), string description)
+{
+  m_select.AddFunc(function, description);
+  
+  return(m_select.Size());
+}
+
+int TestMod::AddResults(void (*function)(), string description)
+{
+  m_results.AddFunc(function, description);
+
+  return(m_results.Size());  
 }
 
 bool TestMod::ProcessKeys()

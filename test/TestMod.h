@@ -12,20 +12,36 @@ PURPOSE: Test Interface
 /* INCLUDE ********************************************************************/
 #include <vector>
 #include <functional>
+#include <iostream>
+#include <string>
 #include "keypress.h"
+
+using namespace std;
 
 /* CLASSES ********************************************************************/
 class Funcs
 {
 public:
   Funcs() {};
-  void AddFunc(void (*function)());
+  void AddFunc(void (*function)(), string str);
+  int Size()
+  {
+    return(m_funcDesc.size());
+  };
   ~Funcs() {};
 private:
   Funcs(const Funcs&) {};
   Funcs& operator=(const Funcs& rhs);
   // Data fields
-  std::vector<std::function<void(void)>> m_funcs;
+  typedef struct FuncDesc
+  {
+    function<void(void)> m_function;
+    string m_string;
+  } FuncDesc;
+  
+  vector<FuncDesc> m_funcDesc;
+  // vector<function<void(void)>> m_funcs;
+  // vector<string> m_strings;
 };
 
 /*------------------------------------------------------------------------------
@@ -39,9 +55,9 @@ public:
   // Constructors
   TestMod() {};
   // Mutators: non-const operations
-  bool AddIncDec(Funcs array);
-  bool AddSelect(Funcs array);
-  bool AddResults(Funcs array); 
+  int AddIncDec(void (*function)(), string description);
+  int AddSelect(void (*function)(), string description);
+  int AddResults(void (*function)(), string description); 
   bool ProcessKeys();
   // Accessors: const operations
   // Static and friend functions
