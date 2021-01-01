@@ -27,6 +27,12 @@ Leg::~Leg()
 {
 }
 
+bool Leg::TestIt()
+{
+   m_hip.set_min_max_pwm(10,10);
+   return(true);
+}
+
 /*------------------------------------------------------------------------------
 FUNCTION: bool Leg::Stand()
 ------------------------------------------------------------------------------*/
@@ -55,4 +61,9 @@ bool Leg::Crouch()
   std::cout << "Leg::Crouch()" << std::endl;
 
   return(m_hip.Angle(180) && m_knee.Angle(0));
+}
+
+void Leg::Set_Hip(int val)
+{
+  m_hip.set_min_max_pwm(val, val);
 }

@@ -21,6 +21,8 @@ public:
   bool Stand();
   bool Kneel();
   bool Crouch();
+  bool TestIt();
+  void Set_RL_Hip(int);
   // Accessors: const operations
   // Static and friend functions
   // Memory management: copy constructor, destructor, operator=

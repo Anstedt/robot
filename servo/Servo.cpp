@@ -65,3 +65,13 @@ void Servo::set_min_max_pwm(int min_pwm, int max_pwm)
   m_slope_pwd = float(m_max_pwd - m_min_pwd) / float(180 - 0);
 }
 
+/*------------------------------------------------------------------------------
+FUNCTION: Servo::set_servo_pwm(int channel, int off)
+0   = minimum on time
+off = off time
+------------------------------------------------------------------------------*/
+void Servo::set_servo_pwm(int channel, int off)
+{
+  PCA9685::Instance()->set_pwm(channel, 0, off);
+}
+

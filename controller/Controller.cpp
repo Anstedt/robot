@@ -12,6 +12,8 @@ PURPOSE: Creates and controls the Balancer/Motor and the Legs
 #include <iostream>
 #include <unistd.h>
 
+#include "TestModLegs.h"
+
 /* METHODS ********************************************************************/
 /*------------------------------------------------------------------------------
 FUNCTION: Controller::Controller()
@@ -23,6 +25,8 @@ Controller::Controller()
   m_balancer = new Balancer();
   m_legs = new Legs();
 
+  TestModLegs test_legs(m_legs);
+  
   cout << "Stand for 6 seconds" << std::endl;
   m_legs->Stand();
   sleep(6);
@@ -50,3 +54,9 @@ Controller::~Controller()
   delete m_balancer;
   delete m_legs;
 }
+
+bool Controller::TestIt()
+{
+  return(m_legs->TestIt());
+}
+

@@ -54,3 +54,14 @@ bool Legs::Crouch()
   return(m_left.Crouch() && m_right.Crouch());
 }
 
+bool Legs::TestIt()
+{
+  m_left.TestIt();
+  m_right.TestIt();
+  return(true);
+}
+
+void Legs::Set_RL_Hip(int val)
+{
+  m_right.Set_Hip(val);
+}
