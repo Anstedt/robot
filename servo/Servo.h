@@ -16,6 +16,7 @@ public:
   void set_min_max_pwm(int min_pwm, int max_pwm);
   bool set_servo_angle(int channel, int degrees);
   void set_servo_pwm(int channel, int pwm);
+  int  get_servo_pwm(int channel);
   // Accessors: const operations
   // Static and friend functions
   // Servo Values
@@ -36,6 +37,7 @@ private:
   Servo(const Servo&);
   Servo& operator=(const Servo& rhs);
   // Data fields
+  int m_current_pwm;
   int m_min_pwd;
   int m_max_pwd;
   float m_slope_pwd;

@@ -19,28 +19,6 @@ PURPOSE: Test Interface
 using namespace std;
 
 /* CLASSES ********************************************************************/
-class Funcs
-{
-public:
-  Funcs() {};
-  void AddFunc(void (*function)(int), string str);
-  int Size()
-  {
-    return(m_funcDesc.size());
-  };
-  ~Funcs() {};
-private:
-  Funcs(const Funcs&) {};
-  Funcs& operator=(const Funcs& rhs);
-  // Data fields
-  typedef struct FuncDesc
-  {
-    function<void(int)> m_function;
-    string m_string;
-  } FuncDesc;
-  
-  vector<FuncDesc> m_funcDesc;
-};
 
 /*------------------------------------------------------------------------------
 CLASS:   TestMod
@@ -51,18 +29,14 @@ class TestMod
 public:
   // Local Classes
   // Constructors
-  TestMod() {};
+  TestMod();
   // Mutators: non-const operations
-  int AddIncDec(void (*function)(int), string description);
-  int AddSelect(void (*function)(int), string description);
-  int AddResults(void (*function)(int), string description); 
+  bool AddIncDec(std::function<void(int)> callback, string);
   bool ProcessKeys();
-
-  bool RegisterForCallback(std::function<void(int)> callback, string);
   // Accessors: const operations
   // Static and friend functions
   // Memory management: copy constructor, destructor, operator=
-  ~TestMod() {};
+  ~TestMod();
 private:
   // Local Classes
   // Constructors
@@ -73,9 +47,8 @@ private:
   TestMod(const TestMod&);
   TestMod& operator=(const TestMod& rhs);
   // Data fields
-  Funcs m_incdec;
-  Funcs m_select;
-  Funcs m_results;
+  int m_active;
+  int m_incdec;
   // C++ functional supports callback functions
   vector<std::function<void(int)>> m_callback;
   vector<string> m_description;

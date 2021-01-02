@@ -10,6 +10,7 @@ FUNCTION:      Servo::Servo()
 ARGUMENTS:     servo_num 0...15
 ------------------------------------------------------------------------------*/
 Servo::Servo(int min_pwd, int max_pwd)
+  : m_current_pwm(min_pwd)
 {
   cout << "Servo::Servo()" << std::endl;
 
@@ -50,7 +51,9 @@ bool Servo::set_servo_angle(int channel, int degrees)
   }
 
   PCA9685::Instance()->set_pwm(channel, 0, output);
-
+  // Track where we are
+  m_current_pwm = output;
+  
   return(success);
 }
 
@@ -73,5 +76,14 @@ off = off time
 void Servo::set_servo_pwm(int channel, int off)
 {
   PCA9685::Instance()->set_pwm(channel, 0, off);
+  // Track where we are
+  m_current_pwm = off;
 }
 
+/*------------------------------------------------------------------------------
+FUNCTION: Servo::get_servo_pwm(int channel)
+------------------------------------------------------------------------------*/
+int Servo::get_servo_pwm(int channel)
+{
+  return(m_current_pwm);
+}

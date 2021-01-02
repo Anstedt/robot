@@ -26,6 +26,7 @@ Controller::Controller()
   m_legs = new Legs();
 
   TestModLegs test_legs(m_legs);
+  test_legs.ProcessKeys();
   
   cout << "Stand for 6 seconds" << std::endl;
   m_legs->Stand();
@@ -54,9 +55,3 @@ Controller::~Controller()
   delete m_balancer;
   delete m_legs;
 }
-
-bool Controller::TestIt()
-{
-  return(m_legs->TestIt());
-}
-

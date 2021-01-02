@@ -2,41 +2,6 @@
 
 ### NOTES
 
-## functional
-
-See how it is used in Gyro and Balancer.
-
-TestIt() is an example of calling a function from the Controller to
-change the servo values. Purely a hack as no parameters are passed.
-
-TestMod needs methods for Inc/Dec. They will use something like
-TestIt(BUT WITH Parameters)
-
-Like this IncDec
-
-switch(c)
-  case 'w':
-    // Increment
-    // Call ACTIVE IncDec function, needs to pass in +
-    m_incdec[ACTIVE].IncDec(1);
-    std::cout << "Increment" << std::endl;
-    break;
-  case 's':
-    // Decrement
-    // Call ACTIVE IncDec function, needs to pass in -
-    m_incdec[ACTIVE].IncDec(-1);
-    std::cout << "Increment" << std::endl;
-    break;
-
-bool IncDec(int incdec)
-{
- int a = legs->get_value();
- a += incdec;
- legs->set_value(a);
- return(true);
-}
-
-
 ### Legs
 
 - Currently contain all Joint information such as channel and pulse

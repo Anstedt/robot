@@ -26,6 +26,7 @@ public:
   bool Stand();
   bool Angle(int angle);
   void SetPWM(int off_pwm);
+  int  GetPWM(int none);
   // Accessors: const operations
   // Static and friend functions
   // Memory management: copy constructor, destructor, operator=

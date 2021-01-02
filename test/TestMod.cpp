@@ -8,48 +8,34 @@ PURPOSE: Upper level test interface
 
 /* METHODS ********************************************************************/
 /*------------------------------------------------------------------------------
-FUNCTION: Funcs::AddFunc(void (*function)(), string str)
-PURPOSE:  Func class for handling vectors of functions and descriptions       
+FUNCTION: TestMod::TestMod()
 ------------------------------------------------------------------------------*/
-void Funcs::AddFunc(void (*function)(int), string str)
+TestMod::TestMod()
+  : m_active(0),
+    m_incdec(1)
 {
-  m_funcDesc.push_back(FuncDesc {function, str});
 }
 
 /*------------------------------------------------------------------------------
-FUNCTION: TestMod::Add-=-(void (*function)(), string description)
-PURPOSE:  Methods to add Funcs for different command sets
+FUNCTION: TestMod::~TestMod()
 ------------------------------------------------------------------------------*/
-int TestMod::AddIncDec(void (*function)(int), string description)
+TestMod::~TestMod()
 {
-  m_incdec.AddFunc(function, description);
-
-  return(m_incdec.Size());
 }
 
-int TestMod::AddSelect(void (*function)(int), string description)
-{
-  m_select.AddFunc(function, description);
-  
-  return(m_select.Size());
-}
-
-int TestMod::AddResults(void (*function)(int), string description)
-{
-  m_results.AddFunc(function, description);
-
-  return(m_results.Size());  
-}
-
-bool TestMod::RegisterForCallback(std::function<void(int)> callback, string desc)
+/*------------------------------------------------------------------------------
+FUNCTION: TestMod::AddIncDec()
+PURPOSE:  Method to add call backs
+------------------------------------------------------------------------------*/
+bool TestMod::AddIncDec(std::function<void(int)> callback, string desc)
 {
   m_callback.push_back(callback);
   
   m_description.push_back(desc);
+  std::cout << "SET Description=" << desc << std::endl;
   
   return(true);
 }
-
 
 /*------------------------------------------------------------------------------
 FUNCTION: TestMod::ProcessKeys()
@@ -59,6 +45,10 @@ bool TestMod::ProcessKeys()
 {
   char c = 0;
   bool process = true;
+
+  int incdec[] = {1, 10, 200, 500, 1000};
+  int incdec_max = 5;
+  int incdec_cnt = 0;
   
   while ( process )
   {
@@ -69,27 +59,44 @@ bool TestMod::ProcessKeys()
       case 'w':
         // Increment
         // Call ACTIVE IncDec function, needs to pass in +
-        std::cout << "Increment" << std::endl;
+        m_callback[m_active](m_incdec);
+        std::cout << "Description=" << m_description[m_active] << std::endl;   
         break;
       case 's':
         // Decrement
-        // Call ACTIVE IncDec function, needs to pass in +
-        std::cout << "Decrement" << std::endl;
+        m_callback[m_active](-m_incdec);
+        std::cout << "Description=" << m_description[m_active] << std::endl;
         break;
       case 'a':
-        // Previous item
-        // Set previous ACTIVE item, rotate on underflow
-        std::cout << "Previous" << std::endl;
+        // Previous item, handle wrap
+        if (--m_active < 0)
+          m_active = m_callback.size();
+        std::cout << "Previous m_active=" << m_active << std::endl;
         break;
       case 'd':
-        // Next item
-        // Set next ACTIVE item, rotate on underflow
-        std::cout << "Next" << std::endl;
+        // Next item, handle wrap
+        if (++m_active > m_callback.size())
+          m_active = 0;
+        std::cout << "Next m_active=" << m_active << std::endl;
         break;
       case 'p':
         // Print data
         // Print results for ACTIVE Results
         std::cout << "Print" << std::endl;
+        break;
+      case '+':
+        // Change increment
+        if (++incdec_cnt > incdec_max)
+          incdec_cnt = 0;
+        m_incdec = incdec[incdec_cnt];
+        std::cout << "m_incdec=" << m_incdec << std::endl;
+        break;
+      case '-':
+        // Change increment
+        if (--incdec_cnt < 0)
+          incdec_cnt = incdec_max;
+        m_incdec = incdec[incdec_cnt];
+        std::cout << "m_incdec=" << m_incdec << std::endl;
         break;
       case 'e':
         // Exit
