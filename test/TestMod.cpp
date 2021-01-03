@@ -47,8 +47,19 @@ bool TestMod::ProcessKeys()
   bool process = true;
 
   int incdec[] = {1, 10, 200, 500, 1000};
-  int incdec_max = 5;
+  int incdec_max = 4;
   int incdec_cnt = 0;
+
+  cout << "--------------------------------------------------------------------------------" << std::endl;
+  cout << "w: increment and set value" << std::endl;
+  cout << "d: decrement and set value" << std::endl;
+  cout << "a: select next item" << std::endl;
+  cout << "s: select previous item item" << std::endl;
+  cout << "[: decrement incdec value {1, 10, 200, 500, 1000}" << std::endl;
+  cout << "]: increment incdec value {1, 10, 200, 500, 1000}" << std::endl;
+  cout << "e: exit/quit" << std::endl;
+  cout << "--------------------------------------------------------------------------------" << std::endl;
+
   
   while ( process )
   {
@@ -70,12 +81,12 @@ bool TestMod::ProcessKeys()
       case 'a':
         // Previous item, handle wrap
         if (--m_active < 0)
-          m_active = m_callback.size();
+          m_active = m_callback.size() - 1;
         std::cout << "Previous m_active=" << m_active << std::endl;
         break;
       case 'd':
         // Next item, handle wrap
-        if (++m_active > m_callback.size())
+        if (++m_active > (m_callback.size()-1))
           m_active = 0;
         std::cout << "Next m_active=" << m_active << std::endl;
         break;
@@ -84,14 +95,14 @@ bool TestMod::ProcessKeys()
         // Print results for ACTIVE Results
         std::cout << "Print" << std::endl;
         break;
-      case '+':
+      case ']':
         // Change increment
         if (++incdec_cnt > incdec_max)
           incdec_cnt = 0;
         m_incdec = incdec[incdec_cnt];
         std::cout << "m_incdec=" << m_incdec << std::endl;
         break;
-      case '-':
+      case '[':
         // Change increment
         if (--incdec_cnt < 0)
           incdec_cnt = incdec_max;

@@ -27,7 +27,8 @@ Controller::Controller()
 
   TestModLegs test_legs(m_legs);
   test_legs.ProcessKeys();
-  
+
+  /************ Leg tests
   cout << "Stand for 6 seconds" << std::endl;
   m_legs->Stand();
   sleep(6);
@@ -43,6 +44,7 @@ Controller::Controller()
   cout << "Stand for 6 seconds" << std::endl;
   m_legs->Stand();
   sleep(6);
+  ************/
 }
 
 /*------------------------------------------------------------------------------
