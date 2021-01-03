@@ -29,10 +29,7 @@ public:
   bool Crouch();
 
   void Set_Hip(int val)  { m_hip.SetPWM(val); };
-  int  Get_Hip(int val)  { return(m_hip.GetPWM(val)); };
   void Set_Knee(int val) { m_knee.SetPWM(val); };
-  int  Get_Knee(int val) { return(m_knee.GetPWM(val)); };
-
   // Accessors: const operations
   // Static and friend functions
   // Memory management: copy constructor, destructor, operator=
