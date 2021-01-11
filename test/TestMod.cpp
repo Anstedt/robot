@@ -52,9 +52,9 @@ bool TestMod::ProcessKeys()
 
   cout << "--------------------------------------------------------------------------------" << std::endl;
   cout << "w: increment and set value" << std::endl;
-  cout << "d: decrement and set value" << std::endl;
-  cout << "a: select next item" << std::endl;
-  cout << "s: select previous item item" << std::endl;
+  cout << "s: decrement and set value" << std::endl;
+  cout << "d: select next item" << std::endl;
+  cout << "a: select previous item item" << std::endl;
   cout << "[: decrement incdec value {1, 10, 200, 500, 1000}" << std::endl;
   cout << "]: increment incdec value {1, 10, 200, 500, 1000}" << std::endl;
   cout << "e: exit/quit" << std::endl;
@@ -82,13 +82,13 @@ bool TestMod::ProcessKeys()
         // Previous item, handle wrap
         if (--m_active < 0)
           m_active = m_callback.size() - 1;
-        std::cout << "Previous m_active=" << m_active << std::endl;
+        std::cout << "Previous m_active=" << m_description[m_active] << " : " << m_active << std::endl;
         break;
       case 'd':
         // Next item, handle wrap
         if (++m_active > (m_callback.size()-1))
           m_active = 0;
-        std::cout << "Next m_active=" << m_active << std::endl;
+        std::cout << "Next m_active=" << m_description[m_active] << " : " << m_active << std::endl;
         break;
       case 'p':
         // Print data
