@@ -121,33 +121,3 @@ bool TestMod::ProcessKeys()
   return(true);
 }
 
-/*
-Need access to Joints and ability to send in raw values
-I need to get to Servo values to set them:
-
-  void Servo::set_min_max_pwm(int min_pwm, int max_pwm)
-
-Joints need interface for this call,
-Legs need interface to Joints call
-I need to track min max or be able to request them.
-  Add int Servo::get_min_pwm()
-  Add int Servo::get_max_pwm()
-Add access up the chain.
-
-I think I need little interface functions here that are in the array.
-void inc_min()
-{
-  m_active->set_min_max_pwm(get_min_pwm(), get_max_pwm()+1)
-}
-
-void inc_max()
-{
-  m_active->set_min_max_pwm(get_min_pwm()+1, get_max_pwm())
-}
-
-In the case of legs these lists are for all the legs
-d indexes to next Func in m_incdec and rotates on overflow, sets ACTIVE func
-a indexes to previous Func in m_incdec and rotates on underflow, sets ACTIVE func
-w execute the ACTIVE func with a + value, example 1
-s execute the ACTIVE func with a - value, example -1
- */
