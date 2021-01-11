@@ -15,6 +15,7 @@ public:
   // Mutators: non-const operations
   void set_min_max_pwm(int min_pwm, int max_pwm);
   bool set_servo_angle(int channel, int degrees);
+  void set_servo_pwm(int channel, int pwm);
   // Accessors: const operations
   // Static and friend functions
   // Servo Values

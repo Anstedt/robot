@@ -27,6 +27,9 @@ public:
   bool Stand();
   bool Kneel();
   bool Crouch();
+
+  void Set_Hip(int val)  { m_hip.SetPWM(val); };
+  void Set_Knee(int val) { m_knee.SetPWM(val); };
   // Accessors: const operations
   // Static and friend functions
   // Memory management: copy constructor, destructor, operator=

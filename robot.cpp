@@ -1,6 +1,7 @@
 #include <iostream>
 #include "Controller.h"
 #include "PCA9685.h"
+#include "keypress.h"
 
 #include <unistd.h>
 #include <signal.h>

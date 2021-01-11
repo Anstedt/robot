@@ -1,35 +1,34 @@
 /*******************************************************************************
-FILE:     Joint.h
-PURPOSE:  Legs need joints which are controlled by Servos
+FILE:          TestModLegs.h
+PURPOSE:       
 *******************************************************************************/
 
 /* NOTES ***********************************************************************
 *******************************************************************************/
 
-#ifndef JOINT_H
-#define JOINT_H
-
 /* INCLUDE ********************************************************************/
-#include "Servo.h"
+#include "TestMod.h"
+#include "Legs.h"
 
 /* CLASSES ********************************************************************/
 /*------------------------------------------------------------------------------
-CLASS:	       Joint
+CLASS:	       TestModLegs
 ------------------------------------------------------------------------------*/
-class Joint : public Servo
+class TestModLegs : public TestMod
 {
 public:
   // Local Classes
   // Constructors
-  Joint(int channel, int min_pulse, int max_pulse);
+  TestModLegs(Legs* legs);
   // Mutators: non-const operations
-  bool Stand();
-  bool Angle(int angle);
-  void SetPWM(int off_pwm);
+  void Set_RL_Hip(int val);  // { m_right.Set_Hip(val); };
+  void Set_RL_Knee(int val); // { m_right.Set_Knee(val); };
+  void Set_LL_Hip(int val);  // { m_left.Set_Hip(val); };
+  void Set_LL_Knee(int val); // { m_left.Set_Knee(val); };
   // Accessors: const operations
   // Static and friend functions
   // Memory management: copy constructor, destructor, operator=
-  ~Joint();
+  ~TestModLegs();
 private:
   // Local Classes
   // Constructors
@@ -37,11 +36,18 @@ private:
   // Accessors: const operations
   // Static and friend functions
   // Memory management
-  Joint(const Joint&);
-  Joint& operator=(const Joint& rhs);
+  TestModLegs(const TestModLegs&);
+  TestModLegs& operator=(const TestModLegs& rhs);
   // Data fields
-  const int m_default_freq = 60;
-  int m_channel;
+  Legs* m_legs;
+  // Track pwm settings
+  int m_rl_hip;
+  int m_rl_knee;
+  int m_ll_hip;
+  int m_ll_knee;
+  
   // Static (shared) class variables
 };
-#endif /* JOINT_H */
+/* GLOBALS ********************************************************************/
+/* FUNCTIONS ******************************************************************/
+/* METHODS ********************************************************************/

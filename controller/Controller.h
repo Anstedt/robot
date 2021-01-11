@@ -25,6 +25,7 @@ public:
   // Local Classes
   // Constructors
   Controller();
+  bool TestIt();
   // Mutators: non-const operations
   // Accessors: const operations
   // Static and friend functions

@@ -46,3 +46,12 @@ bool Joint::Angle(int angle)
 
   return(set_servo_angle(m_channel, angle));
 }
+
+/*------------------------------------------------------------------------------
+FUNCTION: void SetPWM()
+------------------------------------------------------------------------------*/
+void Joint::SetPWM(int off_pwm)
+{
+  set_servo_pwm(m_channel, off_pwm);
+}
+

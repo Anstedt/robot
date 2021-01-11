@@ -1,35 +1,42 @@
 /*******************************************************************************
-FILE:     Joint.h
-PURPOSE:  Legs need joints which are controlled by Servos
+PACKAGE: Test
+PURPOSE: Test Interface      
 *******************************************************************************/
 
 /* NOTES ***********************************************************************
 *******************************************************************************/
 
-#ifndef JOINT_H
-#define JOINT_H
+#ifndef TESTMOD_H
+#define TESTMOD_H
 
 /* INCLUDE ********************************************************************/
-#include "Servo.h"
+#include <vector>
+#include <functional>
+#include <iostream>
+#include <string>
+#include "keypress.h"
+
+using namespace std;
 
 /* CLASSES ********************************************************************/
+
 /*------------------------------------------------------------------------------
-CLASS:	       Joint
+CLASS:   TestMod
+PURPOSE:       
 ------------------------------------------------------------------------------*/
-class Joint : public Servo
+class TestMod
 {
 public:
   // Local Classes
   // Constructors
-  Joint(int channel, int min_pulse, int max_pulse);
+  TestMod();
   // Mutators: non-const operations
-  bool Stand();
-  bool Angle(int angle);
-  void SetPWM(int off_pwm);
+  bool AddIncDec(std::function<void(int)> callback, string);
+  bool ProcessKeys();
   // Accessors: const operations
   // Static and friend functions
   // Memory management: copy constructor, destructor, operator=
-  ~Joint();
+  ~TestMod();
 private:
   // Local Classes
   // Constructors
@@ -37,11 +44,15 @@ private:
   // Accessors: const operations
   // Static and friend functions
   // Memory management
-  Joint(const Joint&);
-  Joint& operator=(const Joint& rhs);
+  TestMod(const TestMod&);
+  TestMod& operator=(const TestMod& rhs);
   // Data fields
-  const int m_default_freq = 60;
-  int m_channel;
+  int m_active;
+  int m_incdec;
+  // C++ functional supports callback functions
+  vector<std::function<void(int)>> m_callback;
+  vector<string> m_description;
   // Static (shared) class variables
 };
-#endif /* JOINT_H */
+
+#endif /* TESTMOD_H */

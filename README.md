@@ -1,12 +1,13 @@
 # Robot
 
 ### Config
-
 - Config.h has Motor and Legs IO and HW configurations.
+
+### NOTES
 
 ### Legs
 
-- Right leg joints are now roughly correct for 0, 90 and 180 degress.
+- Right and Left leg joints are now roughly correct for 0, 90 and 180 degress.
 
 ## Controller
 - Creates and controls the robot, constructed from robot.c::main()

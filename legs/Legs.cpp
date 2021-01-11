@@ -53,4 +53,3 @@ bool Legs::Crouch()
   
   return(m_left.Crouch() && m_right.Crouch());
 }
-
