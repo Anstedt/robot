@@ -1,8 +1,16 @@
 from time import sleep
 import RPi.GPIO as GPIO
 
+# Right Motor/Motor1
 STEP = 10  # Step GPIO Pin
 DIR  = 18  # Direction GPIO Pin
+
+# Left Motor/Motor2
+# STEP = 24  # Step GPIO Pin
+# DIR  = 23  # Direction GPIO Pin
+
+# Both Motors share common mode pins for micro steps
+MODE = (17, 27, 22)   # Microstep Resolution GPIO Pins
 
 CW = 1     # Clockwise Rotation
 CCW = 0    # Counterclockwise Rotation
