@@ -25,14 +25,14 @@ Controller::Controller()
   m_balancer = new Balancer();
   m_legs = new Legs();
 
-  TestModLegs test_legs(m_legs);
-  test_legs.ProcessKeys();
+  // TestModLegs test_legs(m_legs);
+  // test_legs.ProcessKeys();
 
-  /************ Leg tests
   cout << "Stand for 6 seconds" << std::endl;
   m_legs->Stand();
   sleep(6);
 
+  /************ Leg tests
   cout << "Kneel for 6 seconds" << std::endl;
   m_legs->Kneel();
   sleep(6);
