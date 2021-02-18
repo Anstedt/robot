@@ -61,7 +61,7 @@ private:
   static const int CONFIG         = 0x1A;
   static const int GYRO_CONFIG    = 0x1B;
   static const int ACCEL_CONFIG   = 0x1C;
-  static const int INT_ENABLE     = 0x38;  
+  static const int INT_ENABLE     = 0x38;
   static const int ACCEL_XOUT_H   = 0x3B;
   static const int ACCEL_YOUT_H   = 0x3D;
   static const int ACCEL_ZOUT_H   = 0x3F;
@@ -69,6 +69,6 @@ private:
   static const int GYRO_YOUT_H    = 0x45;
   static const int GYRO_ZOUT_H    = 0x47;
   static const int PWR_MGMT_1     = 0x6B;
-  // Static (shared) class variables  
+  // Static (shared) class variables
 };
 #endif

@@ -43,7 +43,7 @@ Motor::Motor(int steps_rev, int pulse_gpio, int dir_gpio, const MotorModeGPIO& m
 
   // Copy the gpio mode pin array
   std::copy(std::begin(mode_gpio), std::end(mode_gpio), std::begin(m_motor_mode_gpio));
-  
+
   m_motor_revs_per_min = revs_per_min;
 
   m_motor_mode = mode;
@@ -51,7 +51,7 @@ Motor::Motor(int steps_rev, int pulse_gpio, int dir_gpio, const MotorModeGPIO& m
   // high is always this number of us. Can go as low as 1.9us
   m_pulse_high_us = PULSE_LOW_TIME_US;
   m_pulse_low_us = 0; // Is variable based on requested speed
-  
+
   if (gpioInitialise() < 0)
   {
     cout << "Motor pigpio initialization failed" << std::endl;
@@ -97,7 +97,7 @@ FUNCTION:      Motor::SetMotorMode(int mode)
 bool Motor::SetMotorMode(int mode)
 {
   bool status = false;
-  
+
   // Mode must be 5 or less
   if (mode < 0 || mode > 5)
   {
@@ -112,7 +112,7 @@ bool Motor::SetMotorMode(int mode)
 
   gpioWrite(m_motor_mode_gpio[0], motor_mode[m_motor_mode].pin_0);
   gpioWrite(m_motor_mode_gpio[1], motor_mode[m_motor_mode].pin_1);
-  gpioWrite(m_motor_mode_gpio[2], motor_mode[m_motor_mode].pin_2);    
+  gpioWrite(m_motor_mode_gpio[2], motor_mode[m_motor_mode].pin_2);
 
   return(status);
 }
@@ -173,9 +173,9 @@ Step Pulse duration STEP Low  Min: 1.9μs, no max
 int Motor::Run(void)
 {
   int motor_angle_cmd = 0;
-  
+
   cout << "Motor:Run() in a separate thread" << std::endl;
-  
+
   while (ThreadRunning())
   {
     // If we have new data, update motor control variables
@@ -198,7 +198,7 @@ int Motor::Run(void)
 
       // Set the direction based on the requested angle
       gpioWrite(m_motor_dir_gpio, m_motor_dir);
-      
+
       // cout << " Fifo Angle=" << motor_angle_cmd << " Direction=" << m_motor_dir << " steps_to_go=" << m_motor_steps_to_go << std::endl;
     }
 
@@ -223,10 +223,10 @@ int Motor::Run(void)
       // If we have no data, sleep some waiting on new data, using 2ms which is
       // half gyro rate.
       gpioDelay(500);
-    }    
+    }
   }
-  
+
   cout << "Motor::Run return" << std::endl;
-      
+
   return(ThreadReturn());
 }

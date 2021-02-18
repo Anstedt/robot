@@ -21,6 +21,7 @@ public:
   bool Stand();
   bool Kneel();
   bool Crouch();
+  bool Sit();
 
   void Set_RL_Hip(int val)  { m_right.Set_Hip(val); };
   void Set_RL_Knee(int val) { m_right.Set_Knee(val); };

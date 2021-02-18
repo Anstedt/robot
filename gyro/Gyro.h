@@ -41,6 +41,6 @@ private:
   int m_gyro_yaw_data_raw;
   float m_angle_acc;
   float m_angle_gyro;
-  // Static (shared) class variables  
+  // Static (shared) class variables
 };
 #endif

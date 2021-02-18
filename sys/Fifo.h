@@ -28,12 +28,12 @@ public:
       memcpy(m_buf, rhs.m_buf, sizeof(T)*(ENTRIES+1));
       m_beg = m_buf;
       m_end = &m_buf[ENTRIES];
-    
+
       m_pHead = (m_buf + (rhs.m_pHead - rhs.m_buf));
       m_pTail = (m_buf + (rhs.m_pTail - rhs.m_buf));
     }
     return(*this);
-  }  
+  }
 private:
   // Data fields
   T m_buf[ENTRIES+1]; // Leave room for the empty data point
@@ -114,7 +114,7 @@ inline bool Fifo<T, ENTRIES>::fill(unsigned int fillsz, const T& val)
   if (fillsz <= (ENTRIES-bufsz))
   {
     T* phead = m_pHead;
-    
+
     // Fill and handle wrap
     while(fillsz--)
     {
@@ -151,7 +151,7 @@ template<typename T, unsigned int ENTRIES>
 inline void Fifo<T, ENTRIES>::pop_front()
 {
   T* pTail = m_pTail;
-  
+
   // Check if the buffer has some data.
   if (pTail != m_pHead)
   {
@@ -160,18 +160,18 @@ inline void Fifo<T, ENTRIES>::pop_front()
     {
       pTail = m_beg;
     }
-    
+
     // Now move the pointer which removes the data point
     m_pTail = pTail;
   }
-  
+
   return;
 }
 
 /*------------------------------------------------------------------------------
 FUNCTION:      void clear()
 ------------------------------------------------------------------------------*/
-template<typename T, unsigned int ENTRIES> 
+template<typename T, unsigned int ENTRIES>
 inline void Fifo<T, ENTRIES>::clear()
 {
   // Set the tail to the head to make the buffer empty.
@@ -205,7 +205,7 @@ inline size_t Fifo<T, ENTRIES>::size() const
   // If head and tail cross the bounds of the buffer
   if(pHead < pTail)
   {
-    // So adjust the size for the wrap case. 
+    // So adjust the size for the wrap case.
     // Using MAX_ELEMENTS+1 since that is the actual buffer size
     size = (ENTRIES + 1) - (pTail - pHead);
   }
@@ -224,7 +224,7 @@ template<typename T, unsigned int ENTRIES>
 inline T& Fifo<T, ENTRIES>::operator[] (unsigned int index)
 {
   T* ptail = m_pTail;
-  
+
   // Get the buffer size
   unsigned int bufsize = size();
 

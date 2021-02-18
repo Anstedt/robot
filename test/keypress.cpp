@@ -13,18 +13,18 @@ struct termios oldSettings, newSettings;
 char local_getkey()
 {
   char c = 0;
-  
+
   fd_set set;
   struct timeval tv;
-  
+
   tv.tv_sec = 10;
   tv.tv_usec = 0;
-  
+
   FD_ZERO( &set );
   FD_SET( fileno( stdin ), &set );
-  
+
   int res = select( fileno( stdin )+1, &set, NULL, NULL, &tv );
-  
+
   if( res > 0 )
   {
     // printf( "Input available\n" );
@@ -49,7 +49,7 @@ void local_open_keypress()
   tcgetattr( fileno( stdin ), &oldSettings );
   newSettings = oldSettings;
   newSettings.c_lflag &= (~ICANON & ~ECHO);
-  tcsetattr( fileno( stdin ), TCSANOW, &newSettings );    
+  tcsetattr( fileno( stdin ), TCSANOW, &newSettings );
 }
 
 void local_close_keypress()
@@ -65,19 +65,19 @@ char getkey()
   tcgetattr( fileno( stdin ), &oldSettings );
   newSettings = oldSettings;
   newSettings.c_lflag &= (~ICANON & ~ECHO);
-  tcsetattr( fileno( stdin ), TCSANOW, &newSettings );    
+  tcsetattr( fileno( stdin ), TCSANOW, &newSettings );
 
   fd_set set;
   struct timeval tv;
-  
+
   tv.tv_sec = 10;
   tv.tv_usec = 0;
-  
+
   FD_ZERO( &set );
   FD_SET( fileno( stdin ), &set );
-  
+
   int res = select( fileno( stdin )+1, &set, NULL, NULL, &tv );
-  
+
   if( res > 0 )
   {
     // printf( "Input available\n" );
@@ -103,13 +103,13 @@ char getkey()
 // int test_main()
 // {
 //   open_keypress();
-  
+
 //   while ( 1 )
 //   {
 //     printf("Key press: %c\n", getkey());
 //   }
-  
+
 //   close_keypress();
-  
+
 //   return 0;
 // }

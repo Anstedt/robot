@@ -16,7 +16,7 @@ Servo::Servo(int min_pwd, int max_pwd)
   // We only need to calculate the slope if m_min_pwd or m_max_pwd change
   // slope = (output_end - output_start) / (input_end - input_start);
   m_min_pwd = min_pwd;
-  m_max_pwd = max_pwd;  
+  m_max_pwd = max_pwd;
   m_slope_pwd = float(m_max_pwd - m_min_pwd) / float(180 - 0);
 }
 
@@ -34,7 +34,7 @@ bool Servo::set_servo_angle(int channel, int degrees)
 {
   bool success = false;
   int output;
-  
+
   // If degrees is in range
   if (degrees >=0 && degrees <= 180)
   {
@@ -50,7 +50,7 @@ bool Servo::set_servo_angle(int channel, int degrees)
   }
 
   PCA9685::Instance()->set_pwm(channel, 0, output);
-  
+
   return(success);
 }
 
@@ -61,7 +61,7 @@ void Servo::set_min_max_pwm(int min_pwm, int max_pwm)
 {
   // We only need to calculate the slope if m_min_pwd or m_max_pwd change
   m_min_pwd = min_pwm;
-  m_max_pwd = max_pwm;  
+  m_max_pwd = max_pwm;
   m_slope_pwd = float(m_max_pwd - m_min_pwd) / float(180 - 0);
 }
 

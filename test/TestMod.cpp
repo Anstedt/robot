@@ -1,6 +1,6 @@
 /*******************************************************************************
 PACKAGE: Test
-PURPOSE: Upper level test interface      
+PURPOSE: Upper level test interface
 *******************************************************************************/
 
 /* INCLUDE ********************************************************************/
@@ -30,10 +30,10 @@ PURPOSE:  Method to add call backs
 bool TestMod::AddIncDec(std::function<void(int)> callback, string desc)
 {
   m_callback.push_back(callback);
-  
+
   m_description.push_back(desc);
   std::cout << "SET Description=" << desc << std::endl;
-  
+
   return(true);
 }
 
@@ -60,7 +60,7 @@ bool TestMod::ProcessKeys()
   cout << "e: exit/quit" << std::endl;
   cout << "--------------------------------------------------------------------------------" << std::endl;
 
-  
+
   while ( process )
   {
     c = getkey();
@@ -71,7 +71,7 @@ bool TestMod::ProcessKeys()
         // Increment
         // Call ACTIVE IncDec function, needs to pass in +
         m_callback[m_active](m_incdec);
-        std::cout << "Description=" << m_description[m_active] << std::endl;   
+        std::cout << "Description=" << m_description[m_active] << std::endl;
         break;
       case 's':
         // Decrement

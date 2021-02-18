@@ -60,7 +60,7 @@ void calculate_IMU_error() {
   GyroErrorY = 0.0;
   GyroErrorZ = 0.0;
   c = 0;
-  
+
   while (c < 200) {
 		/*Read raw value of Accelerometer and gyroscope from MPU6050*/
 		AccX = read_raw_data(ACCEL_XOUT_H) / (16384.0/2); // 4g

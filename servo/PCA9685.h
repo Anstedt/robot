@@ -1,6 +1,6 @@
 /*******************************************************************************
 FILE:    PCA9685.h
-PURPOSE: Singleton to for Servo Control       
+PURPOSE: Singleton to for Servo Control
 *******************************************************************************/
 
 #ifndef PCA9685_H

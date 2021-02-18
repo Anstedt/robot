@@ -28,14 +28,14 @@ bool Threads::Activate(int policy, int priority)
 {
   bool status = false;
   m_running = true;
-  
+
   int code = 0;
   pthread_attr_t threadAttributes;
   struct sched_param threadSchedParameters;
   threadSchedParameters.sched_priority = priority;
 
   cout << policy << " : " << priority << " : " << sched_get_priority_max(policy) << " : " << sched_get_priority_max(policy) << std::endl;
-  
+
   // Get attribute struct for setting priority and policy
   if ((code = pthread_attr_init(&threadAttributes)) != 0)
   {

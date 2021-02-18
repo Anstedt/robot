@@ -1,6 +1,6 @@
 /*******************************************************************************
 FILE:          TestModLegs.cpp
-PURPOSE:       
+PURPOSE:
 *******************************************************************************/
 
 /* INCLUDE ********************************************************************/
@@ -40,7 +40,7 @@ void TestModLegs::Set_RL_Hip(int val)
   m_rl_hip += val;
 
   m_legs->Set_RL_Hip(m_rl_hip);
-  
+
   cout << "Set_RL_Hip(" << m_rl_hip << ")" << std::endl;
 }
 
@@ -58,7 +58,7 @@ FUNCTION: TestModLegs::callbacks(int); (Left Leg)
 void TestModLegs::Set_LL_Hip(int val)
 {
   m_ll_hip += val;
-  
+
   m_legs->Set_LL_Hip(m_ll_hip);
   cout << "Set_LL_Hip(" << m_ll_hip << ")" << std::endl;
 }
@@ -66,7 +66,7 @@ void TestModLegs::Set_LL_Hip(int val)
 void TestModLegs::Set_LL_Knee(int val)
 {
   m_ll_knee += val;
-  
+
   m_legs->Set_LL_Knee(m_ll_knee);
 
   cout << "Set_LL_Knee(" << m_ll_knee << ")" << std::endl;

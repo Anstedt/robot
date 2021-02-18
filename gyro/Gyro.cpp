@@ -26,14 +26,14 @@ Gyro::Gyro()
   {
     p_mpu6050 = new MPU6050();
   }
-  
+
   cout << "Gyro::Gyro()" <<std::endl;
 }
 
 Gyro::~Gyro()
 {
   delete p_mpu6050;
-  
+
   cout << "~GYRO NOT RUNNING gpioTerminate" << std::endl;
   // gpioTerminate(); // Now that the MPU6050 is gone we can close pigpio
 
@@ -52,7 +52,7 @@ bool Gyro::RegisterForCallback(std::function<void(int, int, float, float)> callb
   {
     m_callback = callback;
   }
-  
+
   return(true);
 }
 
@@ -60,7 +60,7 @@ int Gyro::Run(void)
 {
   uint32_t timer = 0;
   uint32_t elapsed = 0;
-  
+
   cout << "Gyro:Run() in a separate thread" << std::endl;
 
   p_mpu6050->set_defaults();
@@ -106,7 +106,7 @@ int Gyro::Run(void)
     {
       m_callback(m_gyro_pitch_data_raw, m_gyro_yaw_data_raw, m_angle_gyro, m_angle_acc);
     }
-    
+
     // CallBack now has all data
     // cout << "Angle Gyro=" << m_angle_gyro << "\tAngle Accelerometer=" << m_angle_acc << "\tGyro Yaw=" << m_gyro_yaw_data_raw << "\tGyro Pitch=" << m_gyro_pitch_data_raw << std::endl;
 

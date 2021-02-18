@@ -21,7 +21,7 @@ FUNCTION: Controller::Controller()
 Controller::Controller()
 {
   cout << "Controller::Controller()" << std::endl;
-  
+
   m_balancer = new Balancer();
   m_legs = new Legs();
 
@@ -29,17 +29,17 @@ Controller::Controller()
   // test_legs.ProcessKeys();
 
   cout << "Stand for 6 seconds" << std::endl;
-  m_legs->Stand();
+  m_legs->Sit();
   sleep(6);
 
   /************ Leg tests
   cout << "Kneel for 6 seconds" << std::endl;
   m_legs->Kneel();
   sleep(6);
- 
+
   cout << "Crouch for 6 seconds" << std::endl;
   m_legs->Crouch();
-  sleep(6);  
+  sleep(6);
 
   cout << "Stand for 6 seconds" << std::endl;
   m_legs->Stand();

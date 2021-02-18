@@ -28,14 +28,14 @@ PCA9685::PCA9685()
   WriteByte(PCA9685::MODE2, PCA9685::OUTDRV);
   WriteByte(PCA9685::MODE1, PCA9685::ALLCALL);
   gpioDelay(0.005 * 1000000); // Micro seconds, wait for oscillator
-  
+
   mode1 = ReadByte(PCA9685::MODE1);
   cout << "READ mode1=" << mode1 << std::endl;
   mode1 = mode1 & ~SLEEP;  // wake up (reset sleep)
   cout << "mode1=" << mode1 << "~SLEEP=" << ~SLEEP << std::endl;
   WriteByte(PCA9685::MODE1, mode1);
 
-  gpioDelay(0.005 * 1000000); // Micro seconds, wait for oscillator 
+  gpioDelay(0.005 * 1000000); // Micro seconds, wait for oscillator
 
   cout << "PCA9685 Set frequency" << std::endl;
   set_pwm_freq(60);
@@ -68,7 +68,7 @@ void PCA9685::set_pwm_freq(int freq_hz)
   int prescale;
   int oldmode;
   int newmode;
-  
+
   prescaleval = 25000000.0; // 25MHz
   prescaleval /= 4096.0; // 12-bit
   prescaleval /= float(freq_hz);

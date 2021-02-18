@@ -19,7 +19,7 @@ MPU6050::MPU6050()
   // We start un-calibrated
   m_calibrated = false;
 
-  // Acceleration data cal is just a constant 
+  // Acceleration data cal is just a constant
   m_acc_calibration_value = -70; // 1000;
 
   // Should not need this but stops i2cClose from complaining on shutdown
@@ -27,7 +27,7 @@ MPU6050::MPU6050()
   {
     cout << "~MPU6050 pigpio initialization failed" << std::endl;
   }
-  
+
   // RP uses bus 1
   device_fd = i2cOpen(1, MPU6050::Device_Address, 0);
 }
@@ -65,7 +65,7 @@ void MPU6050::calibrate(void)
 
   uint32_t timer = gpioTick() + (uint32_t)4000;
   uint32_t elapsed = gpioTick();
-  
+
   // Loop 500 times
   for(int counter = 0; counter < 500; counter++)
   {
@@ -75,12 +75,12 @@ void MPU6050::calibrate(void)
     // DEBUG cout << "gyro_yaw_calibration_value  =" << gyro_yaw_calibration_value << std::endl;
     // DEBUG cout << "gyro_pitch_calibration_value=" << gyro_pitch_calibration_value << std::endl;
     //Wait for 3700 microseconds to simulate the main program loop time
-    
+
     while(timer > gpioTick());
     timer += (uint32_t)4000;
   }
   m_gyro_pitch_calibration_value /= 500; // Divide the total value by 500 to get the avarage gyro offset
-  m_gyro_yaw_calibration_value /= 500;            
+  m_gyro_yaw_calibration_value /= 500;
 
   cout << "Elapsed time = " << float(((gpioTick() - elapsed) / 500)) << "us" << std::endl;
   cout << "gyro_pitch_calibration_value=" << m_gyro_pitch_calibration_value << std::endl;
@@ -116,7 +116,7 @@ FUNCTION:      MPU6050::get_gyro_?_cal()
 int MPU6050::get_gyro_X_cal(void)
 {
   if (!m_calibrated) calibrate();
-  
+
   return(read_raw_data(GYRO_XOUT_H) - m_gyro_yaw_calibration_value);
 }
 

@@ -56,3 +56,13 @@ bool Leg::Crouch()
 
   return(m_hip.Angle(180) && m_knee.Angle(0));
 }
+
+/*------------------------------------------------------------------------------
+FUNCTION: bool Leg::Sit()
+------------------------------------------------------------------------------*/
+bool Leg::Sit()
+{
+  std::cout << "Leg::Sit()" << std::endl;
+
+  return(m_hip.Angle(0) && m_knee.Angle(90));
+}
