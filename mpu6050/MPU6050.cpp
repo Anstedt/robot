@@ -19,8 +19,9 @@ MPU6050::MPU6050()
   // We start un-calibrated
   m_calibrated = false;
 
-  // Acceleration data cal is just a constant
-  m_acc_calibration_value = -70; // 1000;
+  // Acceleration data cal is just a constant based on sitting the robot
+  // straight up and capturing the raw Z axis data
+  m_acc_calibration_value = -600; // 1000;
 
   // Should not need this but stops i2cClose from complaining on shutdown
   if (gpioInitialise() < 0)
@@ -177,16 +178,16 @@ PURPOSE: This function assumes all accel axis use the same constant
 ------------------------------------------------------------------------------*/
 int MPU6050::get_accel_cal(int addr)
 {
-  int accelerometer_data_raw;
+  int accelerometer_data_cal;
 
   // Add in the cal value
-  accelerometer_data_raw = read_raw_data(addr) + m_acc_calibration_value;
+  accelerometer_data_cal = read_raw_data(addr) + m_acc_calibration_value;
 
   // Keep values in range
-  if (accelerometer_data_raw > 8200) accelerometer_data_raw = 8200;
-  if (accelerometer_data_raw < -8200) accelerometer_data_raw = -8200;
+  if (accelerometer_data_cal > 8200) accelerometer_data_cal = 8200;
+  if (accelerometer_data_cal < -8200) accelerometer_data_cal = -8200;
 
-  return(accelerometer_data_raw);
+  return(accelerometer_data_cal);
 }
 
 /*------------------------------------------------------------------------------

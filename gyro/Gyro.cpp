@@ -73,7 +73,10 @@ int Gyro::Run(void)
 
   while (ThreadRunning())
   {
-    m_angle_acc = asin((float)(p_mpu6050->get_accel_Z_cal())/8200.0)* 57.296; //Calculate the current angle according to the accelerometer
+    // The 57.296 is the conversions from radians to degrees. The - is so that
+    // leaning forward is positive. The 8200(8192) is from the data sheet for
+    // AFS_SEL 1.
+    m_angle_acc = asin((float)(p_mpu6050->get_accel_Z_cal())/8200.0) * -57.296; //Calculate the current angle according to the accelerometer
 
     // On startup use accelerometer since that is the best we have
     if(m_start == 0)
