@@ -26,8 +26,7 @@ Balancer::Balancer()
                               MOTOR1_GPIO_MODE_2};
 
   // Motor uses Gyro data so start it first
-  m_motor = new Motor(MOTORS_STEPS_PER_REV, MOTOR1_GPIO_STEP, MOTOR1_GPIO_DIR,
-                      mode_array, MOTORS_MODE_DEFAULT, MOTORS_RPM_DEFAULT);
+  m_motor = new Motor(MOTORS_STEPS_PER_REV, MOTOR2_GPIO_STEP, MOTOR2_GPIO_DIR, mode_array, MOTORS_MODE_DEFAULT, MOTORS_RPM_DEFAULT);
 
   m_motor->Activate(SCHED_FIFO, 1); // Make the motor the highest priority
 
@@ -82,6 +81,7 @@ FUNCTION:      Balancer::CallBack(int pitch, int yaw, float angle_gyro, float an
 void Balancer::CallBack(int gyro_pitch, int gyro_yaw, float angle_gyro, float angle_acc)
 {
   // cout << "Angle Gyro=" << angle_gyro << "\tAngle Accel=" << angle_acc << "\tGyro Pitch=" << gyro_pitch << "\tGyro Yaw=" << gyro_yaw << std::endl;
+  cout << "Angle Gyro=" << angle_gyro << "\tAngle Accel=" << angle_acc << std::endl;
 
   m_motor->AddGyroData(gyro_pitch, gyro_yaw, angle_gyro, angle_acc);
 }
