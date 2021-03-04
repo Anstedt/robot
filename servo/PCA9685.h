@@ -1,14 +1,13 @@
 /*******************************************************************************
-FILE:    PCA9685.h
-PURPOSE: Singleton to for Servo Control
+FILE:     PCA9685.h
+PURPOSE:  Singleton to for Servo Control
 *******************************************************************************/
-
 #ifndef PCA9685_H
 #define PCA9685_H
 
 /* CLASSES ********************************************************************/
 /*------------------------------------------------------------------------------
-CLASS: PCA9685
+CLASS:  PCA9685
 ------------------------------------------------------------------------------*/
 class PCA9685
 {
@@ -68,8 +67,8 @@ private:
 };
 
 /*------------------------------------------------------------------------------
-FUNCTION: inline PCA9685* PCA9685::Instance()
-RETURNS:  Pointer to the PCA9685 singleton
+FUNCTION:  inline PCA9685* PCA9685::Instance()
+RETURNS:   Pointer to the PCA9685 singleton
 ------------------------------------------------------------------------------*/
 inline PCA9685* PCA9685::Instance()
 {
@@ -77,5 +76,4 @@ inline PCA9685* PCA9685::Instance()
 
   return (&instance);
 }
-
 #endif /* PCA9685_H */

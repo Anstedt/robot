@@ -1,3 +1,7 @@
+/*******************************************************************************
+PACKAGE:       Robot
+FILE:          Motor.h
+*******************************************************************************/
 #ifndef MOTOR_H
 #define MOTOR_H
 
@@ -8,9 +12,8 @@
 using MotorModeGPIO = int[3];
 
 /*------------------------------------------------------------------------------
-CLASS:	       Motor
-PROGRAMMER:    Howard
-PURPOSE:       Control a stepper motor
+CLASS:	  Motor
+PURPOSE:  Control a stepper motor
 ------------------------------------------------------------------------------*/
 class Motor : public Threads
 {

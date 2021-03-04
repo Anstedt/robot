@@ -1,3 +1,7 @@
+/*******************************************************************************
+PACKAGE:  Robot
+FILE:     Servo.cpp
+*******************************************************************************/
 #include <iostream>
 #include "Servo.h"
 #include "PCA9685.h"
@@ -6,8 +10,8 @@
 using namespace std;
 
 /*------------------------------------------------------------------------------
-FUNCTION:      Servo::Servo()
-ARGUMENTS:     servo_num 0...15
+FUNCTION:   Servo::Servo()
+ARGUMENTS:  servo_num 0...15
 ------------------------------------------------------------------------------*/
 Servo::Servo(int min_pwd, int max_pwd)
 {
@@ -21,14 +25,14 @@ Servo::Servo(int min_pwd, int max_pwd)
 }
 
 /*------------------------------------------------------------------------------
-FUNCTION: Servo::~Servo()
+FUNCTION:  Servo::~Servo()
 ------------------------------------------------------------------------------*/
 Servo::~Servo()
 {
 }
 
 /*------------------------------------------------------------------------------
-FUNCTION:      bool Servo::set_servo_angle(channel, degrees)
+FUNCTION:  bool Servo::set_servo_angle(channel, degrees)
 ------------------------------------------------------------------------------*/
 bool Servo::set_servo_angle(int channel, int degrees)
 {
@@ -55,7 +59,7 @@ bool Servo::set_servo_angle(int channel, int degrees)
 }
 
 /*------------------------------------------------------------------------------
-FUNCTION: Servo::set_min_max_pwm(int min_pwm, int max_pwm)
+FUNCTION:  Servo::set_min_max_pwm(int min_pwm, int max_pwm)
 ------------------------------------------------------------------------------*/
 void Servo::set_min_max_pwm(int min_pwm, int max_pwm)
 {
@@ -66,9 +70,9 @@ void Servo::set_min_max_pwm(int min_pwm, int max_pwm)
 }
 
 /*------------------------------------------------------------------------------
-FUNCTION: Servo::set_servo_pwm(int channel, int off)
-0   = minimum on time
-off = off time
+FUNCTION:  Servo::set_servo_pwm(int channel, int off)
+           0   = minimum on time
+           off = off time
 ------------------------------------------------------------------------------*/
 void Servo::set_servo_pwm(int channel, int off)
 {

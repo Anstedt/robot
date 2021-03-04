@@ -1,3 +1,9 @@
+/*******************************************************************************
+PACKAGE:  Robot
+FILE:     Fifo.h
+
+PURPOSE:  Low over head Fifo buffer used between real-time tasks
+*******************************************************************************/
 #ifndef FIFO_H
 #define FIFO_H
 

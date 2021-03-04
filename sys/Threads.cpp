@@ -1,18 +1,38 @@
+/*******************************************************************************
+PACKAGE:  Robot
+FILE:     Threads.cpp
+
+PURPOSE:  Linux Thread Support
+*******************************************************************************/
 #include <iostream>
 #include "Threads.h"
 
 using namespace std;
 
+/*------------------------------------------------------------------------------
+FUNCTION:  Threads::Threads()
+------------------------------------------------------------------------------*/
 Threads::Threads()
 {
   m_running = false;
   m_stopped = true;
 }
 
+/*------------------------------------------------------------------------------
+FUNCTION:  Threads::~Threads()
+------------------------------------------------------------------------------*/
 Threads::~Threads()
 {
 }
 
+/*------------------------------------------------------------------------------
+FUNCTION:  void* Threads::ThreadRun(void* This)
+PURPOSE:   Thread Runner
+
+ARGUMENTS: Object this pointer
+
+RETURNS:   None
+------------------------------------------------------------------------------*/
 void* Threads::ThreadRun(void* This)
 {
   Threads* pThread = (Threads *)This;
@@ -24,6 +44,15 @@ void* Threads::ThreadRun(void* This)
   return(NULL);
 }
 
+
+/*------------------------------------------------------------------------------
+FUNCTION:  bool Threads::Activate(int policy, int priority)
+PURPOSE:   Start the thread
+
+ARGUMENTS: Thread policy and riority
+
+RETURNS:   None
+------------------------------------------------------------------------------*/
 bool Threads::Activate(int policy, int priority)
 {
   bool status = false;
@@ -73,21 +102,41 @@ bool Threads::Activate(int policy, int priority)
   return status;
 }
 
+/*------------------------------------------------------------------------------
+FUNCTION:  bool Threads::JoinThread()
+
+RETURNS:   True: Joined thread
+------------------------------------------------------------------------------*/
 bool Threads::JoinThread()
 {
   return(pthread_join(m_threadStruct, NULL));
 }
 
+/*------------------------------------------------------------------------------
+FUNCTION:  bool Threads::ThreadRunning()
+
+RETURNS:   True: thread is running
+------------------------------------------------------------------------------*/
 bool Threads::ThreadRunning()
 {
   return(m_running);
 }
 
+/*------------------------------------------------------------------------------
+FUNCTION:  void Threads::StopThreadRun()
+
+RETURNS:   None
+------------------------------------------------------------------------------*/
 void Threads::StopThreadRun()
 {
   m_running = false;
 }
 
+/*------------------------------------------------------------------------------
+FUNCTION:  bool Threads::ThreadStopped()
+
+RETURNS:   True: Thread is stopped
+------------------------------------------------------------------------------*/
 bool Threads::ThreadStopped()
 {
   return(m_stopped); // True if thread stopped
