@@ -1,3 +1,9 @@
+/*******************************************************************************
+PACKAGE:  Robot
+FILE:     Motor.cpp
+
+PURPOSE:  Controls one motor of the 2 the robot has
+*******************************************************************************/
 #include <iostream>
 #include <pigpio.h>
 #include "Motor.h"
@@ -51,12 +57,12 @@ Motor::Motor(int steps_rev, int pulse_gpio, int dir_gpio, const MotorModeGPIO& m
   // high is always this number of us. Can go as low as 1.9us
   m_pulse_high_us = PULSE_LOW_TIME_US;
   m_pulse_low_us = 0; // Is variable based on requested speed
-  
+
   cout << "steps_rev=" << m_motor_steps_rev << " pulse=" << m_motor_pulse_gpio << " dir=" << m_motor_dir_gpio << " mode=" << mode << " modes="
        << m_motor_mode_gpio[0] << ":"
        << m_motor_mode_gpio[1] << ":"
        << m_motor_mode_gpio[2] << ":" << std::endl;
-    
+
   if (gpioInitialise() < 0)
   {
     cout << "Motor pigpio initialization failed" << std::endl;
@@ -182,9 +188,9 @@ int Motor::Run(void)
   cout << "Motor:Run() in a separate thread" << std::endl;
 
   uint32_t loop_time_hja = gpioTick();
-  
+
   while (ThreadRunning())
-  {  
+  {
     // If we have new data, update motor control variables
     if (!m_angle_gyro_fifo.empty())
     {
@@ -215,7 +221,7 @@ int Motor::Run(void)
       m_motor_steps_to_go--;
       // Pulse high time is always the same
       gpioWrite(m_motor_pulse_gpio, 1);
-      
+
       // Delay Time High: Pulse the motor high then use the actual pulse time to
       // determine the pulse low time.
       m_pulse_low_us = GetPulseLowTime(gpioDelay(m_pulse_high_us));
@@ -224,7 +230,7 @@ int Motor::Run(void)
       gpioWrite(m_motor_pulse_gpio, 0);
       gpioDelay(m_pulse_low_us);
 
-      cout << "### steps_to_go=" << m_motor_steps_to_go << std::endl;
+      // cout << "### steps_to_go=" << m_motor_steps_to_go << std::endl;
       // cout << "pulse_gpio=" << m_motor_pulse_gpio << " motor_dir=" << m_motor_dir << " steps_to_go=" << m_motor_steps_to_go << " pulse_low_us=" << m_pulse_low_us << " pulse_high_us="  << m_pulse_high_us << " LoopTime_us=" << ( gpioTick() - loop_time_hja) << std::endl;
     }
     else
@@ -233,7 +239,7 @@ int Motor::Run(void)
       // half gyro rate.
       gpioDelay(500);
     }
-    
+
     loop_time_hja = gpioTick();
   }
 

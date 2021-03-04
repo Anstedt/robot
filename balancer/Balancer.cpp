@@ -81,7 +81,7 @@ FUNCTION:      Balancer::CallBack(int pitch, int yaw, float angle_gyro, float an
 void Balancer::CallBack(int gyro_pitch, int gyro_yaw, float angle_gyro, float angle_acc)
 {
   // cout << "Angle Gyro=" << angle_gyro << "\tAngle Accel=" << angle_acc << "\tGyro Pitch=" << gyro_pitch << "\tGyro Yaw=" << gyro_yaw << std::endl;
-  cout << "Angle Gyro=" << angle_gyro << "\tAngle Accel=" << angle_acc << std::endl;
+  // cout << "Angle Gyro=" << angle_gyro << "\tAngle Accel=" << angle_acc << std::endl;
 
   m_motor->AddGyroData(gyro_pitch, gyro_yaw, angle_gyro, angle_acc);
 }

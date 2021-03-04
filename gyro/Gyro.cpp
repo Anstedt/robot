@@ -1,3 +1,9 @@
+/*******************************************************************************
+PACKAGE: Robot
+FILE:    Gyro.cpp
+
+PURPOSE: Gyroscope Accelorometer Interface
+*******************************************************************************/
 #include <iostream>
 #include <pigpio.h>
 #include <stdlib.h>
@@ -9,6 +15,9 @@
 
 using namespace std;
 
+/*------------------------------------------------------------------------------
+FUNCTION: Gyro::Gyro()
+------------------------------------------------------------------------------*/
 Gyro::Gyro()
 {
   m_callback = 0;
@@ -30,6 +39,9 @@ Gyro::Gyro()
   cout << "Gyro::Gyro()" <<std::endl;
 }
 
+/*------------------------------------------------------------------------------
+FUNCTION: Gyro::~Gyro()
+------------------------------------------------------------------------------*/
 Gyro::~Gyro()
 {
   delete p_mpu6050;
@@ -56,6 +68,11 @@ bool Gyro::RegisterForCallback(std::function<void(int, int, float, float)> callb
   return(true);
 }
 
+/*------------------------------------------------------------------------------
+FUNCTION: int Gyro::Run(void)
+
+PURPOSE: Process data for Gyro/Accel and send it registered module
+------------------------------------------------------------------------------*/
 int Gyro::Run(void)
 {
   uint32_t timer = 0;

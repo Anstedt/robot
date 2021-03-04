@@ -1,3 +1,7 @@
+/*******************************************************************************
+PACKAGE: Robot
+FILE:    Balancer.h
+*******************************************************************************/
 #ifndef BALANCER_H
 #define BALANCER_H
 
@@ -8,9 +12,9 @@
 /* CLASSES ********************************************************************/
 /*------------------------------------------------------------------------------
 CLASS:	       Balancer
-PURPOSE:       Gather data from gyro.
-               Use PID to determine required robot position change to balance
-               Control motor to get to specified position
+PURPOSE: Gather data from gyro.
+         Use PID to determine required robot position change to balance Control
+         motor to get to specified position.
 ------------------------------------------------------------------------------*/
 class Balancer
 {
