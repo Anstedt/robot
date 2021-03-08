@@ -26,7 +26,7 @@ Balancer::Balancer()
                               MOTOR1_GPIO_MODE_2};
 
   // Motor uses Gyro data so start it first
-  m_motor = new Motor(MOTORS_STEPS_PER_REV, MOTOR2_GPIO_STEP, MOTOR2_GPIO_DIR, mode_array, MOTORS_MODE_DEFAULT, MOTORS_RPM_DEFAULT);
+  m_motor = new Motor(MOTORS_STEPS_PER_REV, MOTOR1_GPIO_STEP, MOTOR1_GPIO_DIR, MOTOR2_GPIO_STEP, MOTOR2_GPIO_DIR, mode_array, MOTORS_MODE_DEFAULT, MOTORS_RPM_DEFAULT);
 
   m_motor->Activate(SCHED_FIFO, 1); // Make the motor the highest priority
 

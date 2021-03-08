@@ -39,13 +39,17 @@ ARGUMENTS: steps_rev = number of steps for 1 full revolution, mode = 0
            mode = default stepper/chop mode for the motor
            revs_per_min = revolutions per minute
 ------------------------------------------------------------------------------*/
-Motor::Motor(int steps_rev, int pulse_gpio, int dir_gpio, const MotorModeGPIO& mode_gpio, int mode, int revs_per_min)
+Motor::Motor(int steps_rev, int pulse1_gpio, int dir1_gpio, int pulse2_gpio, int dir2_gpio, const MotorModeGPIO& mode_gpio, int mode, int revs_per_min)
 {
   cout << "Motor::Motor()" << std::endl;
 
   m_motor_steps_rev = steps_rev;
-  m_motor_pulse_gpio = pulse_gpio;
-  m_motor_dir_gpio = dir_gpio;
+
+  m_motor1_pulse_gpio = pulse1_gpio;
+  m_motor1_dir_gpio   = dir1_gpio;
+
+  m_motor2_pulse_gpio = pulse2_gpio;
+  m_motor2_dir_gpio   = dir2_gpio;
 
   // Copy the gpio mode pin array
   std::copy(std::begin(mode_gpio), std::end(mode_gpio), std::begin(m_motor_mode_gpio));
@@ -58,7 +62,10 @@ Motor::Motor(int steps_rev, int pulse_gpio, int dir_gpio, const MotorModeGPIO& m
   m_pulse_high_us = PULSE_LOW_TIME_US;
   m_pulse_low_us = 0; // Is variable based on requested speed
 
-  cout << "steps_rev=" << m_motor_steps_rev << " pulse=" << m_motor_pulse_gpio << " dir=" << m_motor_dir_gpio << " mode=" << mode << " modes="
+  cout << "steps_rev=" << m_motor_steps_rev
+       << " pulse1=" << m_motor1_pulse_gpio << " dir1=" << m_motor1_dir_gpio
+       << " pulse2=" << m_motor2_pulse_gpio << " dir2=" << m_motor2_dir_gpio
+       << " mode=" << mode << " modes="
        << m_motor_mode_gpio[0] << ":"
        << m_motor_mode_gpio[1] << ":"
        << m_motor_mode_gpio[2] << ":" << std::endl;
@@ -68,9 +75,13 @@ Motor::Motor(int steps_rev, int pulse_gpio, int dir_gpio, const MotorModeGPIO& m
     cout << "Motor pigpio initialization failed" << std::endl;
   }
 
-  // Initialize gpio
-  gpioSetMode(m_motor_pulse_gpio, PI_OUTPUT);   // pulse pin
-  gpioSetMode(m_motor_dir_gpio, PI_OUTPUT);     // direction pin
+  // Initialize gpio motor 1
+  gpioSetMode(m_motor1_pulse_gpio, PI_OUTPUT);   // pulse pin
+  gpioSetMode(m_motor1_dir_gpio, PI_OUTPUT);     // direction pin
+
+  // Initialize gpio motor 2
+  gpioSetMode(m_motor2_pulse_gpio, PI_OUTPUT);   // pulse pin
+  gpioSetMode(m_motor2_dir_gpio, PI_OUTPUT);     // direction pin
 
   // Mode gpio pins
   gpioSetMode(m_motor_mode_gpio[0], PI_OUTPUT); // mode pin 0
@@ -80,8 +91,10 @@ Motor::Motor(int steps_rev, int pulse_gpio, int dir_gpio, const MotorModeGPIO& m
   // Now set the motor mode
   SetMotorMode(mode);
 
-  // Default the direction to CW
-  gpioWrite(m_motor_dir_gpio, MOTOR_CW);
+  // Default the direction, note motor 1/2 are apposite direction to go the same
+  // way for the robot
+  gpioWrite(m_motor1_dir_gpio, MOTOR_CW);
+  gpioWrite(m_motor2_dir_gpio, MOTOR_CCW);
 }
 
 Motor::~Motor()
@@ -199,18 +212,21 @@ int Motor::Run(void)
 
       if (motor_angle_cmd < 0)
       {
-        m_motor_dir = MOTOR_CW;
+        m_motor1_dir = MOTOR_CCW;
+        m_motor2_dir = MOTOR_CW;
         motor_angle_cmd *= -1;
       }
       else
       {
-        m_motor_dir = MOTOR_CCW;
+        m_motor1_dir = MOTOR_CW;
+        m_motor2_dir = MOTOR_CCW;
       }
       // Convert the angle to steps based on the current chopper mode
       m_motor_steps_to_go = AngleToSteps(motor_angle_cmd);
 
       // Set the direction based on the requested angle
-      gpioWrite(m_motor_dir_gpio, m_motor_dir);
+      gpioWrite(m_motor1_dir_gpio, m_motor1_dir);
+      gpioWrite(m_motor2_dir_gpio, m_motor2_dir);
 
       // cout << " Fifo Angle=" << motor_angle_cmd << " Direction=" << m_motor_dir << " steps_to_go=" << m_motor_steps_to_go << std::endl;
     }
@@ -220,14 +236,16 @@ int Motor::Run(void)
     {
       m_motor_steps_to_go--;
       // Pulse high time is always the same
-      gpioWrite(m_motor_pulse_gpio, 1);
+      gpioWrite(m_motor1_pulse_gpio, 1);
+      gpioWrite(m_motor2_pulse_gpio, 1);
 
       // Delay Time High: Pulse the motor high then use the actual pulse time to
       // determine the pulse low time.
       m_pulse_low_us = GetPulseLowTime(gpioDelay(m_pulse_high_us));
 
       // Delay Time Low: Now do the low pulse
-      gpioWrite(m_motor_pulse_gpio, 0);
+      gpioWrite(m_motor1_pulse_gpio, 0);
+      gpioWrite(m_motor2_pulse_gpio, 0);
       gpioDelay(m_pulse_low_us);
 
       // cout << "### steps_to_go=" << m_motor_steps_to_go << std::endl;
