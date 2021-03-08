@@ -7,7 +7,7 @@
 
 ### Legs
 
-- Right and Left leg joints are now roughly correct for 0, 90 and 180 degress.
+- Right and Left leg joints are now roughly correct for 90(forward), 0(straight) and -90(back) degress.
 
 ## Controller
 - Creates and controls the robot, constructed from robot.c::main()

@@ -19,7 +19,6 @@ public:
   // Constructors
   Joint(int channel, int min_pulse, int max_pulse);
   // Mutators: non-const operations
-  bool Stand();
   bool Angle(int angle);
   void SetPWM(int off_pwm);
   // Accessors: const operations

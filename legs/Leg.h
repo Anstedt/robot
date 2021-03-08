@@ -22,7 +22,6 @@ public:
   // Mutators: non-const operations
   bool Stand();
   bool Walk();
-  bool Kneel();
   bool Crouch();
   bool Sit();
 

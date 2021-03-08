@@ -30,7 +30,7 @@ bool Leg::Stand()
 {
   std::cout << "Leg::Stand()" << std::endl;
 
-  return(m_hip.Stand() && m_knee.Stand());
+  return(m_hip.Angle(0) && m_knee.Angle(0));
 }
 
 /*------------------------------------------------------------------------------
@@ -40,17 +40,7 @@ bool Leg::Walk()
 {
   std::cout << "Leg::Walk()" << std::endl;
 
-  return(m_hip.Angle(80) && m_knee.Angle(160));
-}
-
-/*------------------------------------------------------------------------------
-FUNCTION:  bool Leg::Kneel()
-------------------------------------------------------------------------------*/
-bool Leg::Kneel()
-{
-  std::cout << "Leg::Kneel()" << std::endl;
-
-  return(m_hip.Angle(0) && m_knee.Angle(180));
+  return(m_hip.Angle(20) && m_knee.Angle(-60));
 }
 
 /*------------------------------------------------------------------------------
@@ -60,7 +50,7 @@ bool Leg::Crouch()
 {
   std::cout << "Leg::Crouch()" << std::endl;
 
-  return(m_hip.Angle(180) && m_knee.Angle(0));
+  return(m_hip.Angle(90) && m_knee.Angle(-90));
 }
 
 /*------------------------------------------------------------------------------
@@ -68,7 +58,7 @@ FUNCTION:  bool Leg::Sit()
 ------------------------------------------------------------------------------*/
 bool Leg::Sit()
 {
-  std::cout << "Leg::Sit()" << std::endl;
+  std::cout << "Leg::Sit() On Chair" << std::endl;
 
-  return(m_hip.Angle(0) && m_knee.Angle(90));
+  return(m_hip.Angle(90) && m_knee.Angle(-90));
 }
