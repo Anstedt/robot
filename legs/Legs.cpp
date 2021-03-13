@@ -69,3 +69,24 @@ bool Legs::Sit()
 
   return(m_left.Sit() && m_right.Sit());
 }
+/*------------------------------------------------------------------------------
+FUNCTION:  bool Balance(double knee_angle, int wheel_offset)
+PURPOSE:   Based on knee angle select hip angle based on wheel offset.
+           This is so a know balance point, wheel_offset, can be set based on
+           the knee angle.
+
+ARGUMENTS: knee_angle   in degrees
+           wheel_offset in MM from center of hip on horizontal plain
+
+RETURNS:   true if all goes well
+------------------------------------------------------------------------------*/
+bool Legs::Balance(double knee_angle, int wheel_offset)
+{
+  bool lstatus = true;
+  bool rstatus = true;
+  
+  lstatus = m_left.Balance(knee_angle, wheel_offset);
+  rstatus = m_right.Balance(knee_angle, wheel_offset);
+
+  return(lstatus && rstatus);
+}

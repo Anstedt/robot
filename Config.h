@@ -6,6 +6,12 @@ PURPOSE:  Hardware based configs for the robot
 #ifndef CONFIG_H
 #define CONFIG_H
 
+// Converts degrees to radians.
+#define degreesToRadians(angleDegrees) ((angleDegrees) * M_PI / 180.0)
+
+// Converts radians to degrees.
+#define radiansToDegrees(angleRadians) ((angleRadians) * 180.0 / M_PI)
+
 // Motor Constants
 const int MOTORS_STEPS_PER_REV = 200;
 const int MOTORS_MODE_DEFAULT  = 5;
@@ -39,5 +45,9 @@ const int R_MAX_PULSE_HIP  = 644;
 const int R_CHAN_KNEE      = 3;
 const int R_MIN_PULSE_KNEE = 112;
 const int R_MAX_PULSE_KNEE = 602;
+
+// Leg Constants in mm
+const int SHIN_LENGTH   = 75;
+const int THIGH_LENGTH  = 95;
 
 #endif /* CONFIG_H */

@@ -7,7 +7,6 @@ PURPOSE:  A robot has 2 legs, each leg has 2 joints/servos
 #ifndef LEGS_H
 #define LEGS_H
 
-/* INCLUDE ********************************************************************/
 #include "Leg.h"
 
 /* CLASSES ********************************************************************/
@@ -26,6 +25,8 @@ public:
   bool Walk();
   bool Crouch();
   bool Sit();
+
+  bool Balance(double knee_angle, int wheel_offset);
 
   void Set_RL_Hip(int val)  { m_right.Set_Hip(val); };
   void Set_RL_Knee(int val) { m_right.Set_Knee(val); };
