@@ -22,10 +22,15 @@ Controller::Controller()
   m_balancer = new Balancer();
   m_legs = new Legs();
 
-  cout << std::endl << "BEG Sitting for 6 seconds" << std::endl;
-  m_legs->Sit();
+  cout << std::endl << "BEG Balance(30,0) for 6 seconds" << std::endl;
+  m_legs->Balance(30, 0);
   sleep(6);
-  cout << "END Sitting for 6 seconds" << std::endl << std::endl;
+  cout << "END Balance for 6 seconds" << std::endl << std::endl;
+
+  cout << std::endl << "BEG Balance(30,10) for 6 seconds" << std::endl;
+  m_legs->Balance(30, 10);
+  sleep(6);
+  cout << "END Balance for 6 seconds" << std::endl << std::endl;
 
   // TestModLegs test_legs(m_legs);
   // test_legs.ProcessKeys();

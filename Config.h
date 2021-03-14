@@ -7,10 +7,10 @@ PURPOSE:  Hardware based configs for the robot
 #define CONFIG_H
 
 // Converts degrees to radians.
-#define degreesToRadians(angleDegrees) ((angleDegrees) * M_PI / 180.0)
+#define DegreesToRadians(angleDegrees) ((angleDegrees) * M_PI / 180.0)
 
 // Converts radians to degrees.
-#define radiansToDegrees(angleRadians) ((angleRadians) * 180.0 / M_PI)
+#define RadiansToDegrees(angleRadians) ((angleRadians) * 180.0 / M_PI)
 
 // Motor Constants
 const int MOTORS_STEPS_PER_REV = 200;

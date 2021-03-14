@@ -25,7 +25,7 @@ public:
   bool Crouch();
   bool Sit();
 
-  bool Balance(int knee_angle, int wheel_offset);
+  bool Balance(double knee_angle, double wheel_offset);
   
   void Set_Hip(int val)  { m_hip.SetPWM(val); };
   void Set_Knee(int val) { m_knee.SetPWM(val); };
@@ -39,7 +39,7 @@ private:
   // Mutators: non-const operations
   // Accessors: const operations
   // Static and friend functions
-  int GetHipAngle(double knee_angle, int wheel_offset);
+  double GetHipAngle(double knee_angle, double wheel_offset);
   // Memory management
   Leg(const Leg&);
   Leg& operator=(const Leg& rhs);
