@@ -23,11 +23,12 @@ Controller::Controller()
   m_legs = new Legs();
 
   cout << std::endl << "BEG Balance(30,0) for 6 seconds" << std::endl;
+  cout << "--------------------------------------------------------------------------------" << std::endl;
   m_legs->Balance(30, 0);
-  sleep(6);
   cout << "END Balance for 6 seconds" << std::endl << std::endl;
 
   cout << std::endl << "BEG Balance(30,10) for 6 seconds" << std::endl;
+  cout << "--------------------------------------------------------------------------------" << std::endl;
   m_legs->Balance(30, 10);
   sleep(6);
   cout << "END Balance for 6 seconds" << std::endl << std::endl;

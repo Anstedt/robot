@@ -6,7 +6,6 @@ PURPOSE:
 #include "Leg.h"
 #include "Config.h"
 #include <iostream>
-#include<cmath>
 
 /* METHODS ********************************************************************/
 /*------------------------------------------------------------------------------
@@ -114,17 +113,22 @@ double Leg::GetHipAngle(double knee_angle, double wheel_offset)
   // Correct for equation angles versus physical angles
   knee_angle += 90;
   
-  // double knee_rad = DegreesToRadians(knee_angle);
+  double knee_rad = DegreesToRadians(knee_angle);
+  double knee_deg = RadiansToDegrees(knee_rad);
+  
   // double knee_cos = cos(knee_rad);
 
-  double knee_rad = (knee_angle * M_PI) / 180;
-  double m_pi = (double)M_PI;
+  // double knee_rad = (knee_angle * M_PI) / 180;
+  // double m_pi = (double)M_PI;
+
+  std::cout << "knee_rad=" << knee_rad
+            << "knee_deg=" << knee_deg << std::endl;
   
-  std::cout << "M_PI=" << M_PI << std::endl;
-  std::cout << "m_pi=" << m_pi << std::endl;
+  // std::cout << "M_PI=" << M_PI << std::endl;
+  // std::cout << "m_pi=" << m_pi << std::endl;
   
-  std::cout << "M_PI/180=" << M_PI/180 << std::endl;
-  std::cout << "180/M_PI=" << 180/M_PI << std::endl;
+  // std::cout << "M_PI/180=" << M_PI/180 << std::endl;
+  // std::cout << "180/M_PI=" << 180/M_PI << std::endl;
   
   // thigh, shin, wheel_offset, hypotenuse
   // a,     b,    c,            d

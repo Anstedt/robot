@@ -6,6 +6,8 @@ PURPOSE:  Hardware based configs for the robot
 #ifndef CONFIG_H
 #define CONFIG_H
 
+#include<cmath>
+
 // Converts degrees to radians.
 #define DegreesToRadians(angleDegrees) ((angleDegrees) * M_PI / 180.0)
 
