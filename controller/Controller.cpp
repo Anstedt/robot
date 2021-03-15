@@ -22,16 +22,35 @@ Controller::Controller()
   m_balancer = new Balancer();
   m_legs = new Legs();
 
-  // TestModLegs test_legs(m_legs);
-  // test_legs.ProcessKeys();
+  sleep(4); // Let other threads start 
 
-  cout << "Walk for 6 seconds" << std::endl;
-  m_legs->Walk();
+  cout << std::endl << "Balance(30, 0)" << std::endl;
+  m_legs->Balance(30, 0);
+  sleep(6);
+  
+  cout << std::endl << "BEG Balance(30, 10)" << std::endl;
+  m_legs->Balance(30, 10);
+  sleep(6);
+  
+  cout << std::endl << "BEG Balance(30, -10)" << std::endl;
+  m_legs->Balance(30, -10);
   sleep(6);
 
-  /************ Leg tests
-  cout << "Kneel for 6 seconds" << std::endl;
-  m_legs->Kneel();
+  cout << std::endl << "BEG Balance(80, 0)" << std::endl;
+  m_legs->Balance(80, 0);
+  sleep(6);
+
+  cout << std::endl << "BEG Balance(80, 10)" << std::endl;
+  m_legs->Balance(80, 10);
+  sleep(6);
+
+  cout << std::endl << "BEG Balance(80, -10)" << std::endl;
+  m_legs->Balance(80, -10);
+  sleep(6);
+  
+  /*
+  cout << "Walk for 6 seconds" << std::endl;
+  m_legs->Walk();
   sleep(6);
 
   cout << "Crouch for 6 seconds" << std::endl;
@@ -41,7 +60,7 @@ Controller::Controller()
   cout << "Stand for 6 seconds" << std::endl;
   m_legs->Stand();
   sleep(6);
-  ************/
+  */
 }
 
 /*------------------------------------------------------------------------------

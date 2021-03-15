@@ -18,8 +18,8 @@ NOTE: The left leg values are inverted from the right since the servos are
       inverted or opposite sides from each other.
 ------------------------------------------------------------------------------*/
 Legs::Legs()
-  : m_left(L_CHAN_HIP, L_MAX_PULSE_HIP, L_MIN_PULSE_HIP, L_CHAN_KNEE, L_MAX_PULSE_KNEE, L_MIN_PULSE_KNEE),
-    m_right(R_CHAN_HIP, R_MIN_PULSE_HIP, R_MAX_PULSE_HIP, R_CHAN_KNEE, R_MIN_PULSE_KNEE, R_MAX_PULSE_KNEE)
+  : m_left(L_CHAN_HIP, L_MIN_PULSE_HIP, L_MAX_PULSE_HIP, L_CHAN_KNEE, L_MIN_PULSE_KNEE, L_MAX_PULSE_KNEE),
+    m_right(R_CHAN_HIP, R_MAX_PULSE_HIP, R_MIN_PULSE_HIP, R_CHAN_KNEE, R_MAX_PULSE_KNEE, R_MIN_PULSE_KNEE)
 {
 }
 
@@ -51,16 +51,6 @@ bool Legs::Walk()
 }
 
 /*------------------------------------------------------------------------------
-FUNCTION: bool Legs::Kneel()
-------------------------------------------------------------------------------*/
-bool Legs::Kneel()
-{
-  std::cout << "Legs::Kneel()" << std::endl;
-
-  return(m_left.Kneel() && m_right.Kneel());
-}
-
-/*------------------------------------------------------------------------------
 FUNCTION: bool Legs::Crouch()
 ------------------------------------------------------------------------------*/
 bool Legs::Crouch()
@@ -78,4 +68,25 @@ bool Legs::Sit()
   std::cout << "Legs::Sit()" << std::endl;
 
   return(m_left.Sit() && m_right.Sit());
+}
+/*------------------------------------------------------------------------------
+FUNCTION:  bool Balance(double knee_angle, int wheel_offset)
+PURPOSE:   Based on knee angle select hip angle based on wheel offset.
+           This is so a know balance point, wheel_offset, can be set based on
+           the knee angle.
+
+ARGUMENTS: knee_angle   in degrees
+           wheel_offset in MM from center of hip on horizontal plain
+
+RETURNS:   true if all goes well
+------------------------------------------------------------------------------*/
+bool Legs::Balance(double knee_angle, int wheel_offset)
+{
+  bool lstatus = true;
+  bool rstatus = true;
+  
+  lstatus = m_left.Balance(knee_angle, wheel_offset);
+  rstatus = m_right.Balance(knee_angle, wheel_offset);
+
+  return(lstatus && rstatus);
 }

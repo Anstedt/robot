@@ -19,9 +19,9 @@ Servo::Servo(int min_pwd, int max_pwd)
 
   // We only need to calculate the slope if m_min_pwd or m_max_pwd change
   // slope = (output_end - output_start) / (input_end - input_start);
-  m_min_pwd = min_pwd;
-  m_max_pwd = max_pwd;
-  m_slope_pwd = float(m_max_pwd - m_min_pwd) / float(180 - 0);
+  // slope = (output_end - output_start) / (angle_max - angle_min);
+
+  set_min_max_pwm(min_pwd, max_pwd);
 }
 
 /*------------------------------------------------------------------------------
@@ -33,6 +33,8 @@ Servo::~Servo()
 
 /*------------------------------------------------------------------------------
 FUNCTION:  bool Servo::set_servo_angle(channel, degrees)
+
+Assume angle range is -90(back) to +90(forwards), 0(straight)
 ------------------------------------------------------------------------------*/
 bool Servo::set_servo_angle(int channel, int degrees)
 {
@@ -40,10 +42,10 @@ bool Servo::set_servo_angle(int channel, int degrees)
   int output;
 
   // If degrees is in range
-  if (degrees >=0 && degrees <= 180)
+  if (degrees >=-90 && degrees <= 90)
   {
-    // output = output_start + round(slope * (input - input_start))
-    output = m_min_pwd + round(m_slope_pwd * (degrees - 0));
+    // output = output_start + round(slope * (angle_input - angle_min))
+    output = m_min_pwd + round(m_slope_pwd * (degrees - (-90)) );
 
     cout << "channel=" << channel << " degrees=" << degrees << " slope=" << m_slope_pwd << " output=" << output << std::endl;
     success = true;
@@ -66,7 +68,9 @@ void Servo::set_min_max_pwm(int min_pwm, int max_pwm)
   // We only need to calculate the slope if m_min_pwd or m_max_pwd change
   m_min_pwd = min_pwm;
   m_max_pwd = max_pwm;
-  m_slope_pwd = float(m_max_pwd - m_min_pwd) / float(180 - 0);
+  m_slope_pwd = float(m_max_pwd - m_min_pwd) / float(90 - (-90));
+
+  cout << "Slope=" << m_slope_pwd <<  " min=" << m_min_pwd << " max=" << m_max_pwd << std::endl;
 }
 
 /*------------------------------------------------------------------------------
