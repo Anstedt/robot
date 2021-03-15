@@ -77,10 +77,10 @@ RETURNS:   true if all goes well
 ------------------------------------------------------------------------------*/
 bool Leg::Balance(double knee_angle, double wheel_offset)
 {
-  int hip_angle = GetHipAngle(knee_angle, wheel_offset);
+  double hip_angle = GetHipAngle(knee_angle, wheel_offset);
 
-  // m_knee.Angle(knee_angle);
-  // m_hip.Angle(hip_angle);
+  m_knee.Angle(knee_angle);
+  m_hip.Angle(hip_angle);
 
   return(true);
 }
@@ -93,12 +93,10 @@ PURPOSE:   Based on the selected knee angle and wheel_offset find the hip
 ARGUMENTS: knee_angle   in degrees
            wheel_offset in MM from center of hip on horizontal plain
 
-d = sqrt(a**2 + b**2 2ab*cos(knee))
-
-hip = asin((b/d)*sin(knee) + acos(c/d)
-
-a = hip length
+a = thigh length
 b = shin length
+c = wheel offset
+d = hypotenuse(calculated)
 
 RETURNS:   Hip angle in degress
 ------------------------------------------------------------------------------*/
@@ -124,11 +122,13 @@ double Leg::GetHipAngle(double knee_angle, double wheel_offset)
   
   double knee_rad = DegreesToRadians(knee_angle);
   
-  // thigh, shin, wheel_offset, hypotenuse
-  // a,     b,    c,            d
-  // d = sqrt(a**2 + b**2 - 2ab*cos(knee))
+  // calculated the hypotenuse, d = sqrt(a**2 + b**2 2ab*cos(knee))
   double hypotenuse = std::sqrt(shin2 + thigh2 - 2*thigh*shin*cos(knee_rad));
+
+  // Now the hip angle, hip = asin((b/d)*sin(knee) + acos(c/d)
   double hip_angle_rad = asin((shin/hypotenuse)*sin(knee_rad)) + acos(wheel_offset/hypotenuse);
+
+  // No covert to degrees and adjust to physical coordinate system
   double hip_angle = RadiansToDegrees(hip_angle_rad) - 90; // adjust
 
   // Now adjust based on the original knee angle
@@ -137,15 +137,8 @@ double Leg::GetHipAngle(double knee_angle, double wheel_offset)
     hip_angle = -hip_angle;
   }
 
-  // Equation and values
-  // std::cout << "asin((" << shin << "/" << hypotenuse << ")*(" << knee_rad << ")) + " << "acos(" << wheel_offset << "/" << hypotenuse << ")" << std::endl;
-  
-  // Results
-  // std::cout << "asin()=" << asin((shin/hypotenuse)*sin(knee_rad)) << " acos()=" << acos((wheel_offset/hypotenuse)) << std::endl;
-  
-  std::cout << "Shin:" << shin << " Thigh:" << thigh << " Knee:" << knee_angle << " Offset:" << wheel_offset << std::endl;
-  // std::cout << "\thypotenuse=" << hypotenuse << std::endl;
-  std::cout << "\thip_angle=" << hip_angle << std::endl;
+  // Display results
+  std::cout << "hip_angle=" << hip_angle << " Shin:" << shin << " Thigh:" << thigh << " Knee:" << knee_angle << " Offset:" << wheel_offset << std::endl;
   
   return(hip_angle);
 }
