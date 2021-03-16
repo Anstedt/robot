@@ -129,13 +129,14 @@ double Leg::GetHipAngle(double knee_angle, double wheel_offset)
   double hip_angle_rad = asin((shin/hypotenuse)*sin(knee_rad)) + acos(wheel_offset/hypotenuse);
 
   // No covert to degrees and adjust to physical coordinate system
-  double hip_angle = RadiansToDegrees(hip_angle_rad) - 90; // adjust
+  double hip_angle = RadiansToDegrees(hip_angle_rad);
 
   // Now adjust based on the original knee angle
-  if (invert)
-  {
-    hip_angle = -hip_angle;
-  }
+  // if (invert)
+  // {
+  // hip_angle = -hip_angle;
+  // }
+  hip_angle = 90 - hip_angle;
 
   // Display results
   std::cout << "hip_angle=" << hip_angle << " Shin:" << shin << " Thigh:" << thigh << " Knee:" << knee_angle << " Offset:" << wheel_offset << std::endl;

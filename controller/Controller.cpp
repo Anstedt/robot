@@ -24,29 +24,81 @@ Controller::Controller()
 
   sleep(4); // Let other threads start 
 
+  // cout << std::endl << "Balance(-40, 0)" << std::endl;
+  // m_legs->Balance(-40, 0);
+  // sleep(6);
+  
+  // cout << std::endl << "BEG Balance(-40, 10)" << std::endl;
+  // m_legs->Balance(-40, 10);
+  // sleep(6);
+  
+  // cout << std::endl << "BEG Balance(-40, -10)" << std::endl;
+  // m_legs->Balance(-40, -10);
+  // sleep(6);
+
+
+  cout << std::endl << "Balance(0, 0)" << std::endl;
+  m_legs->Balance(0, 0);
+  sleep(6);
+  
+  cout << std::endl << "BEG Balance(0, 80)" << std::endl;
+  m_legs->Balance(0, 40);
+  sleep(6);
+  
+  cout << std::endl << "BEG Balance(0, -80)" << std::endl;
+  m_legs->Balance(0, -80);
+  sleep(6);
+
   cout << std::endl << "Balance(30, 0)" << std::endl;
   m_legs->Balance(30, 0);
   sleep(6);
   
-  cout << std::endl << "BEG Balance(30, 10)" << std::endl;
-  m_legs->Balance(30, 10);
+  cout << std::endl << "BEG Balance(30, 80)" << std::endl;
+  m_legs->Balance(30, 80);
   sleep(6);
   
-  cout << std::endl << "BEG Balance(30, -10)" << std::endl;
-  m_legs->Balance(30, -10);
+  cout << std::endl << "BEG Balance(30, -80)" << std::endl;
+  m_legs->Balance(30, -80);
   sleep(6);
 
-  cout << std::endl << "BEG Balance(80, 0)" << std::endl;
-  m_legs->Balance(80, 0);
+  cout << std::endl << "Balance(-30, 0)" << std::endl;
+  m_legs->Balance(-30, 0);
+  sleep(6);
+  
+  cout << std::endl << "BEG Balance(-30, 80)" << std::endl;
+  m_legs->Balance(-30, 80);
+  sleep(6);
+  
+  cout << std::endl << "BEG Balance(-30, -80)" << std::endl;
+  m_legs->Balance(-30, -80);
   sleep(6);
 
-  cout << std::endl << "BEG Balance(80, 10)" << std::endl;
-  m_legs->Balance(80, 10);
-  sleep(6);
 
-  cout << std::endl << "BEG Balance(80, -10)" << std::endl;
-  m_legs->Balance(80, -10);
-  sleep(6);
+  // cout << std::endl << "Balance(10, 0)" << std::endl;
+  // m_legs->Balance(10, 0);
+  // sleep(6);
+  
+  // cout << std::endl << "BEG Balance(10, 10)" << std::endl;
+  // m_legs->Balance(10, 10);
+  // sleep(6);
+  
+  // cout << std::endl << "BEG Balance(10, -10)" << std::endl;
+  // m_legs->Balance(10, -10);
+  // sleep(6);
+
+
+
+  // cout << std::endl << "BEG Balance(80, 0)" << std::endl;
+  // m_legs->Balance(80, 0);
+  // sleep(6);
+
+  // cout << std::endl << "BEG Balance(80, 10)" << std::endl;
+  // m_legs->Balance(80, 10);
+  // sleep(6);
+
+  // cout << std::endl << "BEG Balance(80, -10)" << std::endl;
+  // m_legs->Balance(80, -10);
+  // sleep(6);
   
   /*
   cout << "Walk for 6 seconds" << std::endl;
