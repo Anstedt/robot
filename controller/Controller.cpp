@@ -42,36 +42,36 @@ Controller::Controller()
   sleep(6);
   
   cout << std::endl << "BEG Balance(0, 80)" << std::endl;
-  m_legs->Balance(0, 40);
+  m_legs->Balance(0, 80);
   sleep(6);
   
   cout << std::endl << "BEG Balance(0, -80)" << std::endl;
   m_legs->Balance(0, -80);
   sleep(6);
 
-  cout << std::endl << "Balance(30, 0)" << std::endl;
-  m_legs->Balance(30, 0);
-  sleep(6);
+  // cout << std::endl << "Balance(30, 0)" << std::endl;
+  // m_legs->Balance(30, 0);
+  // sleep(6);
   
-  cout << std::endl << "BEG Balance(30, 80)" << std::endl;
-  m_legs->Balance(30, 80);
-  sleep(6);
+  // cout << std::endl << "BEG Balance(30, 80)" << std::endl;
+  // m_legs->Balance(30, 80);
+  // sleep(6);
   
-  cout << std::endl << "BEG Balance(30, -80)" << std::endl;
-  m_legs->Balance(30, -80);
-  sleep(6);
+  // cout << std::endl << "BEG Balance(30, -80)" << std::endl;
+  // m_legs->Balance(30, -80);
+  // sleep(6);
 
-  cout << std::endl << "Balance(-30, 0)" << std::endl;
-  m_legs->Balance(-30, 0);
-  sleep(6);
+  // cout << std::endl << "Balance(-30, 0)" << std::endl;
+  // m_legs->Balance(-30, 0);
+  // sleep(6);
   
-  cout << std::endl << "BEG Balance(-30, 80)" << std::endl;
-  m_legs->Balance(-30, 80);
-  sleep(6);
+  // cout << std::endl << "BEG Balance(-30, 80)" << std::endl;
+  // m_legs->Balance(-30, 80);
+  // sleep(6);
   
-  cout << std::endl << "BEG Balance(-30, -80)" << std::endl;
-  m_legs->Balance(-30, -80);
-  sleep(6);
+  // cout << std::endl << "BEG Balance(-30, -80)" << std::endl;
+  // m_legs->Balance(-30, -80);
+  // sleep(6);
 
 
   // cout << std::endl << "Balance(10, 0)" << std::endl;
