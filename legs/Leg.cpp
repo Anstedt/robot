@@ -102,21 +102,12 @@ RETURNS:   Hip angle in degress
 ------------------------------------------------------------------------------*/
 double Leg::GetHipAngle(double knee_angle, double wheel_offset)
 {
-  
-  bool invert = true;
   int thigh = THIGH_LENGTH; // a
   int shin = SHIN_LENGTH;   // b
 
   int thigh2 = std::pow(thigh, 2); // a^2
   int shin2  = std::pow(shin, 2);  // b^2
 
-  // Normally the hip angle is the opposite direction from the knee angle. If
-  // the knee angle is positive the hip angle is negative
-  if (knee_angle <= 0)
-  {
-    invert = false;
-  }
-  
   // Correct for equation angles versus physical angles
   knee_angle = 180 - knee_angle; // Theta 0
   
@@ -131,11 +122,7 @@ double Leg::GetHipAngle(double knee_angle, double wheel_offset)
   // No covert to degrees and adjust to physical coordinate system
   double hip_angle = RadiansToDegrees(hip_angle_rad);
 
-  // Now adjust based on the original knee angle
-  // if (invert)
-  // {
-  // hip_angle = -hip_angle;
-  // }
+  // Convert back to physical space
   hip_angle = 90 - hip_angle;
 
   // Display results
