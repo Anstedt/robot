@@ -22,7 +22,10 @@ Controller::Controller()
   m_balancer = new Balancer();
   m_legs = new Legs();
 
-  sleep(4); // Let other threads start 
+  TestModLegs test_legs(m_legs);
+  test_legs.ProcessKeys();
+
+  // sleep(4); // Let other threads start 
 
   // cout << std::endl << "Balance(-40, 0)" << std::endl;
   // m_legs->Balance(-40, 0);
@@ -36,7 +39,7 @@ Controller::Controller()
   // m_legs->Balance(-40, -10);
   // sleep(6);
 
-
+  /*
   cout << std::endl << "Balance(0, 0)" << std::endl;
   m_legs->Balance(0, 0);
   sleep(6);
@@ -48,7 +51,8 @@ Controller::Controller()
   cout << std::endl << "BEG Balance(0, -80)" << std::endl;
   m_legs->Balance(0, -80);
   sleep(6);
-
+  */
+  
   // cout << std::endl << "Balance(30, 0)" << std::endl;
   // m_legs->Balance(30, 0);
   // sleep(6);
