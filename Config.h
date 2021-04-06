@@ -31,22 +31,30 @@ const int MOTOR2_GPIO_MODE_0   = -1;
 const int MOTOR2_GPIO_MODE_1   = -1;
 const int MOTOR2_GPIO_MODE_2   = -1;
 
+// < -90 degrees, indicates has range further that -90 degrees maybe for example
+// -100 degrees.
+
+// Of course right and left legs are reversed as well as the joints
+
 // Leg Constants, 4 leg joints
 const int L_CHAN_HIP       = 0;
-const int L_MIN_PULSE_HIP  = 150;
-const int L_MAX_PULSE_HIP  = 642;
+const int L_MIN_PULSE_HIP  = 126; // DONE
+const int L_MAX_PULSE_HIP  = 616; // DONE
 
+// Rotate knee in the positive direction, just a little
 const int L_CHAN_KNEE      = 1;
-const int L_MIN_PULSE_KNEE = 124;
-const int L_MAX_PULSE_KNEE = 606;
+const int L_MIN_PULSE_KNEE = 132; // DONE
+const int L_MAX_PULSE_KNEE = 604; // DONE
 
+// Rotate hip one step in the positive direction
 const int R_CHAN_HIP       = 2;
-const int R_MIN_PULSE_HIP  = 161;
-const int R_MAX_PULSE_HIP  = 644;
+const int R_MIN_PULSE_HIP  = 162; // DONE
+const int R_MAX_PULSE_HIP  = 622; // DONE
 
+// No change needed
 const int R_CHAN_KNEE      = 3;
-const int R_MIN_PULSE_KNEE = 112;
-const int R_MAX_PULSE_KNEE = 602;
+const int R_MIN_PULSE_KNEE = 162; // DONE
+const int R_MAX_PULSE_KNEE = 642; // DONE
 
 // Leg Constants in mm
 const int SHIN_LENGTH   = 75;
