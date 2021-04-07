@@ -1,5 +1,10 @@
 /*******************************************************************************
-PACKAGE:       Robot
+PACKAGE:  Robot
+
+NOTE: 90: is 90 degrees forward
+       0: is straight down
+     -90: is 90 degrees back
+
 PURPOSE:  Hardware based configs for the robot
 *******************************************************************************/
 
@@ -31,22 +36,27 @@ const int MOTOR2_GPIO_MODE_0   = -1;
 const int MOTOR2_GPIO_MODE_1   = -1;
 const int MOTOR2_GPIO_MODE_2   = -1;
 
-// Leg Constants, 4 leg joints
+// Of course right and left legs are reversed as well as the joints
+
+// Left Leg HIP servo constants
 const int L_CHAN_HIP       = 0;
-const int L_MIN_PULSE_HIP  = 150;
-const int L_MAX_PULSE_HIP  = 642;
+const int L_MIN_PULSE_HIP  = 126;
+const int L_MAX_PULSE_HIP  = 616;
 
+// Left KNEE servo constants
 const int L_CHAN_KNEE      = 1;
-const int L_MIN_PULSE_KNEE = 124;
-const int L_MAX_PULSE_KNEE = 606;
+const int L_MIN_PULSE_KNEE = 132;
+const int L_MAX_PULSE_KNEE = 604;
 
+// Right Leg HIP servo constants
 const int R_CHAN_HIP       = 2;
-const int R_MIN_PULSE_HIP  = 161;
-const int R_MAX_PULSE_HIP  = 644;
+const int R_MIN_PULSE_HIP  = 162;
+const int R_MAX_PULSE_HIP  = 622;
 
+// Right KNEE servo constants
 const int R_CHAN_KNEE      = 3;
-const int R_MIN_PULSE_KNEE = 112;
-const int R_MAX_PULSE_KNEE = 602;
+const int R_MIN_PULSE_KNEE = 162;
+const int R_MAX_PULSE_KNEE = 642;
 
 // Leg Constants in mm
 const int SHIN_LENGTH   = 75;

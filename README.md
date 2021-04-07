@@ -1,5 +1,12 @@
 # Robot
 
+### Angles
+
+The front is where the holes are in the upper body. The angles are in reference to the front.
+ 90: is 90 degrees forward of the front
+  0: is straight down
+-90: is 90 degrees backwards from the front
+
 ### Config
 - Config.h has Motor and Legs IO and HW configurations.
 

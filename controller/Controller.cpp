@@ -36,7 +36,6 @@ Controller::Controller()
   // m_legs->Balance(-40, -10);
   // sleep(6);
 
-
   cout << std::endl << "Balance(0, 0)" << std::endl;
   m_legs->Balance(0, 0);
   sleep(6);
@@ -45,12 +44,12 @@ Controller::Controller()
   m_legs->Balance(0, 80);
   sleep(6);
   
-  cout << std::endl << "BEG Balance(0, -80)" << std::endl;
-  m_legs->Balance(0, -80);
-  sleep(6);
+  // cout << std::endl << "BEG Balance(0, -80)" << std::endl;
+  // m_legs->Balance(0, -80);
+  // sleep(6);
 
-  // cout << std::endl << "Balance(30, 0)" << std::endl;
-  // m_legs->Balance(30, 0);
+  cout << std::endl << "Balance(60, 0)" << std::endl;
+  m_legs->Balance(60, 0);
   // sleep(6);
   
   // cout << std::endl << "BEG Balance(30, 80)" << std::endl;

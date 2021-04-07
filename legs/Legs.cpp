@@ -10,9 +10,9 @@ FILE: Legs.cpp
 /* METHODS ********************************************************************/
 /*------------------------------------------------------------------------------
 FUNCTION: Legs::Legs()
-0   = Forward
-90  = Straight
-180 = Back
+90  = Forward
+0   = Straight
+-90 = Back
 
 NOTE: The left leg values are inverted from the right since the servos are
       inverted or opposite sides from each other.

@@ -52,7 +52,7 @@ bool Servo::set_servo_angle(int channel, int degrees)
   }
   else
   {
-    cout << "Angle =" << degrees << " out of range (0-180)" << std::endl;
+    cout << "Angle =" << degrees << " out of range (-90 to 90)" << std::endl;
   }
 
   PCA9685::Instance()->set_pwm(channel, 0, output);
