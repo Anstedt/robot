@@ -38,7 +38,7 @@ const int MOTOR2_GPIO_MODE_2   = -1;
 
 // Leg Constants, 4 leg joints
 const int L_CHAN_HIP       = 0;
-const int L_MIN_PULSE_HIP  = 126; // DONE
+const int L_MIN_PULSE_HIP  = 146; // DONE
 const int L_MAX_PULSE_HIP  = 616; // DONE
 
 // Rotate knee in the positive direction, just a little
