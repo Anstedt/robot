@@ -28,6 +28,12 @@ public:
 
   bool Balance(double knee_angle, int wheel_offset);
 
+  void Set_RL_HipAngle(int val)  { m_right.Set_HipAngle(val); };
+  void Set_RL_KneeAngle(int val) { m_right.Set_KneeAngle(val); };
+  void Set_LL_HipAngle(int val)  { m_left.Set_HipAngle(val); };
+  void Set_LL_KneeAngle(int val) { m_left.Set_KneeAngle(val); };
+
+  // Used for Calibration ONLY
   void Set_RL_Hip(int val)  { m_right.Set_Hip(val); };
   void Set_RL_Knee(int val) { m_right.Set_Knee(val); };
   void Set_LL_Hip(int val)  { m_left.Set_Hip(val); };

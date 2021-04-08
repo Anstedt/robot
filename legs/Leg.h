@@ -27,6 +27,9 @@ public:
 
   bool Balance(double knee_angle, double wheel_offset);
   
+  void Set_HipAngle(int val)  { m_hip.Angle(val); };
+  void Set_KneeAngle(int val) { m_knee.Angle(val); };
+
   void Set_Hip(int val)  { m_hip.SetPWM(val); };
   void Set_Knee(int val) { m_knee.SetPWM(val); };
   // Accessors: const operations
