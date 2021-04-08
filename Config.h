@@ -40,23 +40,23 @@ const int MOTOR2_GPIO_MODE_2   = -1;
 
 // Left Leg HIP servo constants
 const int L_CHAN_HIP       = 0;
-const int L_MIN_PULSE_HIP  = 126;
-const int L_MAX_PULSE_HIP  = 616;
+const int L_MIN_PULSE_HIP  = 144;
+const int L_MAX_PULSE_HIP  = 602;
 
 // Left KNEE servo constants
 const int L_CHAN_KNEE      = 1;
-const int L_MIN_PULSE_KNEE = 132;
+const int L_MIN_PULSE_KNEE = 138;
 const int L_MAX_PULSE_KNEE = 604;
 
 // Right Leg HIP servo constants
 const int R_CHAN_HIP       = 2;
-const int R_MIN_PULSE_HIP  = 162;
-const int R_MAX_PULSE_HIP  = 622;
+const int R_MIN_PULSE_HIP  = 158;
+const int R_MAX_PULSE_HIP  = 618;
 
 // Right KNEE servo constants
 const int R_CHAN_KNEE      = 3;
-const int R_MIN_PULSE_KNEE = 162;
-const int R_MAX_PULSE_KNEE = 642;
+const int R_MIN_PULSE_KNEE = 166;
+const int R_MAX_PULSE_KNEE = 632;
 
 // Leg Constants in mm
 const int SHIN_LENGTH   = 75;
