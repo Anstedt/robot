@@ -5,6 +5,8 @@ FILE:     Servo.cpp
 #include <iostream>
 #include "Servo.h"
 #include "PCA9685.h"
+#include <stdlib.h>
+#include <stdio.h>
 #include <math.h>
 
 using namespace std;

@@ -98,8 +98,10 @@ int Gyro::Run(void)
     // On startup use accelerometer since that is the best we have
     if(m_start == 0)
     {
-      m_angle_gyro = m_angle_acc; //Load the accelerometer angle in the angle_gyro variable
+      // m_angle_gyro = m_angle_acc; //Load the accelerometer angle in the angle_gyro variable
+      m_angle_gyro = p_mpu6050->get_accel_Z_cal_angle(); // Experimental
       m_start = 1; //Set the start variable to start the PID controller
+      cout << "EXPERIMENTAL m_angle_acc:get_accel_Z_cal=" << m_angle_acc << ":" << p_mpu6050->get_accel_Z_cal() << " VS MPU6050 Cal Z=" << p_mpu6050->get_accel_Z_cal_angle() << std::endl;
     }
 
     // p_mpu6050->get_gyro_XY(m_gyro_yaw_data_raw, m_gyro_pitch_data_raw);
