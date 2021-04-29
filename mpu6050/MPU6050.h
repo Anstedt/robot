@@ -28,6 +28,9 @@ public:
   int get_accel_X_cal(void); // ACCEL_XOUT_H, calibrated
   int get_accel_Y_cal(void); // ACCEL_YOUT_H, calibrated
   int get_accel_Z_cal(void); // ACCEL_ZOUT_H Used by Arduino code but may be different for us
+
+  float get_accel_Z_cal_angle(void) { return(m_acc_Z_cal_ang); }; // Experimental
+  
   // Static and friend functions
   // Memory management: copy constructor, destructor, operator=
   ~MPU6050();
@@ -59,6 +62,8 @@ private:
 
   // Data fields
   int m_acc_calibration_value;
+  float m_acc_Z_cal_ang; // Experimental
+  
   long m_gyro_yaw_calibration_value;
   long m_gyro_pitch_calibration_value;
   // constants

@@ -67,6 +67,12 @@ void MPU6050::set_defaults(void)
 // Get and set calibration values
 void MPU6050::calibrate(void)
 {
+  int accel_raw_avg = 0;
+  int accel_raw_min =  10000;
+  int accel_raw_max = -10000;
+
+  int accel_raw;
+  
   m_gyro_yaw_calibration_value = 0;
   m_gyro_pitch_calibration_value = 0;
 
@@ -76,9 +82,16 @@ void MPU6050::calibrate(void)
   // Loop 500 times
   for(int counter = 0; counter < 500; counter++)
   {
-    // Note the real could pulls both values from I2C in one call
+    // Note the real code pulls both values from I2C in one call
     m_gyro_yaw_calibration_value   += get_gyro_X();
     m_gyro_pitch_calibration_value += get_gyro_Y();
+
+    accel_raw = get_accel_Z();
+    accel_raw_avg += accel_raw;
+
+    if (accel_raw > accel_raw_max) accel_raw_max = accel_raw;
+    if (accel_raw < accel_raw_min) accel_raw_min = accel_raw;
+    
     // DEBUG cout << "gyro_yaw_calibration_value  =" << gyro_yaw_calibration_value << std::endl;
     // DEBUG cout << "gyro_pitch_calibration_value=" << gyro_pitch_calibration_value << std::endl;
     //Wait for 3700 microseconds to simulate the main program loop time
@@ -89,10 +102,24 @@ void MPU6050::calibrate(void)
   m_gyro_pitch_calibration_value /= 500; // Divide the total value by 500 to get the avarage gyro offset
   m_gyro_yaw_calibration_value /= 500;
 
+  accel_raw_avg /= 500;
+
+  // Now adjust using manual calibration value
+  accel_raw_avg += m_acc_calibration_value;
+  
+  // Calculate the angle according to the accelerometer average
+  if (accel_raw_avg > 8200) accel_raw_avg = 8200;
+  if (accel_raw_avg < -8200) accel_raw_avg = -8200;
+
+  // Now calculate the Z value
+  m_acc_Z_cal_ang = (asin((float)(accel_raw_avg) / 8200.0) * -57.296);
+  
   cout << "Elapsed time = " << float(((gpioTick() - elapsed) / 500)) << "us" << std::endl;
   cout << "gyro_pitch_calibration_value=" << m_gyro_pitch_calibration_value << std::endl;
   cout << "gyro_yaw_calibration_value  =" << m_gyro_yaw_calibration_value << std::endl;
-
+  cout << "m_acc_Z_cal_ang=" << m_acc_Z_cal_ang << " accel_raw=" << accel_raw << " accel_raw_avg with manual calibration=" << accel_raw_avg << std::endl;
+  cout << "accel_raw_min=" << accel_raw_min << " accel_raw_max=" << accel_raw_max << std::endl;
+  
   m_calibrated = true; // We are now calibrated
 }
 
