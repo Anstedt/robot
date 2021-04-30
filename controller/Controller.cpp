@@ -22,10 +22,13 @@ Controller::Controller()
   m_balancer = new Balancer();
   m_legs = new Legs();
 
+  // This should be in Balancer so it can adjust offset but is fine here for now
+  m_legs->Balance(-70, 0); // Knee bent back and wheel offset from robot center
+
   sleep(4); // Let other threads start 
   
   // This should be in Balancer so it can adjust offset but is fine here for now
-  m_legs->Balance(-50, 0); // Knee bent back and wheel offset from robot center
+  m_legs->Balance(-40, 0); // Knee bent back and wheel offset from robot center
 }
 
 /*------------------------------------------------------------------------------
