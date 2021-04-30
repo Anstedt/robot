@@ -1,5 +1,17 @@
 # Robot
 
+### Transition to Linux driver for motor control
+- Build and install driver
+- Learn how driver works
+- Test out driver on my system
+- Work out max speeds based on different micro-step setting
+
+### Implement PID based off of Arduino Code
+- Add code to mys system and get it to build
+- Move from angle based control to speed and distance control
+
+### Implement mechanism to control robot motion; turning and traveling
+
 ### Angles
 
 The front is where the holes are in the upper body. The angles are in reference to the front.
@@ -44,18 +56,13 @@ The front is where the holes are in the upper body. The angles are in reference 
   - Default motor speed
   - Turning on debug
   - Setting motor mode
-- Before using accel Z get an average. Maybe in the Calibrate function
-  - While running do not allow large jumps in accel Z to get into the
-    current location. Vibrations cause serious gyrations in accel Z.
 - Add a speed interface so balancer can more smoothly control the
   motor. May be able to use this to more smoothly get to the final
   location. Rick is thinking of this as well by having ramping
   functions for startup and shutdown. He is thinking of adding this to
   the driver itself. Might be the right thing to do.
-
 - Pull data all at once so that it is all synchronized as spelled out
   in data sheet
-- Determine how acc_calibration_value was found in original code
 
 ## Data Flow Diagram of the Robot Code
 ![Robot](Robot.png)
