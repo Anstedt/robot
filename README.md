@@ -3,6 +3,12 @@
 ### Transition to Linux driver for motor control
 - Build and install driver
 - Learn how driver works
+- Move to 2 Motor objects rather than 1 Motor object controlling 2 motors
+  - This means the Balancer needs to create 2 motors.
+  - Question, should the Motor objects share the same running thread?
+    - Might need this since there is only one Gyro data Fifo
+    - But the Gyro data could be sent to 2 Fifos in AddGyroData()
+    - See CallBack in Balancer
 - Test out driver on my system
 - Work out max speeds based on different micro-step setting
 
