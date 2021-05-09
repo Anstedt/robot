@@ -1,1 +1,1 @@
-add_library(motor Motor)
+add_library(motor Motor MotorDriver PID)

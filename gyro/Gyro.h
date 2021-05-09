@@ -40,8 +40,8 @@ private:
   // C++ functional supports callback functions
   std::function<void(int, int, float, float)> m_callback;
   int m_start;
-  int m_gyro_pitch_data_raw;
-  int m_gyro_yaw_data_raw;
+  int m_gyro_Y_data_raw;
+  int m_gyro_X_data_raw;
   float m_angle_acc;
   float m_angle_gyro;
   // Static (shared) class variables

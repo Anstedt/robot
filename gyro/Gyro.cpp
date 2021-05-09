@@ -22,8 +22,8 @@ Gyro::Gyro()
 {
   m_callback = 0;
   m_start = 0;
-  m_gyro_pitch_data_raw = 0;
-  m_gyro_yaw_data_raw = 0;
+  m_gyro_Y_data_raw = 0;
+  m_gyro_X_data_raw = 0;
   m_angle_acc = 0.0;
   m_angle_gyro = 0.0;
 
@@ -104,13 +104,13 @@ int Gyro::Run(void)
       cout << "EXPERIMENTAL m_angle_acc:get_accel_Z_cal=" << m_angle_acc << ":" << p_mpu6050->get_accel_Z_cal() << " VS MPU6050 Cal Z=" << p_mpu6050->get_accel_Z_cal_angle() << std::endl;
     }
 
-    // p_mpu6050->get_gyro_XY(m_gyro_yaw_data_raw, m_gyro_pitch_data_raw);
-    m_gyro_yaw_data_raw = p_mpu6050->get_gyro_X_cal();
-    m_gyro_pitch_data_raw = p_mpu6050->get_gyro_Y_cal();
+    // p_mpu6050->get_gyro_XY(m_gyro_X_data_raw, m_gyro_Y_data_raw);
+    m_gyro_X_data_raw = p_mpu6050->get_gyro_X_cal();
+    m_gyro_Y_data_raw = p_mpu6050->get_gyro_Y_cal();
 
     // From data sheet: LSB is 131 LSB/degrees/second and we a reading 250 times per second
     // 0.000031 = 1/(131*250)
-    m_angle_gyro += m_gyro_pitch_data_raw * 0.000031; //Calculate the traveled during this loop angle and add this to the angle_gyro variable
+    m_angle_gyro += m_gyro_Y_data_raw * 0.000031; //Calculate the traveled during this loop angle and add this to the angle_gyro variable
 
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     //MPU-6050 offset compensation
@@ -121,16 +121,16 @@ int Gyro::Run(void)
     //Try 0.0000003 or -0.0000003 first to see if there is any improvement.
 
     //Uncomment the following line to make the compensation active
-    m_angle_gyro -= m_gyro_yaw_data_raw * 0.0000003;                  //Compensate the gyro offset when the robot is rotating
+    m_angle_gyro -= m_gyro_X_data_raw * 0.0000003;                  //Compensate the gyro offset when the robot is rotating
     m_angle_gyro = m_angle_gyro * 0.9996 + m_angle_acc * 0.0004;      //Correct the drift of the gyro angle with the accelerometer angle
 
     if (m_callback)
     {
-      m_callback(m_gyro_pitch_data_raw, m_gyro_yaw_data_raw, m_angle_gyro, m_angle_acc);
+      m_callback(m_gyro_Y_data_raw, m_gyro_X_data_raw, m_angle_gyro, m_angle_acc);
     }
 
     // CallBack now has all data
-    // cout << "Angle Gyro=" << m_angle_gyro << "\tAngle Accelerometer=" << m_angle_acc << "\tGyro Yaw=" << m_gyro_yaw_data_raw << "\tGyro Pitch=" << m_gyro_pitch_data_raw << std::endl;
+    // cout << "Angle Gyro=" << m_angle_gyro << "\tAngle Accelerometer=" << m_angle_acc << "\tGyro X=" << m_gyro_X_data_raw << "\tGyro Y=" << m_gyro_Y_data_raw << std::endl;
 
     while(timer > gpioTick());
     timer += 4000;

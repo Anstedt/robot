@@ -7,9 +7,14 @@ FILE:          Motor.h
 
 /* INCLUDE ********************************************************************/
 #include "Threads.h"
-#include "Fifo.h"
+#include "LockingQueue.h"
 
-using MotorModeGPIO = int[3];
+#include "PID.h"
+#include "StandardTypes.h"
+#include "rpi4-stepper.h"
+#include "MotorDriver.h"
+
+using MotorModeGPIO = GPIO[3];
 
 /*------------------------------------------------------------------------------
 CLASS:	  Motor
@@ -21,7 +26,8 @@ public:
   // Local Classes
   // Constructors
   // int (&mode_gpio)[3];
-  Motor(int steps_rev, int pulse1_gpio, int dir1_gpio, int pulse2_gpio, int dir2_gpio, const MotorModeGPIO& mode_gpio, int motor_mode, int revs_per_min = 1);
+  Motor(int steps_rev, GPIO pulse_gpio, GPIO dir_gpio, GPIO a, GPIO b, GPIO c, int motor_mode, int revs_per_min = 1);
+  Motor(int steps_rev, GPIO pulse_gpio, GPIO dir_gpio, const MotorModeGPIO& mode_gpio, int motor_mode, int revs_per_min = 1);
   // Mutators: non-const operations
   bool AddGyroData(int pitch, int yaw, float angle_acc, float angle_gyro);
   bool SetMotorMode(int mode);
@@ -44,20 +50,20 @@ private:
   Motor& operator=(const Motor& rhs);
   // Data fields
   int m_motor_steps_rev;
-  int m_motor1_pulse_gpio;
-  int m_motor1_dir_gpio;
-  int m_motor2_pulse_gpio;
-  int m_motor2_dir_gpio;
+  int m_motor_pulse_gpio;
+  int m_motor_dir_gpio;
   MotorModeGPIO m_motor_mode_gpio;
   int m_motor_revs_per_min;
   // Motor control
   int m_motor_steps_to_go;
   int m_motor_mode;
-  int m_motor1_dir;
-  int m_motor2_dir;
+  int m_motor_dir;
   int m_pulse_high_us;
   int m_pulse_low_us;
-  Fifo<float, 512> m_angle_gyro_fifo;
+
+  MotorDriver m_motorDriver;
+
+  LockingQueue<float> m_angle_gyro_fifo;
   // Static (shared) class variables
 };
 

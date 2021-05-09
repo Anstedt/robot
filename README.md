@@ -1,5 +1,27 @@
 # Robot
 
+### See /mnt/robot/RP/notes.txt for important information on driver
+    and implementation
+
+### Transition to NEW motor system
+- Options
+  - Dual motor objects?
+    - Dual Fifos would work since Gyro Callback goes through Balancer?
+  - Is there a need for separate threads?
+    - I could call direct from Gyro, through Balancer, but that could stall Gyro in some cases.
+    - Biggest issue is Fifo's are polled so the Motor threads still need to run at 250Hz each
+    - With Rick's driver the overhead of calls should be minimal so direct calls would work
+    - Changes to do this
+      - Motor threads removed
+      - Motor->AddGyroData() is direct call to Rick's driver
+      - Ask Rick if a combined call is best?
+        - This could be a static motor call used by each Motor???
+- Plan
+  - Dual motor Objects
+  - Phase one is keep threads
+  - Phase two is direct calls, not threads, after I learn more about Rick's driver
+  - Phase three, optional. static function to combine both motor calls.
+
 ### Transition to Linux driver for motor control
 - Build and install driver
 - Learn how driver works

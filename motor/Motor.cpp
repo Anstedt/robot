@@ -28,7 +28,6 @@ struct MotorMode
   {0,0,1, 16},  // 1/16
   {1,0,1, 32}}; // 1/32
 
-
 /*------------------------------------------------------------------------------
 FUNCTION:  Motor::Motor()
 
@@ -39,63 +38,21 @@ ARGUMENTS: steps_rev = number of steps for 1 full revolution, mode = 0
            mode = default stepper/chop mode for the motor
            revs_per_min = revolutions per minute
 ------------------------------------------------------------------------------*/
-Motor::Motor(int steps_rev, int pulse1_gpio, int dir1_gpio, int pulse2_gpio, int dir2_gpio, const MotorModeGPIO& mode_gpio, int mode, int revs_per_min)
+Motor::Motor(int steps_rev, GPIO pulse_gpio, GPIO dir_gpio, GPIO microstep0, GPIO microstep1, GPIO microstep2, int mode, int revs_per_min)
+  : m_motorDriver(pulse_gpio, dir_gpio, microstep0, microstep1, microstep2)
 {
   cout << "Motor::Motor()" << std::endl;
 
   m_motor_steps_rev = steps_rev;
 
-  m_motor1_pulse_gpio = pulse1_gpio;
-  m_motor1_dir_gpio   = dir1_gpio;
-
-  m_motor2_pulse_gpio = pulse2_gpio;
-  m_motor2_dir_gpio   = dir2_gpio;
-
-  // Copy the gpio mode pin array
-  std::copy(std::begin(mode_gpio), std::end(mode_gpio), std::begin(m_motor_mode_gpio));
+  m_motor_dir_gpio   = dir_gpio;
 
   m_motor_revs_per_min = revs_per_min;
 
-  m_motor_mode = mode;
-  m_motor_steps_to_go = 0;
-  // high is always this number of us. Can go as low as 1.9us
-  m_pulse_high_us = PULSE_LOW_TIME_US;
-  m_pulse_low_us = 0; // Is variable based on requested speed
-
-  cout << "steps_rev=" << m_motor_steps_rev
-       << " pulse1=" << m_motor1_pulse_gpio << " dir1=" << m_motor1_dir_gpio
-       << " pulse2=" << m_motor2_pulse_gpio << " dir2=" << m_motor2_dir_gpio
-       << " mode=" << mode << " modes="
-       << m_motor_mode_gpio[0] << ":"
-       << m_motor_mode_gpio[1] << ":"
-       << m_motor_mode_gpio[2] << ":" << std::endl;
-
-  if (gpioInitialise() < 0)
-  {
-    cout << "Motor pigpio initialization failed" << std::endl;
-  }
-
-  // Initialize gpio motor 1
-  gpioSetMode(m_motor1_pulse_gpio, PI_OUTPUT);   // pulse pin
-  gpioSetMode(m_motor1_dir_gpio, PI_OUTPUT);     // direction pin
-
-  // Initialize gpio motor 2
-  gpioSetMode(m_motor2_pulse_gpio, PI_OUTPUT);   // pulse pin
-  gpioSetMode(m_motor2_dir_gpio, PI_OUTPUT);     // direction pin
-
-  // Mode gpio pins
-  gpioSetMode(m_motor_mode_gpio[0], PI_OUTPUT); // mode pin 0
-  gpioSetMode(m_motor_mode_gpio[1], PI_OUTPUT); // mode pin 1
-  gpioSetMode(m_motor_mode_gpio[2], PI_OUTPUT); // mode pin 2
-
   // Now set the motor mode
   SetMotorMode(mode);
-
-  // Default the direction, note motor 1/2 are apposite direction to go the same
-  // way for the robot
-  gpioWrite(m_motor1_dir_gpio, MOTOR_CW);
-  gpioWrite(m_motor2_dir_gpio, MOTOR_CCW);
 }
+
 
 Motor::~Motor()
 {
@@ -108,11 +65,13 @@ Motor::~Motor()
 FUNCTION:      Motor::AddGyroData(int pitch, int yaw, float angle_gyro, float angle_acc)
 RETURNS:       None
 ------------------------------------------------------------------------------*/
-bool Motor::AddGyroData(int pitch, int yaw, float angle_gyro, float angle_acc)
+bool Motor::AddGyroData(int y, int x, float angle_gyro, float angle_acc)
 {
-  // cout << "Angle Gyro=" << angle_gyro << "\tAngle Accel=" << angle_acc << "\tGyro Pitch=" << pitch << "\tGyro Yaw=" << yaw << std::endl;
+  // cout << "Angle Gyro=" << angle_gyro << "\tAngle Accel=" << angle_acc << "\tGyro Y=" << y << "\tGyro X=" << x << std::endl;
 
-  return(m_angle_gyro_fifo.push_back(angle_gyro));
+  m_angle_gyro_fifo.push(angle_gyro);
+
+  return(true);
 }
 
 /*------------------------------------------------------------------------------
@@ -196,7 +155,7 @@ Step Pulse duration STEP Low  Min: 1.9μs, no max
 ------------------------------------------------------------------------------*/
 int Motor::Run(void)
 {
-  int motor_angle_cmd = 0;
+  float motor_angle_cmd = 0;
 
   cout << "Motor:Run() in a separate thread" << std::endl;
 
@@ -204,61 +163,30 @@ int Motor::Run(void)
 
   while (ThreadRunning())
   {
-    // If we have new data, update motor control variables
-    if (!m_angle_gyro_fifo.empty())
+    // Wait up to 100ms for the data then try again on next loop
+    // Normally data comes at 4ms but on shutdown that may not happen
+    if (m_angle_gyro_fifo.tryWaitAndPop(motor_angle_cmd, 100))
     {
-      motor_angle_cmd = m_angle_gyro_fifo.front();
-      m_angle_gyro_fifo.pop_front();
-
       if (motor_angle_cmd < 0)
       {
-        m_motor1_dir = MOTOR_CCW;
-        m_motor2_dir = MOTOR_CW;
+        m_motor_dir = MOTOR_CCW;
         motor_angle_cmd *= -1;
       }
       else
       {
-        m_motor1_dir = MOTOR_CW;
-        m_motor2_dir = MOTOR_CCW;
+        m_motor_dir = MOTOR_CW;
       }
+
       // Convert the angle to steps based on the current chopper mode
       m_motor_steps_to_go = AngleToSteps(motor_angle_cmd);
 
+      // HJA At this point we can call Ricks driver
+
       // Set the direction based on the requested angle
-      gpioWrite(m_motor1_dir_gpio, m_motor1_dir);
-      gpioWrite(m_motor2_dir_gpio, m_motor2_dir);
+      gpioWrite(m_motor_dir_gpio, m_motor_dir);
 
       // cout << " Fifo Angle=" << motor_angle_cmd << " Direction=" << m_motor_dir << " steps_to_go=" << m_motor_steps_to_go << std::endl;
     }
-
-    // Run the motor while we have more steps
-    if(m_motor_steps_to_go > 0)
-    {
-      m_motor_steps_to_go--;
-      // Pulse high time is always the same
-      gpioWrite(m_motor1_pulse_gpio, 1);
-      gpioWrite(m_motor2_pulse_gpio, 1);
-
-      // Delay Time High: Pulse the motor high then use the actual pulse time to
-      // determine the pulse low time.
-      m_pulse_low_us = GetPulseLowTime(gpioDelay(m_pulse_high_us));
-
-      // Delay Time Low: Now do the low pulse
-      gpioWrite(m_motor1_pulse_gpio, 0);
-      gpioWrite(m_motor2_pulse_gpio, 0);
-      gpioDelay(m_pulse_low_us);
-
-      // cout << "### steps_to_go=" << m_motor_steps_to_go << std::endl;
-      // cout << "pulse_gpio=" << m_motor_pulse_gpio << " motor_dir=" << m_motor_dir << " steps_to_go=" << m_motor_steps_to_go << " pulse_low_us=" << m_pulse_low_us << " pulse_high_us="  << m_pulse_high_us << " LoopTime_us=" << ( gpioTick() - loop_time_hja) << std::endl;
-    }
-    else
-    {
-      // If we have no data, sleep some waiting on new data, using 2ms which is
-      // half gyro rate.
-      gpioDelay(500);
-    }
-
-    loop_time_hja = gpioTick();
   }
 
   cout << "Motor::Run return" << std::endl;

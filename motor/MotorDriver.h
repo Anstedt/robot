@@ -1,50 +1,51 @@
 /*******************************************************************************
 PACKAGE: Robot
-FILE:    Balancer.h
+FILE:    MotorDriver.h
+
+PURPOSE: Low level motor control interface
 *******************************************************************************/
-#ifndef BALANCER_H
-#define BALANCER_H
+
+/* NOTES ***********************************************************************
+*******************************************************************************/
+
+#ifndef MOTORDRIVER_H
+#define MOTORDRIVER_H
 
 /* INCLUDE ********************************************************************/
-#include "Gyro.h"
-#include "Motor.h"
+#include "StandardTypes.h"
+#include "rpi4-stepper.h"
 
 /* CLASSES ********************************************************************/
 /*------------------------------------------------------------------------------
-CLASS:	       Balancer
-PURPOSE: Gather data from gyro.
-         Use PID to determine required robot position change to balance Control
-         motor to get to specified position.
+CLASS:	  MotorDriver
+PURPOSE:  
 ------------------------------------------------------------------------------*/
-class Balancer
+class MotorDriver
 {
 public:
   // Local Classes
   // Constructors
-  Balancer();
+  MotorDriver(GPIO pulse_gpio, GPIO dir_gpio, GPIO microstep0, GPIO microstep1, GPIO microstep2);
   // Mutators: non-const operations
+  bool MotorCmd(int steps, int speed);
   // Accessors: const operations
   // Static and friend functions
   // Memory management: copy constructor, destructor, operator=
-  ~Balancer();
+  ~ MotorDriver();
 private:
   // Local Classes
   // Constructors
   // Mutators: non-const operations
   // Accessors: const operations
-  // static void* CallBackRun(void* This, int pitch, int yaw, float angle_acc, float angle_gyro);
-  // HJA void CallBack(int pitch, int yaw, float angle_acc, float angle_gyro);
-  void CallBack(int, int, float, float);
   // Static and friend functions
   // Memory management
-  Balancer(const Balancer&);
-  Balancer& operator=(const Balancer& rhs);
+  MotorDriver(const  MotorDriver&);
+  MotorDriver& operator=(const  MotorDriver& rhs);
   // Data fields
-  Gyro* m_gyro;
-  Motor* m_motorRight;
-  Motor* m_motorLeft;
+  struct STEPPER_SETUP m_motor_control;
+  int m_motor_fd;
   // Static (shared) class variables
 };
 /* GLOBALS ********************************************************************/
 
-#endif /* BALANCER_H */
+#endif /* MOTORDRIVER_H */

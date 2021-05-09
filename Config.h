@@ -11,6 +11,9 @@ PURPOSE:  Hardware based configs for the robot
 #ifndef CONFIG_H
 #define CONFIG_H
 
+#include "StandardTypes.h"
+#include "rpi4-stepper.h"
+
 #include<cmath>
 
 // Converts degrees to radians.
@@ -24,17 +27,18 @@ const int MOTORS_STEPS_PER_REV = 200;
 const int MOTORS_MODE_DEFAULT  = 5;
 const int MOTORS_RPM_DEFAULT   = 30;
 
-const int MOTOR1_GPIO_STEP     = 10; // 21
-const int MOTOR1_GPIO_DIR      = 18; // 20
-const int MOTOR1_GPIO_MODE_0   = 17; // 14
-const int MOTOR1_GPIO_MODE_1   = 27; // 15
-const int MOTOR1_GPIO_MODE_2   = 22; // 18
+const GPIO MOTOR1_GPIO_STEP     = GPIO_10; // 10; // 21
+const GPIO MOTOR1_GPIO_DIR      = GPIO_18; // 18; // 20
+const GPIO MOTOR1_GPIO_MODE_0   = GPIO_17; // 17; // 14
+const GPIO MOTOR1_GPIO_MODE_1   = GPIO_27; // 27; // 15
+const GPIO MOTOR1_GPIO_MODE_2   = GPIO_22; // 22; // 18
 
-const int MOTOR2_GPIO_STEP     = 24;
-const int MOTOR2_GPIO_DIR      = 23;
-const int MOTOR2_GPIO_MODE_0   = -1;
-const int MOTOR2_GPIO_MODE_1   = -1;
-const int MOTOR2_GPIO_MODE_2   = -1;
+const GPIO MOTOR2_GPIO_STEP     = GPIO_24; // 24;
+const GPIO MOTOR2_GPIO_DIR      = GPIO_23; // 23;
+// Motor mode pins are the same for both motors since they are wired together on the robot
+const GPIO MOTOR2_GPIO_MODE_0   = GPIO_17;
+const GPIO MOTOR2_GPIO_MODE_1   = GPIO_27;
+const GPIO MOTOR2_GPIO_MODE_2   = GPIO_22;
 
 // Of course right and left legs are reversed as well as the joints
 
