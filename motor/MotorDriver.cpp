@@ -12,10 +12,10 @@ PURPOSE:  Low level driver access to motor
 #include <unistd.h>
 #include <fcntl.h>
 #include <iostream>
+#include "Config.h"
 
 #include "MotorDriver.h"
 
-#define DEFAULT_AGGRESSIVENESS 10  /* lower 8 bits treated as a fractions */
 #define STEP_CMD_FILE "/sys/devices/platform/soc/fe20c000.pwm/cmd"
 
 /* METHODS ********************************************************************/
@@ -32,11 +32,6 @@ MotorDriver::MotorDriver(GPIO pulse_gpio, GPIO dir_gpio, GPIO microstep0, GPIO m
   m_motor_control.min_speed = 0; // min speed in steps, 0 is stopped
   m_motor_control.max_speed = 0; // min speed in steps, 0 is stopped
 	m_motor_control.microstep_control = 0; // bit 0 is value for gpio_microstep0, bit 1 = microstep1, etc
-	m_motor_control.ramp_aggressiveness = DEFAULT_AGGRESSIVENESS;
-
-  // Constants our our system
-  m_motor_control.wait_timeout = 4; // wait timeout in ms, for 250hz wait no more than 4ms
-  m_motor_control.combine_ticks_per_step = COMBINE_TICKS_PER_STEP;
 
   // Constants for the hardware
   m_motor_control.gpios[GPIO_STEP] = pulse_gpio;       // constant
@@ -44,6 +39,11 @@ MotorDriver::MotorDriver(GPIO pulse_gpio, GPIO dir_gpio, GPIO microstep0, GPIO m
   m_motor_control.gpios[GPIO_MICROSTEP0] = microstep0; // constant
   m_motor_control.gpios[GPIO_MICROSTEP1] = microstep1; // constant
   m_motor_control.gpios[GPIO_MICROSTEP2] = microstep2; // constant
+
+  // Constants our our system
+	m_motor_control.ramp_aggressiveness    = MOTORS_RAMP_AGGRESSIVENESS;
+  m_motor_control.wait_timeout           = MOTORS_WAIT_TIMEOUT;
+  m_motor_control.combine_ticks_per_step = MOTORS_COMBINE_TICKS_PER_STEP;
 
   m_motor_fd = open(STEP_CMD_FILE, O_RDWR | O_SYNC);  /* might need root access */
 	if (m_motor_fd < 0)
@@ -85,7 +85,11 @@ bool MotorDriver::MotorCmd(s32 distance_raw, u32 max_speed_raw, u8 microstep_mod
   
   // We will shift mode to meed the required speed and distance
   m_motor_control.distance =  distance_raw;
+
+  // Speeds the same since we are not ramping
+  m_motor_control.min_speed = max_speed_raw;
   m_motor_control.max_speed = max_speed_raw;
+
   m_motor_control.microstep_control = microstep_mode;
 
   lseek(m_motor_fd, 0, SEEK_SET); // Start at the beginning
