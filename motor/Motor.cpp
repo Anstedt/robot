@@ -39,7 +39,7 @@ ARGUMENTS: steps_rev = number of steps for 1 full revolution, mode = 0
            mode = default stepper/chop mode for the motor
            revs_per_min = revolutions per minute
 ------------------------------------------------------------------------------*/
-Motor::Motor(int steps_rev, GPIO pulse_gpio, GPIO dir_gpio, GPIO microstep0, GPIO microstep1, GPIO microstep2, int mode, int revs_per_min)
+Motor::Motor(int steps_rev, GPIO pulse_gpio, GPIO dir_gpio, GPIO microstep0, GPIO microstep1, GPIO microstep2, int mode, int revs_per_min, int dir)
   : m_motorDriver(pulse_gpio, dir_gpio, microstep0, microstep1, microstep2)
 {
   cout << "Motor::Motor()" << std::endl;
@@ -49,6 +49,8 @@ Motor::Motor(int steps_rev, GPIO pulse_gpio, GPIO dir_gpio, GPIO microstep0, GPI
   m_motor_dir_gpio   = dir_gpio;
 
   m_motor_revs_per_min = revs_per_min;
+
+  m_motor_dir = dir;
 
   // Now set the motor mode
   SetMotorMode(mode);
@@ -133,6 +135,9 @@ int Motor::Run(void)
       // Convert the angle to steps based on the current chopper mode
       m_motor_steps_to_go = AngleToSteps(motor_angle_cmd);
 
+      // Correct motor direction since each motor runs in the opposite direction
+      m_motor_steps_to_go *= m_motor_dir;
+      
       // HJA At this point we can call Ricks driver
       // MOTORS_RPM_DEFAULT = 30 rpm
       // / 60 = rp second = 0.5

@@ -32,18 +32,22 @@ const u32 MOTORS_RAMP_AGGRESSIVENESS    = 10; // lower 8 bits are fraction
 const u32 MOTORS_WAIT_TIMEOUT           = 0;
 const u32 MOTORS_COMBINE_TICKS_PER_STEP = 0; // No timeout unless an issue is logged
 
-const GPIO MOTOR1_GPIO_STEP     = GPIO_10; // 10; // 21
-const GPIO MOTOR1_GPIO_DIR      = GPIO_18; // 18; // 20
-const GPIO MOTOR1_GPIO_MODE_0   = GPIO_17; // 17; // 14
-const GPIO MOTOR1_GPIO_MODE_1   = GPIO_27; // 27; // 15
-const GPIO MOTOR1_GPIO_MODE_2   = GPIO_22; // 22; // 18
+// Motor 2
+const GPIO MOTOR1_GPIO_STEP   = GPIO_10; // 10; // 21
+const GPIO MOTOR1_GPIO_DIR    = GPIO_18; // 18; // 20
+const GPIO MOTOR1_GPIO_MODE_0 = GPIO_17; // 17; // 14
+const GPIO MOTOR1_GPIO_MODE_1 = GPIO_27; // 27; // 15
+const GPIO MOTOR1_GPIO_MODE_2 = GPIO_22; // 22; // 18
+const int  MOTOR1_DIRECTION   = 1; // Set to 1 or -1
 
-const GPIO MOTOR2_GPIO_STEP     = GPIO_24; // 24;
-const GPIO MOTOR2_GPIO_DIR      = GPIO_23; // 23;
+// Motor 2
+const GPIO MOTOR2_GPIO_STEP   = GPIO_24; // 24;
+const GPIO MOTOR2_GPIO_DIR    = GPIO_23; // 23;
 // Motor mode pins are the same for both motors since they are wired together on the robot
-const GPIO MOTOR2_GPIO_MODE_0   = GPIO_17;
-const GPIO MOTOR2_GPIO_MODE_1   = GPIO_27;
-const GPIO MOTOR2_GPIO_MODE_2   = GPIO_22;
+const GPIO MOTOR2_GPIO_MODE_0 = GPIO_17;
+const GPIO MOTOR2_GPIO_MODE_1 = GPIO_27;
+const GPIO MOTOR2_GPIO_MODE_2 = GPIO_22;
+const int  MOTOR2_DIRECTION   = (MOTOR1_DIRECTION*-1); // motor 2 is opposite dir of motor 1
 
 // Of course right and left legs are reversed as well as the joints
 
