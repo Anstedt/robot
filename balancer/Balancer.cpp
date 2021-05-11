@@ -94,11 +94,11 @@ Balancer::~Balancer()
 
   m_motorLeft->JoinThread();
 
+  cout << "Balancer delete Left Motor" << std::endl;
+  delete m_motorLeft;
+
   // MOTORS STOPPED AND REMOVED
   
-  cout << "Balancer delete Left Motor" << std::endl;
-  delete m_motorRight;
-
   cout << "~Balancer IS RUNNING gpioTerminate" << std::endl;
   gpioTerminate(); // Now that the MPU6050 is gone we can close pigpio
 }

@@ -90,13 +90,16 @@ bool MotorDriver::MotorCmd(s32 distance_raw, u32 max_speed_raw, u8 microstep_mod
   m_motor_control.min_speed = max_speed_raw;
   m_motor_control.max_speed = max_speed_raw;
 
+  // std::cout << "Motor steps per second=" << max_speed_raw << std::endl;
+  // std::cout << "Motor distance=" << distance_raw << std::endl;
+
   m_motor_control.microstep_control = microstep_mode;
 
   lseek(m_motor_fd, 0, SEEK_SET); // Start at the beginning
 
   if (write(m_motor_fd, &m_motor_control, sizeof(m_motor_control)) != sizeof(m_motor_control))
   {
-    std::cout << "ERROR: write to motor driver handle=" << m_motor_fd << " failed " <<  std::endl;
+    std::cout << "ERROR: write to motor driver handle=" << m_motor_fd << " failed " << std::endl;
     status = false;
   }
   
