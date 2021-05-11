@@ -27,7 +27,7 @@ public:
   // Constructors
   MotorDriver(GPIO pulse_gpio, GPIO dir_gpio, GPIO microstep0, GPIO microstep1, GPIO microstep2);
   // Mutators: non-const operations
-  bool MotorCmd(int steps, int speed);
+  bool MotorCmd(s32 distance_raw, u32 max_speed_raw, u8 microstep_mode);
   // Accessors: const operations
   // Static and friend functions
   // Memory management: copy constructor, destructor, operator=
@@ -44,6 +44,9 @@ private:
   // Data fields
   struct STEPPER_SETUP m_motor_control;
   int m_motor_fd;
+  int m_distance_raw;
+  int m_max_speed_raw;
+  int m_motor_microstep_mode;
   // Static (shared) class variables
 };
 /* GLOBALS ********************************************************************/

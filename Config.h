@@ -24,7 +24,7 @@ PURPOSE:  Hardware based configs for the robot
 
 // Motor Constants
 const int MOTORS_STEPS_PER_REV = 200;
-const int MOTORS_MODE_DEFAULT  = 5;
+const int MOTORS_MODE_DEFAULT  = 5; // 1/32 stepping
 const int MOTORS_RPM_DEFAULT   = 30;
 
 const GPIO MOTOR1_GPIO_STEP     = GPIO_10; // 10; // 21

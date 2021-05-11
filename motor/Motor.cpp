@@ -6,6 +6,7 @@ PURPOSE:  Controls one motor of the 2 the robot has
 *******************************************************************************/
 #include <iostream>
 #include <pigpio.h>
+#include "Config.h"
 #include "Motor.h"
 
 using namespace std;
@@ -54,10 +55,11 @@ Motor::Motor(int steps_rev, GPIO pulse_gpio, GPIO dir_gpio, GPIO microstep0, GPI
 }
 
 
+/*------------------------------------------------------------------------------
+FUNCTION: Motor:: Motor()
+------------------------------------------------------------------------------*/
 Motor::~Motor()
 {
-  gpioTerminate(); // Close pigpio
-
   cout << "Motor::~Motor()" <<std::endl;
 }
 
@@ -93,36 +95,7 @@ bool Motor::SetMotorMode(int mode)
     status = true;
   }
 
-  gpioWrite(m_motor_mode_gpio[0], motor_mode[m_motor_mode].pin_0);
-  gpioWrite(m_motor_mode_gpio[1], motor_mode[m_motor_mode].pin_1);
-  gpioWrite(m_motor_mode_gpio[2], motor_mode[m_motor_mode].pin_2);
-
   return(status);
-}
-
-/*------------------------------------------------------------------------------
-FUNCTION:      Motor::GetPulseLowTime(int pulse_up)
-PURPOSE:       Calculate the pulse down time for:
-               - Pulse Up Time
-               - m_motor_revs_per_min
-               - m_motor_steps_rev
-               - mode multiplier = motor_mode[m_motor_mode].multiplier;
-
-ARGUMENTS:     None
-RETURNS:       time in usec to delay
-------------------------------------------------------------------------------*/
-int Motor::GetPulseLowTime(int pulse_high_us)
-{
-  int usecs_per_rev = (60*1000000)/m_motor_revs_per_min; // Convert to microseconds per rev
-  int pulses_per_rev =  motor_mode[m_motor_mode].multiplier * m_motor_steps_rev;
-  int usecs_per_pulse = usecs_per_rev / pulses_per_rev;
-
-  // Since we know how long the total pulse should be the low is just the total
-  // minus the high pulse
-  if ((usecs_per_pulse - pulse_high_us) < 0)
-    return(m_pulse_high_us); // Never go negative
-  else
-    return(usecs_per_pulse - pulse_high_us);
 }
 
 /*------------------------------------------------------------------------------
@@ -142,16 +115,6 @@ int Motor::AngleToSteps(float angle)
 /*------------------------------------------------------------------------------
 FUNCTION:  Motor::Run(void)
 PURPOSE:   Run the motor is a separate thread
-
-Step Frequency                Max: 250kHz
-Step Pulse duration STEP High Min: 1.9μs, no max
-Step Pulse duration STEP Low  Min: 1.9μs, no max
-
-    1.9us 1.9us
-   v     v     v
-   ,-----.     ,-----.
-   |     |     |     |
----'     `-----'     `--
 ------------------------------------------------------------------------------*/
 int Motor::Run(void)
 {
@@ -167,23 +130,15 @@ int Motor::Run(void)
     // Normally data comes at 4ms but on shutdown that may not happen
     if (m_angle_gyro_fifo.tryWaitAndPop(motor_angle_cmd, 100))
     {
-      if (motor_angle_cmd < 0)
-      {
-        m_motor_dir = MOTOR_CCW;
-        motor_angle_cmd *= -1;
-      }
-      else
-      {
-        m_motor_dir = MOTOR_CW;
-      }
-
       // Convert the angle to steps based on the current chopper mode
       m_motor_steps_to_go = AngleToSteps(motor_angle_cmd);
 
       // HJA At this point we can call Ricks driver
-
-      // Set the direction based on the requested angle
-      gpioWrite(m_motor_dir_gpio, m_motor_dir);
+      // MOTORS_RPM_DEFAULT = 30 rpm
+      // / 60 = rp second = 0.5
+      // * 200 which is pulses per rev of the motor = 100
+      // * mode modifier for example 1/32 = 100 * 32 = 3200
+      m_motorDriver.MotorCmd(m_motor_steps_to_go, (MOTORS_RPM_DEFAULT * 200 * 32) / 60, m_motor_mode);
 
       // cout << " Fifo Angle=" << motor_angle_cmd << " Direction=" << m_motor_dir << " steps_to_go=" << m_motor_steps_to_go << std::endl;
     }

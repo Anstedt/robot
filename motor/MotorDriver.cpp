@@ -15,6 +15,7 @@ PURPOSE:  Low level driver access to motor
 
 #include "MotorDriver.h"
 
+#define DEFAULT_AGGRESSIVENESS 10  /* lower 8 bits treated as a fractions */
 #define STEP_CMD_FILE "/sys/devices/platform/soc/fe20c000.pwm/cmd"
 
 /* METHODS ********************************************************************/
@@ -27,13 +28,17 @@ PURPOSE:   Setup constants for the motor
 MotorDriver::MotorDriver(GPIO pulse_gpio, GPIO dir_gpio, GPIO microstep0, GPIO microstep1, GPIO microstep2)
 {
   // Defaults for motor control
-  m_motor_control.distance  = 0;  // in steps NOTE: signed, pos = DIR pin high, neg = DIR pin low NOTE: if = 0 then stop
+  m_motor_control.distance  = 0; // in steps NOTE: signed, pos = DIR pin high, neg = DIR pin low NOTE: if = 0 then stop
   m_motor_control.min_speed = 0; // min speed in steps, 0 is stopped
   m_motor_control.max_speed = 0; // min speed in steps, 0 is stopped
-	m_motor_control.microstep_control = 0;  /* bit 0 is value for gpio_microstep0, bit 1 = microstep1, etc */
-	m_motor_control.ramp_aggressiveness = 0;
+	m_motor_control.microstep_control = 0; // bit 0 is value for gpio_microstep0, bit 1 = microstep1, etc
+	m_motor_control.ramp_aggressiveness = DEFAULT_AGGRESSIVENESS;
 
-  // Constants for the harwdare
+  // Constants our our system
+  m_motor_control.wait_timeout = 4; // wait timeout in ms, for 250hz wait no more than 4ms
+  m_motor_control.combine_ticks_per_step = COMBINE_TICKS_PER_STEP;
+
+  // Constants for the hardware
   m_motor_control.gpios[GPIO_STEP] = pulse_gpio;       // constant
   m_motor_control.gpios[GPIO_DIRECTION] = dir_gpio;    // constant
   m_motor_control.gpios[GPIO_MICROSTEP0] = microstep0; // constant
@@ -51,19 +56,47 @@ MotorDriver::MotorDriver(GPIO pulse_gpio, GPIO dir_gpio, GPIO microstep0, GPIO m
 }
 
 /*------------------------------------------------------------------------------
-FUNCTION:  MotorDriver::MotorCmd(int steps, int speed)
+FUNCTION:  bool MotorCmd(s32 distance_raw, u32 max_speed_raw, u8 microstep_mode)
 PURPOSE:   Driver motor at the specified rate at the specified speed
 
 ASSUMES:   steps per revolution is 200
 
-ARGUMENTS: steps = steps to take if chopper mode is 1/32 then steps=64 then
+ARGUMENTS: distance_raw  = pulses
+                           real distance depends on microstep_mode
+                           steps for motor to rotate 360 degrees, normally 200 
+                           circumference of wheel
+                             often only concerned with angle of rotation
+           max_speed_raw = max pulses per second
+                           real speed depends on microstep_mode
+                           steps for motor to rotate 360 degrees, normally 200 
+                           circumference of wheel
+                             often only concerned with angle of rotation
+
+EXAMPLE:
+
+steps = steps to take if chopper mode is 1/32 then steps=64 then
 motor steps = 2 or 1/100 of a revolution
 
 RETURNS:   worked
 ------------------------------------------------------------------------------*/
-bool MotorDriver::MotorCmd(int distance_in_steps, int speed_in_steps)
+bool MotorDriver::MotorCmd(s32 distance_raw, u32 max_speed_raw, u8 microstep_mode)
 {
+  bool status = true;
+  
   // We will shift mode to meed the required speed and distance
+  m_motor_control.distance =  distance_raw;
+  m_motor_control.max_speed = max_speed_raw;
+  m_motor_control.microstep_control = microstep_mode;
+
+  lseek(m_motor_fd, 0, SEEK_SET); // Start at the beginning
+
+  if (write(m_motor_fd, &m_motor_control, sizeof(m_motor_control)) != sizeof(m_motor_control))
+  {
+    std::cout << "ERROR: write to motor driver handle=" << m_motor_fd << " failed " <<  std::endl;
+    status = false;
+  }
+  
+  return(status);
 }
 
 /*------------------------------------------------------------------------------
@@ -72,4 +105,3 @@ FUNCTION:  MotorDriver::~MotorDriver()
 MotorDriver::~MotorDriver()
 {
 }
-
