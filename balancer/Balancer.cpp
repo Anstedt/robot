@@ -10,7 +10,6 @@ PURPOSE: Creates Gyro and Motors and connecting them up for balancing
 #include "Balancer.h"
 #include <functional>
 
-#include <pigpio.h>
 #include <unistd.h>
 
 using namespace std;
@@ -94,9 +93,6 @@ Balancer::~Balancer()
   delete m_motorLeft;
 
   // MOTORS STOPPED AND REMOVED
-  
-  cout << "~Balancer IS RUNNING gpioTerminate" << std::endl;
-  gpioTerminate(); // Now that the MPU6050 is gone we can close pigpio
 }
 
 /*------------------------------------------------------------------------------

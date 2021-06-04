@@ -6,7 +6,6 @@ FILE: Gyro.h
 
 /* INCLUDE ********************************************************************/
 #include "Threads.h"
-#include "MPU6050.h"
 #include <functional>
 
 using namespace std;
@@ -28,7 +27,6 @@ protected:
    int Run(void); // Thread entry point
 private:
   // Local Classes
-  MPU6050* p_mpu6050;
   // Constructors
   // Mutators: non-const operations
   // Accessors: const operations

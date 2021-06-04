@@ -5,7 +5,6 @@ FILE:     Motor.cpp
 PURPOSE:  Controls one motor of the 2 the robot has
 *******************************************************************************/
 #include <iostream>
-#include <pigpio.h>
 #include "Config.h"
 #include "Motor.h"
 
@@ -113,8 +112,6 @@ int Motor::Run(void)
   
   cout << "Motor:Run() in a separate thread" << std::endl;
 
-  uint32_t loop_time_hja = gpioTick();
-
   while (ThreadRunning())
   {
     // Wait up to 100ms for the data then try again on next loop
@@ -134,6 +131,8 @@ int Motor::Run(void)
       // * mode modifier for example 1/32 = 100 * 32 = 3200
       m_motorDriver.MotorCmd(m_motor_steps_to_go, (m_motor_revs_per_min * 200 * 32) / 60, m_motor_mode);
 
+      cout << "Motor::m_motor_steps_to_go=" << m_motor_steps_to_go << std::endl;
+      
       // cout << " Fifo Angle=" << motor_angle_cmd << " Direction=" << m_motor_dir << " steps_to_go=" << m_motor_steps_to_go << std::endl;
     }
   }

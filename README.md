@@ -1,130 +1,63 @@
 # Robot
 
-### See /mnt/robot/RP/notes.txt for important information on driver
-    and implementation
+## You will need pigpio which is part of the default raspberry pi OS install
 
-### Transition to NEW motor system
-- Options
-  - Dual motor objects?
-    - Dual Fifos would work since Gyro Callback goes through Balancer?
-  - Is there a need for separate threads?
-    - I could call direct from Gyro, through Balancer, but that could stall Gyro in some cases.
-    - Biggest issue is Fifo's are polled so the Motor threads still need to run at 250Hz each
-    - With Rick's driver the overhead of calls should be minimal so direct calls would work
-    - Changes to do this
-      - Motor threads removed
-      - Motor->AddGyroData() is direct call to Rick's driver
-      - Ask Rick if a combined call is best?
-        - This could be a static motor call used by each Motor???
-- Plan
-  - Dual motor Objects
-  - Phase one is keep threads
-  - Phase two is direct calls, not threads, after I learn more about Rick's driver
-  - Phase three, optional. static function to combine both motor calls.
-
-### Transition to Linux driver for motor control
-- Build and install driver
-- Learn how driver works
-- Move to 2 Motor objects rather than 1 Motor object controlling 2 motors
-  - This means the Balancer needs to create 2 motors.
-  - Question, should the Motor objects share the same running thread?
-    - Might need this since there is only one Gyro data Fifo
-    - But the Gyro data could be sent to 2 Fifos in AddGyroData()
-    - See CallBack in Balancer
-- Test out driver on my system
-- Work out max speeds based on different micro-step setting
-
-### Implement PID based off of Arduino Code
-- Add code to mys system and get it to build
-- Move from angle based control to speed and distance control
-
-### Implement mechanism to control robot motion; turning and traveling
-
-### Angles
-
-The front is where the holes are in the upper body. The angles are in reference to the front.
- 90: is 90 degrees forward of the front
-  0: is straight down
--90: is 90 degrees backwards from the front
-
-### Config
-- Config.h has Motor and Legs IO and HW configurations.
-
-### NOTES
-
-### Legs
-
-- Right and Left leg joints are now roughly correct for 90(forward), 0(straight) and -90(back) degress.
-
-## Controller
-- Creates and controls the robot, constructed from robot.c::main()
-- Control interface is still needed.
-
-## Status
-- robot
-  - Signals
-- Controller - just a shell at this time, needs controller interfaces and commands
-  - Balancer - needs pid, motion commands, dual motor testing, balance testing
-    - Motor - works
-    - DRV8825 - works but should be a Linux driver
-    - Gyro - works but needs Z averaging on startup
-    - MPU6050 - works and tested
-  - Legs
-    - Leg - works but may need interfaces added
-    - Joint - works but may need interfaces added
-    - Servo - works but may need interfaces added
-      - Interfaces to PCA9685 16 Channel 12 Bit PWM Servo Driver
-  - Threads - works and tested
-
-## The robot needs to run as root but cmake takes care of this during the build
-
-## ToDo
-- Add a command line interface for setting:
-  - Run duration
-  - Default motor speed
-  - Turning on debug
-  - Setting motor mode
-- Add a speed interface so balancer can more smoothly control the
-  motor. May be able to use this to more smoothly get to the final
-  location. Rick is thinking of this as well by having ramping
-  functions for startup and shutdown. He is thinking of adding this to
-  the driver itself. Might be the right thing to do.
-- Pull data all at once so that it is all synchronized as spelled out
-  in data sheet
-
-## Data Flow Diagram of the Robot Code
-![Robot](Robot.png)
-
-## Electrical Harware Design
-![Robot-HW](Robot-HW.png)
-
-## Migrating to c++
-- Notice how C++ exceptions are turned off, see CMakeLists.txt
-  compiler option CMAKE_CXX_FLAGS. This is to improve performance as
-  exceptions can slow the code down drastically and we are trying to
-  build a real-time robot control system.
-
-## Option 1: use cmake and Ninja for the build
+## BUILDING uses cmake and Ninja for the build
 - Install cmake
   - $ sudo apt-get install cmake
 - Install ninja
   - $ sudo apt-get install ninja-build
   - $ sudo ln /usr/bin/ninja /usr/sbin/ninja
-- Build the robot using ninja
-  - cmake -G Ninja
-  - ninja
-- Run the robot
-  - $ robot
 
-## Option 2: Using cmake and make for the build
-- Install cmake
-  - $ sudo apt-get install cmake
-- Build the robot using make
-  - $ cd robot # wherever you have it
-  - $ cmake . # you need the '.'
-  - $ make
-- Run the robot
-  - $ ./robot
+## Get robot code
+- cd to YOUR_GIT_ROOT
+- git clone https://github.com/Anstedt/robot.git
+- cd robot
+- git co test-stepper-driver
+  - This branch has the test code
+  
+## Build the robot using ninja  
+- cmake -G Ninja
+- ninja
+## Run the robot
+- ./robot
 
-- To start over with cmake run the following
-  - $ rm -rf rules.ninja CMakeCache.txt */CMakeCache.txt CMakeFiles */CMakeFiles -r build.ninja .ninja_* cmake_install.cmake */cmake_install.cmake */lib*.a
+## Rebuild again without adding files
+- ninja
+## Run the robot
+- ./robot
+
+## To start over with cmake run the following; NEVER NEEDS TO BE DONE UNLESS YOU MODIFY THE DIRECTORY STRUCTURE OR ADD NEW FILES
+  - rm -rf rules.ninja CMakeCache.txt */CMakeCache.txt CMakeFiles */CMakeFiles -r build.ninja .ninja_* cmake_install.cmake */cmake_install.cmake */lib*.a
+
+## Be very aware that I used robot/motor/rpi4-stepper.h which is slickly modified for my use
+
+## Code that controls the motors
+- robot/balancer/Balancer CallBack(...)
+  - Data from Gyro is sent to the Motors via this call
+    - Notice no delays between motors calls
+- robot/motor/Motor.cpp AddGyroData(...)
+  - Adds Gyro data to the FIFO
+- robot/motor/Motor.cpp Run(void)
+  - This pulls the gyro data from the FIFO and calls
+    - robot/motor/MotorDriver::MotorCmd(..)
+      - Writes to the Linux motor driver
+
+## Call tree
+- robot/gyro/Gyro.cpp Run(void) simulates Gyro/accel data and calls m_callback()
+  - which is robot/balancer/Balancer CallBack(...) which calls
+    - robot/motor/Motor.cpp AddGyroData() which queues up the data in FIFO
+      - robot/motor/Motor.cpp Run(void) pulls data from FIFO, m_angle_gyro_fifo
+        - robot/motor/Motor.cpp Run(void) sends commands to Stepper Motor Driver
+
+## The FIFO is a blocking queue that will not return unless there is data in it
+
+## The simulation of data is done by removing the MPU6050 code and creating values in the Gyro.cpp code
+- Angle values cycle through 0, 2, 4, 0, -2, -4
+  - Steps 0, 35, 71, 0, -35, -71
+  - In reality each motor runs the opposite directions so if motor A steps == 71, B == -71
+- You can hack the simulation in robot/gyro/Gyro.cpp Run(void)
+  - Note you can control the rate by changing the following line in the same function
+    - timer = gpioTick() + 4000; // gpioTick is in micro seconds
+  - This time drives the rate of calls to the motor driver
+  - Normally this function is pulling real-time MPU6050 data from the Gyro/Accel hardware
