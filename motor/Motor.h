@@ -14,8 +14,6 @@ FILE:          Motor.h
 #include "rpi4-stepper.h"
 #include "MotorDriver.h"
 
-using MotorModeGPIO = GPIO[3];
-
 /*------------------------------------------------------------------------------
 CLASS:	  Motor
 PURPOSE:  Control a stepper motor
@@ -25,7 +23,6 @@ class Motor : public Threads
 public:
   // Local Classes
   // Constructors
-  // int (&mode_gpio)[3];
   Motor(int steps_rev, GPIO pulse_gpio, GPIO dir_gpio, GPIO a, GPIO b, GPIO c, int motor_mode, int revs_per_min, int direction);
   // Mutators: non-const operations
   bool AddGyroData(int pitch, int yaw, float angle_acc, float angle_gyro);
@@ -49,12 +46,8 @@ private:
   Motor& operator=(const Motor& rhs);
   // Data fields
   int m_motor_steps_rev;
-  int m_motor_pulse_gpio;
-  int m_motor_dir_gpio;
-  MotorModeGPIO m_motor_mode_gpio;
   int m_motor_revs_per_min;
   // Motor control
-  int m_motor_steps_to_go;
   int m_motor_mode;
   int m_motor_dir;
 

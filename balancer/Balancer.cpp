@@ -21,10 +21,6 @@ FUNCTION:      Balancer::Balancer()
 ------------------------------------------------------------------------------*/
 Balancer::Balancer()
 {
-  MotorModeGPIO mode_array = {MOTOR1_GPIO_MODE_0,
-                              MOTOR1_GPIO_MODE_1,
-                              MOTOR1_GPIO_MODE_2};
-
   // Right Motor uses Gyro data so start it first
   m_motorRight = new Motor(MOTORS_STEPS_PER_REV, MOTOR1_GPIO_STEP, MOTOR1_GPIO_DIR,
                            MOTOR1_GPIO_MODE_0, MOTOR1_GPIO_MODE_1, MOTOR1_GPIO_MODE_2,

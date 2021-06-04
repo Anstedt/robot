@@ -11,24 +11,6 @@ PURPOSE:  Controls one motor of the 2 the robot has
 
 using namespace std;
 
-#define MOTOR_CW  1
-#define MOTOR_CCW 0
-#define PULSE_LOW_TIME_US 4
-
-struct MotorMode
-{
-  int pin_0;
-  int pin_1;
-  int pin_2;
-  int multiplier;
-} motor_mode[6] = {
-  {0,0,0, 1},   // Full
-  {1,0,0, 2},   // Half
-  {0,1,0, 4},   // 1/4
-  {1,1,0, 8},   // 1/8
-  {0,0,1, 16},  // 1/16
-  {1,0,1, 32}}; // 1/32
-
 /*------------------------------------------------------------------------------
 FUNCTION:  Motor::Motor()
 
@@ -46,11 +28,8 @@ Motor::Motor(int steps_rev, GPIO pulse_gpio, GPIO dir_gpio, GPIO microstep0, GPI
 
   m_motor_steps_rev = steps_rev;
 
-  m_motor_dir_gpio   = dir_gpio;
-
-  m_motor_revs_per_min = revs_per_min;
-
   m_motor_dir = dir;
+  m_motor_revs_per_min = revs_per_min;
 
   // Now set the motor mode
   SetMotorMode(mode);
@@ -106,7 +85,16 @@ RETURNS:       None
 ------------------------------------------------------------------------------*/
 int Motor::AngleToSteps(float angle)
 {
-  int pulses_per_rev =  motor_mode[m_motor_mode].multiplier * m_motor_steps_rev;
+  // Motor mode lookup
+  const int motor_mode[6] = {
+    1,   // Full
+    2,   // Half
+    4,   // 1/4
+    8,   // 1/8
+    16,  // 1/16
+    32}; // 1/32
+
+  int pulses_per_rev =  motor_mode[m_motor_mode] * m_motor_steps_rev;
 
   // pulses for 1 revolution are the number of pulses needed for 1 revolution
   // 1 revolution is 360 degrees
@@ -121,7 +109,8 @@ PURPOSE:   Run the motor is a separate thread
 int Motor::Run(void)
 {
   float motor_angle_cmd = 0;
-
+  int m_motor_steps_to_go = 0;
+  
   cout << "Motor:Run() in a separate thread" << std::endl;
 
   uint32_t loop_time_hja = gpioTick();
@@ -143,7 +132,7 @@ int Motor::Run(void)
       // / 60 = rp second = 0.5
       // * 200 which is pulses per rev of the motor = 100
       // * mode modifier for example 1/32 = 100 * 32 = 3200
-      m_motorDriver.MotorCmd(m_motor_steps_to_go, (MOTORS_RPM_DEFAULT * 200 * 32) / 60, m_motor_mode);
+      m_motorDriver.MotorCmd(m_motor_steps_to_go, (m_motor_revs_per_min * 200 * 32) / 60, m_motor_mode);
 
       // cout << " Fifo Angle=" << motor_angle_cmd << " Direction=" << m_motor_dir << " steps_to_go=" << m_motor_steps_to_go << std::endl;
     }
