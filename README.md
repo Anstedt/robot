@@ -13,7 +13,7 @@
 - cd to YOUR_GIT_ROOT
 - git clone https://github.com/Anstedt/robot.git
 - cd robot
-- git co test-stepper-driver
+- git checkout test-stepper-driver
   - This branch has the test code
   
 ## Build the robot using ninja  
