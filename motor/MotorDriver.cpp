@@ -87,11 +87,10 @@ bool MotorDriver::MotorCmd(s32 distance_raw, u32 max_speed_raw, u8 microstep_mod
   if (distance_raw > -4 && distance_raw < 4)
   {
     distance_raw = 0;
-    std::cout << "distance_raw == 0" << std::endl;
   }
   
-  int distance = distance_raw;
-  std::cout << "MotorDriver::distance=" << distance << std::endl;
+  // int distance = distance_raw;
+  // std::cout << "MotorDriver::distance=" << distance << std::endl;
   // std::cout << "microstep_mode=" << mode << " distance=" << distance_raw << " max_speed_raw=" << max_speed_raw << std::endl;
   // std::cout << "distance=" << distance_raw << std::endl;
   

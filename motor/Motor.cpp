@@ -131,7 +131,7 @@ int Motor::Run(void)
       // * mode modifier for example 1/32 = 100 * 32 = 3200
       m_motorDriver.MotorCmd(m_motor_steps_to_go, (m_motor_revs_per_min * 200 * 32) / 60, m_motor_mode);
 
-      cout << "Motor::m_motor_steps_to_go=" << m_motor_steps_to_go << std::endl;
+      // cout << "Motor::m_motor_steps_to_go=" << m_motor_steps_to_go << std::endl;
       
       // cout << " Fifo Angle=" << motor_angle_cmd << " Direction=" << m_motor_dir << " steps_to_go=" << m_motor_steps_to_go << std::endl;
     }
