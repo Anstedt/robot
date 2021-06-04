@@ -82,6 +82,21 @@ RETURNS:   worked
 bool MotorDriver::MotorCmd(s32 distance_raw, u32 max_speed_raw, u8 microstep_mode)
 {
   bool status = true;
+
+  // Driver needs 4 or greater
+  if (distance_raw < 4 && distance_raw >= 2)
+  {
+    // Set to 4 for 2 or greater
+    distance_raw = 4;
+  }
+  else if (distance_raw < 2)
+  {
+    // Set to 0 for 1 or less
+    distance_raw = 0;
+  }
+
+  if (distance_raw < 4 && distance_raw != 0)
+    std::cout << "STEPS=" << distance_raw << std::endl;
   
   // We will shift mode to meed the required speed and distance
   m_motor_control.distance =  distance_raw;
