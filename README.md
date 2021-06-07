@@ -17,7 +17,7 @@
   - This branch has the test code
   
 ## Build the robot using ninja  
-- cmake -G Ninja
+- cmake -G Ninja .
 - ninja
 ## Run the robot
 - ./robot
