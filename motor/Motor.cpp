@@ -35,7 +35,6 @@ Motor::Motor(int steps_rev, GPIO pulse_gpio, GPIO dir_gpio, GPIO microstep0, GPI
   SetMotorMode(mode);
 }
 
-
 /*------------------------------------------------------------------------------
 FUNCTION: Motor:: Motor()
 ------------------------------------------------------------------------------*/
@@ -51,7 +50,6 @@ RETURNS:       None
 bool Motor::AddGyroData(int y, int x, float angle_gyro, float angle_acc)
 {
   // cout << "Angle Gyro=" << angle_gyro << "\tAngle Accel=" << angle_acc << "\tGyro Y=" << y << "\tGyro X=" << x << std::endl;
-
   m_angle_gyro_fifo.push(angle_gyro);
 
   return(true);
