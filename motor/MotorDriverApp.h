@@ -21,10 +21,9 @@ public:
   // Local Classes
   // Constructors
   // int (&mode_gpio)[3];
-  MotorDriver(int steps_rev, int pulse1_gpio, int dir1_gpio, int pulse2_gpio, int dir2_gpio, const MotorModeGPIO& mode_gpio, int motor_mode, int revs_per_min = 1);
+  MotorDriver(GPIO pulse_gpio, GPIO dir_gpio, GPIO microstep0, GPIO microstep1, GPIO microstep2);
   // Mutators: non-const operations
-  bool AddGyroData(int pitch, int yaw, float angle_acc, float angle_gyro);
-  bool SetMotorMode(int mode);
+  bool MotorCmd(s32 distance_raw, u32 max_speed_raw, u8 microstep_mode);
   // Accessors: const operations
   // Static and friend functions
   // Memory management: copy constructor, destructor, operator=
@@ -43,18 +42,19 @@ private:
   MotorDriver(const MotorDriver&);
   MotorDriver& operator=(const MotorDriver& rhs);
   // Data fields
-  int m_motor_steps_rev;
-  int m_motor1_pulse_gpio;
-  int m_motor1_dir_gpio;
-  int m_motor2_pulse_gpio;
-  int m_motor2_dir_gpio;
+  int m_motor_pulse_gpio;
+  int m_motor_dir_gpio;
   MotorModeGPIO m_motor_mode_gpio;
-  int m_motor_revs_per_min;
+
+  struct STEPPER_SETUP m_motor_control;
+  int m_distance_raw;
+  int m_max_speed_raw;
+  int m_motor_microstep_mode;
+
   // Motor control
   int m_motor_steps_to_go;
   int m_motor_mode;
-  int m_motor1_dir;
-  int m_motor2_dir;
+  int m_motor_dir;
   int m_pulse_high_us;
   int m_pulse_low_us;
   Fifo<float, 512> m_angle_gyro_fifo;

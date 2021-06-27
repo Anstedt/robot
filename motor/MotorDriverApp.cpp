@@ -38,26 +38,22 @@ ARGUMENTS: steps_rev = number of steps for 1 full revolution, mode = 0
            mode_gpio = array of 3 gpio pins used for mode
            mode = default stepper/chop mode for the motor
            revs_per_min = revolutions per minute
-------------------------------------------------------------------------------*/
-MotorDriver::MotorDriver(int steps_rev, int pulse1_gpio, int dir1_gpio, int pulse2_gpio, int dir2_gpio, const MotorModeGPIO& mode_gpio, int mode, int revs_per_min)
+------------------------------------------------------------------------------*/          
+MotorDriver::MotorDriver(GPIO pulse_gpio, GPIO dir_gpio, GPIO microstep0, GPIO microstep1, GPIO microstep2);
 {
   cout << "MotorDriver::MotorDriver()" << std::endl;
 
-  m_motor_steps_rev = steps_rev;
-
-  m_motor1_pulse_gpio = pulse1_gpio;
-  m_motor1_dir_gpio   = dir1_gpio;
-
-  m_motor2_pulse_gpio = pulse2_gpio;
-  m_motor2_dir_gpio   = dir2_gpio;
+  m_motor_pulse_gpio = pulse_gpio;
+  m_motor_dir_gpio   = dir_gpio;
 
   // Copy the gpio mode pin array
-  std::copy(std::begin(mode_gpio), std::end(mode_gpio), std::begin(m_motor_mode_gpio));
-
-  m_motor_revs_per_min = revs_per_min;
-
-  m_motor_mode = mode;
+  m_motor_mode_gpio.pin_0 = microstep0;
+  m_motor_mode_gpio.pin_1 = microstep1;
+  m_motor_mode_gpio.pin_2 = microstep2;
+  
+  m_motor_mode = 0; // Default to 0, MotorCmd will fill this in
   m_motor_steps_to_go = 0;
+  
   // high is always this number of us. Can go as low as 1.9us
   m_pulse_high_us = PULSE_LOW_TIME_US;
   m_pulse_low_us = 0; // Is variable based on requested speed
@@ -75,26 +71,21 @@ MotorDriver::MotorDriver(int steps_rev, int pulse1_gpio, int dir1_gpio, int puls
     cout << "MotorDriver pigpio initialization failed" << std::endl;
   }
 
-  // Initialize gpio motor 1
-  gpioSetMode(m_motor1_pulse_gpio, PI_OUTPUT);   // pulse pin
-  gpioSetMode(m_motor1_dir_gpio, PI_OUTPUT);     // direction pin
-
-  // Initialize gpio motor 2
-  gpioSetMode(m_motor2_pulse_gpio, PI_OUTPUT);   // pulse pin
-  gpioSetMode(m_motor2_dir_gpio, PI_OUTPUT);     // direction pin
+  // Initialize gpio motor
+  gpioSetMode(m_motor_pulse_gpio, PI_OUTPUT);   // pulse pin
+  gpioSetMode(m_motor_dir_gpio, PI_OUTPUT);     // direction pin
 
   // Mode gpio pins
-  gpioSetMode(m_motor_mode_gpio[0], PI_OUTPUT); // mode pin 0
-  gpioSetMode(m_motor_mode_gpio[1], PI_OUTPUT); // mode pin 1
-  gpioSetMode(m_motor_mode_gpio[2], PI_OUTPUT); // mode pin 2
+  gpioSetMode(microstep0, PI_OUTPUT); // mode pin 0
+  gpioSetMode(microstep1, PI_OUTPUT); // mode pin 1
+  gpioSetMode(microstep2, PI_OUTPUT); // mode pin 2
 
   // Now set the motor mode
   SetMotorMode(mode);
 
   // Default the direction, note motor 1/2 are apposite direction to go the same
   // way for the robot
-  gpioWrite(m_motor1_dir_gpio, MOTOR_CW);
-  gpioWrite(m_motor2_dir_gpio, MOTOR_CCW);
+  gpioWrite(m_motor_dir_gpio, MOTOR_CW);
 }
 
 MotorDriver::~MotorDriver()
