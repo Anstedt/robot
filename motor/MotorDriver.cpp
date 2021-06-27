@@ -82,7 +82,7 @@ RETURNS:   worked
 bool MotorDriver::MotorCmd(s32 distance_raw, u32 max_speed_raw, u8 microstep_mode)
 {
   bool status = true;
-  
+
   // If not at least =/-4 just set to 0 for driver
   if (distance_raw > -4 && distance_raw < 4)
   {
@@ -108,7 +108,7 @@ bool MotorDriver::MotorCmd(s32 distance_raw, u32 max_speed_raw, u8 microstep_mod
     std::cout << "ERROR: write to motor driver handle=" << m_motor_fd << " failed " << std::endl;
     status = false;
   }
-  
+
   return(status);
 }
 
