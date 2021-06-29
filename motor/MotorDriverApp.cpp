@@ -6,6 +6,7 @@ PURPOSE:  Controls one motor of the 2 the robot has
 *******************************************************************************/
 #include <iostream>
 #include <pigpio.h>
+#include "Config.h" // HJA should remove this when we have mode setup correctly
 #include "MotorDriver.h"
 
 using namespace std;
@@ -39,7 +40,7 @@ ARGUMENTS: steps_rev = number of steps for 1 full revolution, mode = 0
            mode = default stepper/chop mode for the motor
            revs_per_min = revolutions per minute
 ------------------------------------------------------------------------------*/          
-MotorDriver::MotorDriver(GPIO pulse_gpio, GPIO dir_gpio, GPIO microstep0, GPIO microstep1, GPIO microstep2);
+MotorDriver::MotorDriver(GPIO pulse_gpio, GPIO dir_gpio, GPIO microstep0, GPIO microstep1, GPIO microstep2)
 {
   cout << "MotorDriver::MotorDriver()" << std::endl;
 
@@ -47,9 +48,9 @@ MotorDriver::MotorDriver(GPIO pulse_gpio, GPIO dir_gpio, GPIO microstep0, GPIO m
   m_motor_dir_gpio   = dir_gpio;
 
   // Copy the gpio mode pin array
-  m_motor_mode_gpio.pin_0 = microstep0;
-  m_motor_mode_gpio.pin_1 = microstep1;
-  m_motor_mode_gpio.pin_2 = microstep2;
+  m_motor_mode_gpio[0] = microstep0;
+  m_motor_mode_gpio[1] = microstep1;
+  m_motor_mode_gpio[2] = microstep2;
   
   m_motor_mode = 0; // Default to 0, MotorCmd will fill this in
   m_motor_steps_to_go = 0;
@@ -57,14 +58,6 @@ MotorDriver::MotorDriver(GPIO pulse_gpio, GPIO dir_gpio, GPIO microstep0, GPIO m
   // high is always this number of us. Can go as low as 1.9us
   m_pulse_high_us = PULSE_LOW_TIME_US;
   m_pulse_low_us = 0; // Is variable based on requested speed
-
-  cout << "steps_rev=" << m_motor_steps_rev
-       << " pulse1=" << m_motor1_pulse_gpio << " dir1=" << m_motor1_dir_gpio
-       << " pulse2=" << m_motor2_pulse_gpio << " dir2=" << m_motor2_dir_gpio
-       << " mode=" << mode << " modes="
-       << m_motor_mode_gpio[0] << ":"
-       << m_motor_mode_gpio[1] << ":"
-       << m_motor_mode_gpio[2] << ":" << std::endl;
 
   if (gpioInitialise() < 0)
   {
@@ -76,12 +69,12 @@ MotorDriver::MotorDriver(GPIO pulse_gpio, GPIO dir_gpio, GPIO microstep0, GPIO m
   gpioSetMode(m_motor_dir_gpio, PI_OUTPUT);     // direction pin
 
   // Mode gpio pins
-  gpioSetMode(microstep0, PI_OUTPUT); // mode pin 0
-  gpioSetMode(microstep1, PI_OUTPUT); // mode pin 1
-  gpioSetMode(microstep2, PI_OUTPUT); // mode pin 2
+  gpioSetMode(m_motor_mode_gpio[0], PI_OUTPUT); // mode pin 0
+  gpioSetMode(m_motor_mode_gpio[1], PI_OUTPUT); // mode pin 1
+  gpioSetMode(m_motor_mode_gpio[2], PI_OUTPUT); // mode pin 2
 
   // Now set the motor mode
-  SetMotorMode(mode);
+  SetMotorMode(MOTORS_MODE_DEFAULT);
 
   // Default the direction, note motor 1/2 are apposite direction to go the same
   // way for the robot
@@ -93,17 +86,6 @@ MotorDriver::~MotorDriver()
   gpioTerminate(); // Close pigpio
 
   cout << "MotorDriver::~MotorDriver()" <<std::endl;
-}
-
-/*------------------------------------------------------------------------------
-FUNCTION:      MotorDriver::AddGyroData(int pitch, int yaw, float angle_gyro, float angle_acc)
-RETURNS:       None
-------------------------------------------------------------------------------*/
-bool MotorDriver::AddGyroData(int pitch, int yaw, float angle_gyro, float angle_acc)
-{
-  // cout << "Angle Gyro=" << angle_gyro << "\tAngle Accel=" << angle_acc << "\tGyro Pitch=" << pitch << "\tGyro Yaw=" << yaw << std::endl;
-
-  return(m_angle_gyro_fifo.push_back(angle_gyro));
 }
 
 /*------------------------------------------------------------------------------
@@ -130,6 +112,50 @@ bool MotorDriver::SetMotorMode(int mode)
   gpioWrite(m_motor_mode_gpio[2], motor_mode[m_motor_mode].pin_2);
 
   return(status);
+}
+
+/*------------------------------------------------------------------------------
+FUNCTION:  bool MotorCmd(s32 distance_raw, u32 max_speed_raw, u8 microstep_mode)
+PURPOSE:   Driver motor at the specified rate at the specified speed
+
+ASSUMES:   steps per revolution is 200
+
+ARGUMENTS: distance_raw  = pulses
+                           real distance depends on microstep_mode
+                           steps for motor to rotate 360 degrees, normally 200 
+                           circumference of wheel
+                             often only concerned with angle of rotation
+           max_speed_raw = max pulses per second
+                           real speed depends on microstep_mode
+                           steps for motor to rotate 360 degrees, normally 200 
+                           circumference of wheel
+                             often only concerned with angle of rotation
+
+EXAMPLE:
+
+steps = steps to take if chopper mode is 1/32 then steps=64 then
+motor steps = 2 or 1/100 of a revolution
+
+RETURNS:   worked
+------------------------------------------------------------------------------*/
+bool MotorDriver::MotorCmd(s32 distance_raw, u32 max_speed_raw, u8 microstep_mode)
+{
+  bool status = true;
+
+  MotorCMD motor_cmd;
+  
+  // If not at least =/-4 just set to 0 for driver
+  if (distance_raw > -4 && distance_raw < 4)
+  {
+    distance_raw = 0;
+  }
+  
+  // We will shift mode to meed the required speed and distance
+  motor_cmd.steps = distance_raw;
+  motor_cmd.speed = max_speed_raw;
+  motor_cmd.mode = microstep_mode;
+  
+  return(m_motor_cmd_fifo.push_back(motor_cmd));
 }
 
 /*------------------------------------------------------------------------------
@@ -184,10 +210,17 @@ Step Pulse duration STEP Low  Min: 1.9μs, no max
    ,-----.     ,-----.
    |     |     |     |
 ---'     `-----'     `--
+
+HJA
+HJA MISSING SPEED CONTROL
+HJA MISSING MODE CONTROL
+HJA
 ------------------------------------------------------------------------------*/
 int MotorDriver::Run(void)
 {
   int motor_angle_cmd = 0;
+
+  MotorCMD motor_cmd;
 
   cout << "MotorDriver:Run() in a separate thread" << std::endl;
 
@@ -196,28 +229,23 @@ int MotorDriver::Run(void)
   while (ThreadRunning())
   {
     // If we have new data, update motor control variables
-    if (!m_angle_gyro_fifo.empty())
+    if (!m_motor_cmd_fifo.empty())
     {
-      motor_angle_cmd = m_angle_gyro_fifo.front();
-      m_angle_gyro_fifo.pop_front();
+      motor_cmd = m_motor_cmd_fifo.front();
+      m_motor_cmd_fifo.pop_front();
 
-      if (motor_angle_cmd < 0)
+      if (motor_cmd.steps < 0)
       {
-        m_motor1_dir = MOTOR_CCW;
-        m_motor2_dir = MOTOR_CW;
-        motor_angle_cmd *= -1;
+        m_motor_dir = MOTOR_CCW;
+        motor_cmd.steps *= -1;
       }
       else
       {
-        m_motor1_dir = MOTOR_CW;
-        m_motor2_dir = MOTOR_CCW;
+        m_motor_dir = MOTOR_CW;
       }
-      // Convert the angle to steps based on the current chopper mode
-      m_motor_steps_to_go = AngleToSteps(motor_angle_cmd);
 
       // Set the direction based on the requested angle
-      gpioWrite(m_motor1_dir_gpio, m_motor1_dir);
-      gpioWrite(m_motor2_dir_gpio, m_motor2_dir);
+      gpioWrite(m_motor_dir_gpio, m_motor_dir);
 
       // cout << " Fifo Angle=" << motor_angle_cmd << " Direction=" << m_motor_dir << " steps_to_go=" << m_motor_steps_to_go << std::endl;
     }
@@ -227,16 +255,14 @@ int MotorDriver::Run(void)
     {
       m_motor_steps_to_go--;
       // Pulse high time is always the same
-      gpioWrite(m_motor1_pulse_gpio, 1);
-      gpioWrite(m_motor2_pulse_gpio, 1);
+      gpioWrite(m_motor_pulse_gpio, 1);
 
       // Delay Time High: Pulse the motor high then use the actual pulse time to
       // determine the pulse low time.
       m_pulse_low_us = GetPulseLowTime(gpioDelay(m_pulse_high_us));
 
       // Delay Time Low: Now do the low pulse
-      gpioWrite(m_motor1_pulse_gpio, 0);
-      gpioWrite(m_motor2_pulse_gpio, 0);
+      gpioWrite(m_motor_pulse_gpio, 0);
       gpioDelay(m_pulse_low_us);
 
       // cout << "### steps_to_go=" << m_motor_steps_to_go << std::endl;
