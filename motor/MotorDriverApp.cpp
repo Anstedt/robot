@@ -53,7 +53,6 @@ MotorDriver::MotorDriver(GPIO pulse_gpio, GPIO dir_gpio, GPIO microstep0, GPIO m
   m_motor_mode_gpio[2] = microstep2;
   
   m_motor_mode = 0; // Default to 0, MotorCmd will fill this in
-  m_motor_steps_to_go = 0;
   
   // high is always this number of us. Can go as low as 1.9us
   m_pulse_high_us = PULSE_LOW_TIME_US;
@@ -166,14 +165,15 @@ PURPOSE:       Calculate the pulse down time for:
                - m_motor_steps_rev
                - mode multiplier = motor_mode[m_motor_mode].multiplier;
 
+               - speed is pulses per second
+
+
 ARGUMENTS:     None
 RETURNS:       time in usec to delay
 ------------------------------------------------------------------------------*/
-int MotorDriver::GetPulseLowTime(int pulse_high_us)
+int MotorDriver::GetPulseLowTime(int pulse_high_us, u32 speed)
 {
-  int usecs_per_rev = (60*1000000)/m_motor_revs_per_min; // Convert to microseconds per rev
-  int pulses_per_rev =  motor_mode[m_motor_mode].multiplier * m_motor_steps_rev;
-  int usecs_per_pulse = usecs_per_rev / pulses_per_rev;
+  int usecs_per_pulse = 1000000/speed; // Convert to microseconds per rev
 
   // Since we know how long the total pulse should be the low is just the total
   // minus the high pulse
@@ -181,20 +181,6 @@ int MotorDriver::GetPulseLowTime(int pulse_high_us)
     return(m_pulse_high_us); // Never go negative
   else
     return(usecs_per_pulse - pulse_high_us);
-}
-
-/*------------------------------------------------------------------------------
-FUNCTION:      int MotorDriver::AngleToSteps(float angle)
-RETURNS:       None
-------------------------------------------------------------------------------*/
-int MotorDriver::AngleToSteps(float angle)
-{
-  int pulses_per_rev =  motor_mode[m_motor_mode].multiplier * m_motor_steps_rev;
-
-  // pulses for 1 revolution are the number of pulses needed for 1 revolution
-  // 1 revolution is 360 degrees
-  // So if we need to turn say 60 degrees we need (60/360) of the pulses
-  return(pulses_per_rev * (angle / 360));
 }
 
 /*------------------------------------------------------------------------------
@@ -220,7 +206,7 @@ int MotorDriver::Run(void)
 {
   int motor_angle_cmd = 0;
 
-  MotorCMD motor_cmd;
+  MotorCMD motor_cmd; // steps, speed in pulses per second, mode
 
   cout << "MotorDriver:Run() in a separate thread" << std::endl;
 
@@ -247,19 +233,22 @@ int MotorDriver::Run(void)
       // Set the direction based on the requested angle
       gpioWrite(m_motor_dir_gpio, m_motor_dir);
 
+      // Set the mode as passed in
+      SetMotorMode(motor_cmd.mode);
+      
       // cout << " Fifo Angle=" << motor_angle_cmd << " Direction=" << m_motor_dir << " steps_to_go=" << m_motor_steps_to_go << std::endl;
     }
 
     // Run the motor while we have more steps
-    if(m_motor_steps_to_go > 0)
+    if(motor_cmd.steps > 0)
     {
-      m_motor_steps_to_go--;
+      motor_cmd.steps--;
       // Pulse high time is always the same
       gpioWrite(m_motor_pulse_gpio, 1);
 
       // Delay Time High: Pulse the motor high then use the actual pulse time to
       // determine the pulse low time.
-      m_pulse_low_us = GetPulseLowTime(gpioDelay(m_pulse_high_us));
+      m_pulse_low_us = GetPulseLowTime(gpioDelay(m_pulse_high_us), motor_cmd.speed);
 
       // Delay Time Low: Now do the low pulse
       gpioWrite(m_motor_pulse_gpio, 0);

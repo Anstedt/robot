@@ -126,6 +126,7 @@ int Motor::Run(void)
       m_motor_steps_to_go *= m_motor_dir;
       
       // HJA At this point we can call Ricks driver
+      // HJA Issue here is the mode should be in the equation rather than 32 constant
       // MOTORS_RPM_DEFAULT = 30 rpm
       // / 60 = rp second = 0.5
       // * 200 which is pulses per rev of the motor = 100

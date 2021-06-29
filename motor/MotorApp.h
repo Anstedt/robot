@@ -51,7 +51,7 @@ private:
   int m_motor_mode;
   int m_motor_dir;
 
-  MotorDriver m_motorDriver;
+  MotorDriver* m_motorDriver;
 
   LockingQueue<float> m_angle_gyro_fifo;
   // Static (shared) class variables

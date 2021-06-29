@@ -45,8 +45,7 @@ private:
   // Constructors
   // Mutators: non-const operations
   // Accessors: const operations
-  int GetPulseLowTime(int pulse_high_us);
-  int AngleToSteps(float angle);
+  int GetPulseLowTime(int pulse_high_us, u32 speed);
   // Static and friend functions
   // Memory management
   MotorDriver(const MotorDriver&);
@@ -58,10 +57,9 @@ private:
 
   int m_distance_raw;
   int m_max_speed_raw;
-  int m_motor_microstep_mode;
+  // int m_motor_microstep_mode;
 
   // Motor control
-  int m_motor_steps_to_go;
   int m_motor_mode;
   int m_motor_dir;
   int m_pulse_high_us;
