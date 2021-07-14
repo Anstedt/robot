@@ -1,1 +1,1 @@
-add_library(threads Threads)
+add_library(threads Threads Slog)

@@ -7,6 +7,8 @@ FILE: Legs.cpp
 #include "Legs.h"
 #include <iostream>
 
+#include "Slog.h"
+
 /* METHODS ********************************************************************/
 /*------------------------------------------------------------------------------
 FUNCTION: Legs::Legs()
@@ -35,7 +37,7 @@ FUNCTION: bool Legs::Stand()
 ------------------------------------------------------------------------------*/
 bool Legs::Stand()
 {
-  std::cout << "Legs::Stand()" << std::endl;
+  SLOG << "Legs::Stand()" << std::endl;
 
   return(m_left.Stand() && m_right.Stand());
 }
@@ -45,7 +47,7 @@ FUNCTION: bool Legs::Walk()
 ------------------------------------------------------------------------------*/
 bool Legs::Walk()
 {
-  std::cout << "Legs::Walk()" << std::endl;
+  SLOG << "Legs::Walk()" << std::endl;
 
   return(m_left.Walk() && m_right.Walk());
 }
@@ -55,7 +57,7 @@ FUNCTION: bool Legs::Crouch()
 ------------------------------------------------------------------------------*/
 bool Legs::Crouch()
 {
-  std::cout << "Legs::Crouch()" << std::endl;
+  SLOG << "Legs::Crouch()" << std::endl;
 
   return(m_left.Crouch() && m_right.Crouch());
 }
@@ -65,7 +67,7 @@ FUNCTION: bool Legs::Sit()
 ------------------------------------------------------------------------------*/
 bool Legs::Sit()
 {
-  std::cout << "Legs::Sit()" << std::endl;
+  SLOG << "Legs::Sit()" << std::endl;
 
   return(m_left.Sit() && m_right.Sit());
 }

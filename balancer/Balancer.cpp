@@ -13,6 +13,8 @@ PURPOSE: Creates Gyro and Motors and connecting them up for balancing
 #include <pigpio.h>
 #include <unistd.h>
 
+#include "Slog.h"
+
 using namespace std;
 
 /* METHODS ********************************************************************/
@@ -53,49 +55,49 @@ Balancer::~Balancer()
   m_gyro->StopThreadRun();
   while(!m_gyro->ThreadStopped())
   {
-    cout << "Waiting for Gyro to stop" << std::endl;
+    SLOG << "Waiting for Gyro to stop" << std::endl;
     sleep(1);
   }
 
-  cout << "Balancer Gyro->JoinThread" << std::endl;
+  SLOG << "Balancer Gyro->JoinThread" << std::endl;
   m_gyro->JoinThread();
 
-  cout << "Balancer delete Gyro" << std::endl;
+  SLOG << "Balancer delete Gyro" << std::endl;
   delete m_gyro;
 
   // STOP AND REMOVE MOTORS
   
   // Remove Right Motor
-  cout << "Balancer Right Motor->JoinThread" << std::endl;
+  SLOG << "Balancer Right Motor->JoinThread" << std::endl;
   m_motorRight->StopThreadRun();
   while(!m_motorRight->ThreadStopped())
   {
-    cout << "Waiting for Right Motor to stop" << std::endl;
+    SLOG << "Waiting for Right Motor to stop" << std::endl;
     sleep(1);
   }
 
   m_motorRight->JoinThread();
 
-  cout << "Balancer delete Right Motor" << std::endl;
+  SLOG << "Balancer delete Right Motor" << std::endl;
   delete m_motorRight;
 
   // Remove Left Motor
-  cout << "Balancer Left Motor->JoinThread" << std::endl;
+  SLOG << "Balancer Left Motor->JoinThread" << std::endl;
   m_motorLeft->StopThreadRun();
   while(!m_motorLeft->ThreadStopped())
   {
-    cout << "Waiting for Left Motor to stop" << std::endl;
+    SLOG << "Waiting for Left Motor to stop" << std::endl;
     sleep(1);
   }
 
   m_motorLeft->JoinThread();
 
-  cout << "Balancer delete Left Motor" << std::endl;
+  SLOG << "Balancer delete Left Motor" << std::endl;
   delete m_motorLeft;
 
   // MOTORS STOPPED AND REMOVED
   
-  cout << "~Balancer IS RUNNING gpioTerminate" << std::endl;
+  SLOG << "~Balancer IS RUNNING gpioTerminate" << std::endl;
   gpioTerminate(); // Now that the MPU6050 is gone we can close pigpio
 }
 
@@ -104,8 +106,8 @@ FUNCTION:      Balancer::CallBack(int pitch, int yaw, float angle_gyro, float an
 ------------------------------------------------------------------------------*/
 void Balancer::CallBack(int gyro_pitch, int gyro_yaw, float angle_gyro, float angle_acc)
 {
-  // cout << "Angle Gyro=" << angle_gyro << "\tAngle Accel=" << angle_acc << "\tGyro Pitch=" << gyro_pitch << "\tGyro Yaw=" << gyro_yaw << std::endl;
-  // cout << "Angle Gyro=" << angle_gyro << "\tAngle Accel=" << angle_acc << std::endl;
+  // SLOG << "Angle Gyro=" << angle_gyro << "\tAngle Accel=" << angle_acc << "\tGyro Pitch=" << gyro_pitch << "\tGyro Yaw=" << gyro_yaw << std::endl;
+  // SLOG << "Angle Gyro=" << angle_gyro << "\tAngle Accel=" << angle_acc << std::endl;
 
   m_motorRight->AddGyroData(gyro_pitch, gyro_yaw, angle_gyro, angle_acc);
   m_motorLeft->AddGyroData(gyro_pitch, gyro_yaw, angle_gyro, angle_acc);

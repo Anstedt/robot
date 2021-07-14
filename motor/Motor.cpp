@@ -9,6 +9,8 @@ PURPOSE:  Controls one motor of the 2 the robot has
 #include "Config.h"
 #include "Motor.h"
 
+#include "Slog.h"
+
 using namespace std;
 
 /*------------------------------------------------------------------------------
@@ -24,7 +26,7 @@ ARGUMENTS: steps_rev = number of steps for 1 full revolution, mode = 0
 Motor::Motor(int steps_rev, GPIO pulse_gpio, GPIO dir_gpio, GPIO microstep0, GPIO microstep1, GPIO microstep2, int mode, int revs_per_min, int dir)
   : m_motorDriver(pulse_gpio, dir_gpio, microstep0, microstep1, microstep2)
 {
-  cout << "Motor::Motor()" << std::endl;
+  SLOG << "Motor::Motor()" << std::endl;
 
   m_motor_steps_rev = steps_rev;
 
@@ -40,7 +42,7 @@ FUNCTION: Motor:: Motor()
 ------------------------------------------------------------------------------*/
 Motor::~Motor()
 {
-  cout << "Motor::~Motor()" <<std::endl;
+  SLOG << "Motor::~Motor()" <<std::endl;
 }
 
 /*------------------------------------------------------------------------------
@@ -49,7 +51,8 @@ RETURNS:       None
 ------------------------------------------------------------------------------*/
 bool Motor::AddGyroData(int y, int x, float angle_gyro, float angle_acc)
 {
-  // cout << "Angle Gyro=" << angle_gyro << "\tAngle Accel=" << angle_acc << "\tGyro Y=" << y << "\tGyro X=" << x << std::endl;
+  // SLOG << "Angle Gyro=" << angle_gyro << "\tAngle Accel=" << angle_acc << "\tGyro Y=" << y << "\tGyro X=" << x << std::endl;
+
   m_angle_gyro_fifo.push(angle_gyro);
 
   return(true);
@@ -65,7 +68,7 @@ bool Motor::SetMotorMode(int mode)
   // Mode must be 5 or less
   if (mode < 0 || mode > 5)
   {
-    cout << "MOTOR:mode must be 5 or less, passed = " << mode << "defaulting mode to 0" << std::endl;
+    SLOG << "MOTOR:mode must be 5 or less, passed = " << mode << "defaulting mode to 0" << std::endl;
     m_motor_mode = 0;
   }
   else
@@ -109,7 +112,7 @@ int Motor::Run(void)
   float motor_angle_cmd = 0;
   int m_motor_steps_to_go = 0;
   
-  cout << "Motor:Run() in a separate thread" << std::endl;
+  SLOG << "Motor:Run() in a separate thread" << std::endl;
 
   uint32_t loop_time_hja = gpioTick();
 
@@ -133,11 +136,11 @@ int Motor::Run(void)
       // * mode modifier for example 1/32 = 100 * 32 = 3200
       m_motorDriver.MotorCmd(m_motor_steps_to_go, (m_motor_revs_per_min * 200 * 32) / 60, m_motor_mode);
 
-      // cout << " Fifo Angle=" << motor_angle_cmd << " Direction=" << m_motor_dir << " steps_to_go=" << m_motor_steps_to_go << std::endl;
+      // SLOG << " Fifo Angle=" << motor_angle_cmd << " Direction=" << m_motor_dir << " steps_to_go=" << m_motor_steps_to_go << std::endl;
     }
   }
 
-  cout << "Motor::Run return" << std::endl;
+  SLOG << "Motor::Run return" << std::endl;
 
   return(ThreadReturn());
 }

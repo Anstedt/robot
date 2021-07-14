@@ -13,6 +13,8 @@ PURPOSE: Gyroscope Accelorometer Interface
 
 #include <unistd.h>
 
+#include "Slog.h"
+
 using namespace std;
 
 /*------------------------------------------------------------------------------
@@ -29,14 +31,14 @@ Gyro::Gyro()
 
   if (gpioInitialise() < 0)
   {
-    cout << "Gyro pigpio initialization failed" << std::endl;
+    SLOG << "Gyro pigpio initialization failed" << std::endl;
   }
   else
   {
     p_mpu6050 = new MPU6050();
   }
 
-  cout << "Gyro::Gyro()" <<std::endl;
+  SLOG << "Gyro::Gyro()" <<std::endl;
 }
 
 /*------------------------------------------------------------------------------
@@ -46,10 +48,10 @@ Gyro::~Gyro()
 {
   delete p_mpu6050;
 
-  cout << "~GYRO NOT RUNNING gpioTerminate" << std::endl;
+  SLOG << "~GYRO NOT RUNNING gpioTerminate" << std::endl;
   // gpioTerminate(); // Now that the MPU6050 is gone we can close pigpio
 
-  cout << "Gyro::~Gyro()" <<std::endl;
+  SLOG << "Gyro::~Gyro()" <<std::endl;
 };
 
 /*------------------------------------------------------------------------------
@@ -78,7 +80,7 @@ int Gyro::Run(void)
   uint32_t timer = 0;
   uint32_t elapsed = 0;
 
-  cout << "Gyro:Run() in a separate thread" << std::endl;
+  SLOG << "Gyro:Run() in a separate thread" << std::endl;
 
   p_mpu6050->set_defaults();
 
@@ -101,7 +103,7 @@ int Gyro::Run(void)
       // m_angle_gyro = m_angle_acc; //Load the accelerometer angle in the angle_gyro variable
       m_angle_gyro = p_mpu6050->get_accel_Z_cal_angle(); // Experimental
       m_start = 1; //Set the start variable to start the PID controller
-      cout << "EXPERIMENTAL m_angle_acc:get_accel_Z_cal=" << m_angle_acc << ":" << p_mpu6050->get_accel_Z_cal() << " VS MPU6050 Cal Z=" << p_mpu6050->get_accel_Z_cal_angle() << std::endl;
+      SLOG << "EXPERIMENTAL m_angle_acc:get_accel_Z_cal=" << m_angle_acc << ":" << p_mpu6050->get_accel_Z_cal() << " VS MPU6050 Cal Z=" << p_mpu6050->get_accel_Z_cal_angle() << std::endl;
     }
 
     // p_mpu6050->get_gyro_XY(m_gyro_X_data_raw, m_gyro_Y_data_raw);
@@ -130,13 +132,13 @@ int Gyro::Run(void)
     }
 
     // CallBack now has all data
-    // cout << "Angle Gyro=" << m_angle_gyro << "\tAngle Accelerometer=" << m_angle_acc << "\tGyro X=" << m_gyro_X_data_raw << "\tGyro Y=" << m_gyro_Y_data_raw << std::endl;
+    // SLOG << "Angle Gyro=" << m_angle_gyro << "\tAngle Accelerometer=" << m_angle_acc << "\tGyro X=" << m_gyro_X_data_raw << "\tGyro Y=" << m_gyro_Y_data_raw << std::endl;
 
     while(timer > gpioTick());
     timer += 4000;
   }
 
-  cout << "Gyro:Run() DONE in a separate thread : " << (gpioTick() - elapsed) << "us" << std::endl;
+  SLOG << "Gyro:Run() DONE in a separate thread : " << (gpioTick() - elapsed) << "us" << std::endl;
 
   return(ThreadReturn());
 }
