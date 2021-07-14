@@ -4,7 +4,6 @@ FILE:     Motor.cpp
 
 PURPOSE:  Controls one motor of the 2 the robot has
 *******************************************************************************/
-#include <iostream>
 #include <pigpio.h>
 #include "Config.h"
 #include "Motor.h"

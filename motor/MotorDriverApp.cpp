@@ -4,7 +4,6 @@ FILE:     MotorDriver.cpp
 
 PURPOSE:  Controls one motor of the 2 the robot has
 *******************************************************************************/
-#include <iostream>
 #include <pigpio.h>
 #include "Config.h" // HJA should remove this when we have mode setup correctly
 #include "MotorDriver.h"

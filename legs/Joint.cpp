@@ -5,7 +5,6 @@ PURPOSE:  Joint associated with 1 servo
 
 /* INCLUDE ********************************************************************/
 #include "Joint.h"
-#include <iostream>
 
 #include "Slog.h"
 

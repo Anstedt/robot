@@ -4,13 +4,9 @@ FILE:     MPU6050.cpp
 
 PURPOSE:  Interface to the MPU6050 Gyro/Accel via I2C
 *******************************************************************************/
-#include <iostream>
 #include <pigpio.h>
-#include <stdlib.h>
-#include <stdio.h>
 #include <math.h>
 #include "MPU6050.h"
-#include <unistd.h> // for usleep()
 
 #include "Slog.h"
 

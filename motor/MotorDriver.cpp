@@ -11,10 +11,11 @@ PURPOSE:  Low level driver access to motor
 /* INCLUDE ********************************************************************/
 #include <unistd.h>
 #include <fcntl.h>
-#include <iostream>
 #include "Config.h"
 
 #include "MotorDriver.h"
+
+#include "Slog.h"
 
 #define STEP_CMD_FILE "/sys/devices/platform/soc/fe20c000.pwm/cmd"
 
@@ -48,7 +49,7 @@ MotorDriver::MotorDriver(GPIO pulse_gpio, GPIO dir_gpio, GPIO microstep0, GPIO m
   m_motor_fd = open(STEP_CMD_FILE, O_RDWR | O_SYNC);  /* might need root access */
 	if (m_motor_fd < 0)
   {
-		std::cout << "ERROR: could not open motor fd from " << STEP_CMD_FILE << std::endl;
+		SLOG << "ERROR: could not open motor fd from " << STEP_CMD_FILE << std::endl;
     return;
 	}
 
@@ -105,7 +106,7 @@ bool MotorDriver::MotorCmd(s32 distance_raw, u32 max_speed_raw, u8 microstep_mod
 
   if (write(m_motor_fd, &m_motor_control, sizeof(m_motor_control)) != sizeof(m_motor_control))
   {
-    std::cout << "ERROR: write to motor driver handle=" << m_motor_fd << " failed " << std::endl;
+    SLOG << "ERROR: write to motor driver handle=" << m_motor_fd << " failed " << std::endl;
     status = false;
   }
 

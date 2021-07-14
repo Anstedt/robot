@@ -5,7 +5,6 @@ FILE: Legs.cpp
 /* INCLUDE ********************************************************************/
 #include "Config.h"
 #include "Legs.h"
-#include <iostream>
 
 #include "Slog.h"
 

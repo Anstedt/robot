@@ -5,7 +5,6 @@ PURPOSE: Creates Gyro and Motors and connecting them up for balancing
 *******************************************************************************/
 /* INCLUDE ********************************************************************/
 #include "Config.h"
-#include <iostream>
 
 #include "Balancer.h"
 #include <functional>
