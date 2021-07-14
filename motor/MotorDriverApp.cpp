@@ -9,6 +9,8 @@ PURPOSE:  Controls one motor of the 2 the robot has
 #include "Config.h" // HJA should remove this when we have mode setup correctly
 #include "MotorDriver.h"
 
+#include "Slog.h"
+
 using namespace std;
 
 #define MOTOR_CW  1
@@ -42,7 +44,7 @@ ARGUMENTS: steps_rev = number of steps for 1 full revolution, mode = 0
 ------------------------------------------------------------------------------*/          
 MotorDriver::MotorDriver(GPIO pulse_gpio, GPIO dir_gpio, GPIO microstep0, GPIO microstep1, GPIO microstep2)
 {
-  cout << "MotorDriver::MotorDriver()" << std::endl;
+  SLOG << "MotorDriver::MotorDriver()" << std::endl;
 
   m_motor_pulse_gpio = pulse_gpio;
   m_motor_dir_gpio   = dir_gpio;
@@ -60,7 +62,7 @@ MotorDriver::MotorDriver(GPIO pulse_gpio, GPIO dir_gpio, GPIO microstep0, GPIO m
 
   if (gpioInitialise() < 0)
   {
-    cout << "MotorDriver pigpio initialization failed" << std::endl;
+    SLOG << "MotorDriver pigpio initialization failed" << std::endl;
   }
 
   // Initialize gpio motor
@@ -84,7 +86,7 @@ MotorDriver::~MotorDriver()
 {
   gpioTerminate(); // Close pigpio
 
-  cout << "MotorDriver::~MotorDriver()" <<std::endl;
+  SLOG << "MotorDriver::~MotorDriver()" <<std::endl;
 }
 
 /*------------------------------------------------------------------------------
@@ -97,7 +99,7 @@ bool MotorDriver::SetMotorMode(int mode)
   // Mode must be 5 or less
   if (mode < 0 || mode > 5)
   {
-    cout << "MOTOR:mode must be 5 or less, passed = " << mode << "defaulting mode to 0" << std::endl;
+    SLOG << "MOTOR:mode must be 5 or less, passed = " << mode << "defaulting mode to 0" << std::endl;
     m_motor_mode = 0;
   }
   else
@@ -208,7 +210,7 @@ int MotorDriver::Run(void)
 
   MotorCMD motor_cmd; // steps, speed in pulses per second, mode
 
-  cout << "MotorDriver:Run() in a separate thread" << std::endl;
+  SLOG << "MotorDriver:Run() in a separate thread" << std::endl;
 
   uint32_t loop_time_hja = gpioTick();
 
@@ -236,7 +238,7 @@ int MotorDriver::Run(void)
       // Set the mode as passed in
       SetMotorMode(motor_cmd.mode);
       
-      // cout << " Fifo Angle=" << motor_angle_cmd << " Direction=" << m_motor_dir << " steps_to_go=" << m_motor_steps_to_go << std::endl;
+      // SLOG << " Fifo Angle=" << motor_angle_cmd << " Direction=" << m_motor_dir << " steps_to_go=" << m_motor_steps_to_go << std::endl;
     }
 
     // Run the motor while we have more steps
@@ -254,8 +256,8 @@ int MotorDriver::Run(void)
       gpioWrite(m_motor_pulse_gpio, 0);
       gpioDelay(m_pulse_low_us);
 
-      // cout << "### steps_to_go=" << m_motor_steps_to_go << std::endl;
-      // cout << "pulse_gpio=" << m_motor_pulse_gpio << " motor_dir=" << m_motor_dir << " steps_to_go=" << m_motor_steps_to_go << " pulse_low_us=" << m_pulse_low_us << " pulse_high_us="  << m_pulse_high_us << " LoopTime_us=" << ( gpioTick() - loop_time_hja) << std::endl;
+      // SLOG << "### steps_to_go=" << m_motor_steps_to_go << std::endl;
+      // SLOG << "pulse_gpio=" << m_motor_pulse_gpio << " motor_dir=" << m_motor_dir << " steps_to_go=" << m_motor_steps_to_go << " pulse_low_us=" << m_pulse_low_us << " pulse_high_us="  << m_pulse_high_us << " LoopTime_us=" << ( gpioTick() - loop_time_hja) << std::endl;
     }
     else
     {
@@ -267,7 +269,7 @@ int MotorDriver::Run(void)
     loop_time_hja = gpioTick();
   }
 
-  cout << "MotorDriver::Run return" << std::endl;
+  SLOG << "MotorDriver::Run return" << std::endl;
 
   return(ThreadReturn());
 }
