@@ -10,6 +10,8 @@ PURPOSE:  Controls one motor of the 2 the robot has
 
 using namespace std;
 
+#include "Slog.h"
+
 #define MOTOR_CW  1
 #define MOTOR_CCW 0
 #define PULSE_LOW_TIME_US 4
@@ -41,7 +43,7 @@ ARGUMENTS: steps_rev = number of steps for 1 full revolution, mode = 0
 ------------------------------------------------------------------------------*/
 Motor::Motor(int steps_rev, int pulse1_gpio, int dir1_gpio, int pulse2_gpio, int dir2_gpio, const MotorModeGPIO& mode_gpio, int mode, int revs_per_min)
 {
-  cout << "Motor::Motor()" << std::endl;
+  SLOG << "Motor::Motor()" << std::endl;
 
   m_motor_steps_rev = steps_rev;
 
@@ -62,7 +64,7 @@ Motor::Motor(int steps_rev, int pulse1_gpio, int dir1_gpio, int pulse2_gpio, int
   m_pulse_high_us = PULSE_LOW_TIME_US;
   m_pulse_low_us = 0; // Is variable based on requested speed
 
-  cout << "steps_rev=" << m_motor_steps_rev
+  SLOG << "steps_rev=" << m_motor_steps_rev
        << " pulse1=" << m_motor1_pulse_gpio << " dir1=" << m_motor1_dir_gpio
        << " pulse2=" << m_motor2_pulse_gpio << " dir2=" << m_motor2_dir_gpio
        << " mode=" << mode << " modes="
@@ -72,7 +74,7 @@ Motor::Motor(int steps_rev, int pulse1_gpio, int dir1_gpio, int pulse2_gpio, int
 
   if (gpioInitialise() < 0)
   {
-    cout << "Motor pigpio initialization failed" << std::endl;
+    SLOG << "Motor pigpio initialization failed" << std::endl;
   }
 
   // Initialize gpio motor 1
@@ -101,7 +103,7 @@ Motor::~Motor()
 {
   gpioTerminate(); // Close pigpio
 
-  cout << "Motor::~Motor()" <<std::endl;
+  SLOG << "Motor::~Motor()" <<std::endl;
 }
 
 /*------------------------------------------------------------------------------
@@ -110,7 +112,7 @@ RETURNS:       None
 ------------------------------------------------------------------------------*/
 bool Motor::AddGyroData(int pitch, int yaw, float angle_gyro, float angle_acc)
 {
-  // cout << "Angle Gyro=" << angle_gyro << "\tAngle Accel=" << angle_acc << "\tGyro Pitch=" << pitch << "\tGyro Yaw=" << yaw << std::endl;
+  // SLOG << "Angle Gyro=" << angle_gyro << "\tAngle Accel=" << angle_acc << "\tGyro Pitch=" << pitch << "\tGyro Yaw=" << yaw << std::endl;
 
   return(m_angle_gyro_fifo.push_back(angle_gyro));
 }
@@ -125,7 +127,7 @@ bool Motor::SetMotorMode(int mode)
   // Mode must be 5 or less
   if (mode < 0 || mode > 5)
   {
-    cout << "MOTOR:mode must be 5 or less, passed = " << mode << "defaulting mode to 0" << std::endl;
+    SLOG << "MOTOR:mode must be 5 or less, passed = " << mode << "defaulting mode to 0" << std::endl;
     m_motor_mode = 0;
   }
   else
@@ -198,7 +200,7 @@ int Motor::Run(void)
 {
   int motor_angle_cmd = 0;
 
-  cout << "Motor:Run() in a separate thread" << std::endl;
+  SLOG << "Motor:Run() in a separate thread" << std::endl;
 
   uint32_t loop_time_hja = gpioTick();
 
@@ -228,7 +230,7 @@ int Motor::Run(void)
       gpioWrite(m_motor1_dir_gpio, m_motor1_dir);
       gpioWrite(m_motor2_dir_gpio, m_motor2_dir);
 
-      // cout << " Fifo Angle=" << motor_angle_cmd << " Direction=" << m_motor_dir << " steps_to_go=" << m_motor_steps_to_go << std::endl;
+      // SLOG << " Fifo Angle=" << motor_angle_cmd << " Direction=" << m_motor_dir << " steps_to_go=" << m_motor_steps_to_go << std::endl;
     }
 
     // Run the motor while we have more steps
@@ -248,8 +250,8 @@ int Motor::Run(void)
       gpioWrite(m_motor2_pulse_gpio, 0);
       gpioDelay(m_pulse_low_us);
 
-      // cout << "### steps_to_go=" << m_motor_steps_to_go << std::endl;
-      // cout << "pulse_gpio=" << m_motor_pulse_gpio << " motor_dir=" << m_motor_dir << " steps_to_go=" << m_motor_steps_to_go << " pulse_low_us=" << m_pulse_low_us << " pulse_high_us="  << m_pulse_high_us << " LoopTime_us=" << ( gpioTick() - loop_time_hja) << std::endl;
+      // SLOG << "### steps_to_go=" << m_motor_steps_to_go << std::endl;
+      // SLOG << "pulse_gpio=" << m_motor_pulse_gpio << " motor_dir=" << m_motor_dir << " steps_to_go=" << m_motor_steps_to_go << " pulse_low_us=" << m_pulse_low_us << " pulse_high_us="  << m_pulse_high_us << " LoopTime_us=" << ( gpioTick() - loop_time_hja) << std::endl;
     }
     else
     {
@@ -261,7 +263,7 @@ int Motor::Run(void)
     loop_time_hja = gpioTick();
   }
 
-  cout << "Motor::Run return" << std::endl;
+  SLOG << "Motor::Run return" << std::endl;
 
   return(ThreadReturn());
 }

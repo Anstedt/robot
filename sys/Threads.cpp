@@ -7,6 +7,8 @@ PURPOSE:  Linux Thread Support
 #include <iostream>
 #include "Threads.h"
 
+#include "Slog.h"
+
 using namespace std;
 
 /*------------------------------------------------------------------------------
@@ -37,7 +39,7 @@ void* Threads::ThreadRun(void* This)
 {
   Threads* pThread = (Threads *)This;
 
-  cout << "pThread=" << pThread << std::endl;
+  SLOG << "pThread=" << pThread << std::endl;
 
   pThread->Run();
 
@@ -63,35 +65,35 @@ bool Threads::Activate(int policy, int priority)
   struct sched_param threadSchedParameters;
   threadSchedParameters.sched_priority = priority;
 
-  cout << policy << " : " << priority << " : " << sched_get_priority_max(policy) << " : " << sched_get_priority_max(policy) << std::endl;
+  SLOG << policy << " : " << priority << " : " << sched_get_priority_max(policy) << " : " << sched_get_priority_max(policy) << std::endl;
 
   // Get attribute struct for setting priority and policy
   if ((code = pthread_attr_init(&threadAttributes)) != 0)
   {
-    cout << "FAILED: pthread_attr_init" << std::endl;
+    SLOG << "FAILED: pthread_attr_init" << std::endl;
     status = false;
   }
   // Set the scheduling policy in the attribute structure
   else if ((code = pthread_attr_setschedpolicy(&threadAttributes, policy)) != 0)
   {
-    cout << "FAILED: pthread_attr_setschedpolicy" << std::endl;
+    SLOG << "FAILED: pthread_attr_setschedpolicy" << std::endl;
     status = false;
   }
   // Set the priority in the attribute structure
   else if ( (code = pthread_attr_setschedparam(&threadAttributes, &threadSchedParameters)) != 0)
   {
-    cout << "FAILED: pthread_attr_setschedparam code=" << code << " priority=" << priority << std::endl;
+    SLOG << "FAILED: pthread_attr_setschedparam code=" << code << " priority=" << priority << std::endl;
     status = false;
   }
   // Create the thread, which starts the Runner function defined by the derived class
   else if ((code = pthread_create(&m_threadStruct, &threadAttributes, ThreadRun, (void*)this)) != 0 )
   {
-    cout << "FAILED: pthread_create code=" << code << std::endl;
+    SLOG << "FAILED: pthread_create code=" << code << std::endl;
     status = false;
   }
   else if ((code = pthread_attr_destroy(&threadAttributes)) != 0)
   {
-    cout << "FAILED: pthread_attr_destroy" << std::endl;
+    SLOG << "FAILED: pthread_attr_destroy" << std::endl;
     status = false;
   }
   else

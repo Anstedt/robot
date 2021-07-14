@@ -30,6 +30,14 @@ The front is where the holes are in the upper body. The angles are in reference 
 
 ### NOTES
 
+### System Logging
+- #include "Slog.h" in robot.cpp
+- slog << "My Notes" << std::endl;
+  "My Notes" in /var/log/message
+- SLOG << "My Notes" << std::endl;
+  "My Notes" in /var/log/message
+  "robot.cpp:33 My Notes" in /var/log/message
+
 ### Legs
 
 - Right and Left leg joints are now roughly correct for 90(forward), 0(straight) and -90(back) degress.
