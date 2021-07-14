@@ -13,6 +13,8 @@ PURPOSE: Creates Gyro and Motors and connecting them up for balancing
 #include <pigpio.h>
 #include <unistd.h>
 
+#include "Slog.h"
+
 using namespace std;
 
 /* METHODS ********************************************************************/
@@ -48,30 +50,30 @@ Balancer::~Balancer()
   m_gyro->StopThreadRun();
   while(!m_gyro->ThreadStopped())
   {
-    cout << "Waiting for Gyro to stop" << std::endl;
+    SLOG << "Waiting for Gyro to stop" << std::endl;
     sleep(1);
   }
 
-  cout << "Balancer Gyro->JoinThread" << std::endl;
+  SLOG << "Balancer Gyro->JoinThread" << std::endl;
   m_gyro->JoinThread();
 
-  cout << "Balancer delete Gyro" << std::endl;
+  SLOG << "Balancer delete Gyro" << std::endl;
   delete m_gyro;
 
-  cout << "Balancer Motor->JoinThread" << std::endl;
+  SLOG << "Balancer Motor->JoinThread" << std::endl;
   m_motor->StopThreadRun();
   while(!m_motor->ThreadStopped())
   {
-    cout << "Waiting for Motor to stop" << std::endl;
+    SLOG << "Waiting for Motor to stop" << std::endl;
     sleep(1);
   }
 
   m_motor->JoinThread();
 
-  cout << "Balancer delete Motor" << std::endl;
+  SLOG << "Balancer delete Motor" << std::endl;
   delete m_motor;
 
-  cout << "~Balancer IS RUNNING gpioTerminate" << std::endl;
+  SLOG << "~Balancer IS RUNNING gpioTerminate" << std::endl;
   gpioTerminate(); // Now that the MPU6050 is gone we can close pigpio
 }
 
@@ -80,8 +82,8 @@ FUNCTION:      Balancer::CallBack(int pitch, int yaw, float angle_gyro, float an
 ------------------------------------------------------------------------------*/
 void Balancer::CallBack(int gyro_pitch, int gyro_yaw, float angle_gyro, float angle_acc)
 {
-  // cout << "Angle Gyro=" << angle_gyro << "\tAngle Accel=" << angle_acc << "\tGyro Pitch=" << gyro_pitch << "\tGyro Yaw=" << gyro_yaw << std::endl;
-  // cout << "Angle Gyro=" << angle_gyro << "\tAngle Accel=" << angle_acc << std::endl;
+  // SLOG << "Angle Gyro=" << angle_gyro << "\tAngle Accel=" << angle_acc << "\tGyro Pitch=" << gyro_pitch << "\tGyro Yaw=" << gyro_yaw << std::endl;
+  // SLOG << "Angle Gyro=" << angle_gyro << "\tAngle Accel=" << angle_acc << std::endl;
 
   m_motor->AddGyroData(gyro_pitch, gyro_yaw, angle_gyro, angle_acc);
 }

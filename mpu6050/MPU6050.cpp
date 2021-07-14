@@ -12,6 +12,8 @@ PURPOSE:  Interface to the MPU6050 Gyro/Accel via I2C
 #include "MPU6050.h"
 #include <unistd.h> // for usleep()
 
+#include "Slog.h"
+
 using namespace std;
 
 /*------------------------------------------------------------------------------
@@ -20,7 +22,7 @@ FUNCTION:      MPU6050::MPU6050()
 MPU6050::MPU6050()
 {
   // Initializes I2C with device Address
-  cout << "MPU6050::MPU6050()" << std::endl;
+  SLOG << "MPU6050::MPU6050()" << std::endl;
 
   // We start un-calibrated
   m_calibrated = false;
@@ -32,7 +34,7 @@ MPU6050::MPU6050()
   // Should not need this but stops i2cClose from complaining on shutdown
   if (gpioInitialise() < 0)
   {
-    cout << "~MPU6050 pigpio initialization failed" << std::endl;
+    SLOG << "~MPU6050 pigpio initialization failed" << std::endl;
   }
 
   // RP uses bus 1
@@ -46,10 +48,10 @@ MPU6050::~MPU6050()
 {
   i2cClose(device_fd);
 
-  cout << "~MPU6050 NOT RUNNING gpioTerminate" << std::endl;
+  SLOG << "~MPU6050 NOT RUNNING gpioTerminate" << std::endl;
   // gpioTerminate(); // Now that the MPU6050 is gone we can close pigpio
 
-  cout << "MPU6050::~MPU6050()" << std::endl;
+  SLOG << "MPU6050::~MPU6050()" << std::endl;
 }
 
 // Setup  defaults if the user request them
@@ -92,8 +94,8 @@ void MPU6050::calibrate(void)
     if (accel_raw > accel_raw_max) accel_raw_max = accel_raw;
     if (accel_raw < accel_raw_min) accel_raw_min = accel_raw;
     
-    // DEBUG cout << "gyro_yaw_calibration_value  =" << gyro_yaw_calibration_value << std::endl;
-    // DEBUG cout << "gyro_pitch_calibration_value=" << gyro_pitch_calibration_value << std::endl;
+    // DEBUG SLOG << "gyro_yaw_calibration_value  =" << gyro_yaw_calibration_value << std::endl;
+    // DEBUG SLOG << "gyro_pitch_calibration_value=" << gyro_pitch_calibration_value << std::endl;
     //Wait for 3700 microseconds to simulate the main program loop time
 
     while(timer > gpioTick());
@@ -114,11 +116,11 @@ void MPU6050::calibrate(void)
   // Now calculate the Z value
   m_acc_Z_cal_ang = (asin((float)(accel_raw_avg) / 8200.0) * -57.296);
   
-  cout << "Elapsed time = " << float(((gpioTick() - elapsed) / 500)) << "us" << std::endl;
-  cout << "gyro_pitch_calibration_value=" << m_gyro_pitch_calibration_value << std::endl;
-  cout << "gyro_yaw_calibration_value  =" << m_gyro_yaw_calibration_value << std::endl;
-  cout << "m_acc_Z_cal_ang=" << m_acc_Z_cal_ang << " accel_raw=" << accel_raw << " accel_raw_avg with manual calibration=" << accel_raw_avg << std::endl;
-  cout << "accel_raw_min=" << accel_raw_min << " accel_raw_max=" << accel_raw_max << std::endl;
+  SLOG << "Elapsed time = " << float(((gpioTick() - elapsed) / 500)) << "us" << std::endl;
+  SLOG << "gyro_pitch_calibration_value=" << m_gyro_pitch_calibration_value << std::endl;
+  SLOG << "gyro_yaw_calibration_value  =" << m_gyro_yaw_calibration_value << std::endl;
+  SLOG << "m_acc_Z_cal_ang=" << m_acc_Z_cal_ang << " accel_raw=" << accel_raw << " accel_raw_avg with manual calibration=" << accel_raw_avg << std::endl;
+  SLOG << "accel_raw_min=" << accel_raw_min << " accel_raw_max=" << accel_raw_max << std::endl;
   
   m_calibrated = true; // We are now calibrated
 }

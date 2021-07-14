@@ -16,7 +16,7 @@ PURPOSE:  Syslog types
 
 /* CLASSES ********************************************************************/
 /* GLOBALS ********************************************************************/
-namespace log
+namespace slogtypes
 {
   enum level
   {

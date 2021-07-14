@@ -11,12 +11,12 @@
 class Slog: public std::basic_ostream<char>
 {
 public:
-  explicit Slog(const std::string& name = std::string(), log::type type = log::user):
+  explicit Slog(const std::string& name = std::string(), slogtypes::type type = slogtypes::user):
   std::basic_ostream<char>(&streambuf),
       streambuf(name, type)
   { }
 
-  Slog& operator<<(log::level level) noexcept
+  Slog& operator<<(slogtypes::level level) noexcept
   {
     streambuf.set_level(level);
     return (*this);
@@ -31,5 +31,3 @@ static Slog slog;
 #define SLOG (slog << __FILE__ << ":" << __LINE__ << " ")
 
 #endif // SLOG_H
-
-

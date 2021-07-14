@@ -16,7 +16,7 @@ class Slog;
 class Slogbuf: public std::basic_streambuf<char>
 {
 public:
-  explicit Slogbuf(const std::string& name, log::type type):
+  explicit Slogbuf(const std::string& name, slogtypes::type type):
   std::basic_streambuf<char>()
   {
     openlog(name.size() ? name.data() : nullptr, LOG_PID, type);
@@ -46,11 +46,11 @@ protected:
   }
 
   friend class Slog;
-  void set_level(log::level new_level) noexcept { level = new_level; };
+  void set_level(slogtypes::level new_level) noexcept { level = new_level; };
 
 private:
-  static constexpr log::level ini_level = log::info;
-  log::level level = ini_level;
+  static constexpr slogtypes::level ini_level = slogtypes::info;
+  slogtypes::level level = ini_level;
 
   std::string buffer;
 };

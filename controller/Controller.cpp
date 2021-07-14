@@ -21,7 +21,7 @@ Controller::Controller()
 {
   SLOG << "Controller::Controller()" << std::endl;
 
-  //m_balancer = new Balancer();
+  m_balancer = new Balancer();
   //m_legs = new Legs();
 
   sleep(2); // Let other threads start 
@@ -37,6 +37,6 @@ Controller::~Controller()
 {
   SLOG << "Controller::~Controller()" << std::endl;
 
-  //delete m_balancer;
+  delete m_balancer;
   //delete m_legs;
 }
