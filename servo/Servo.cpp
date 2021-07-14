@@ -9,6 +9,8 @@ FILE:     Servo.cpp
 #include <stdio.h>
 #include <math.h>
 
+#include "Slog.h"
+
 using namespace std;
 
 /*------------------------------------------------------------------------------
@@ -17,7 +19,7 @@ ARGUMENTS:  servo_num 0...15
 ------------------------------------------------------------------------------*/
 Servo::Servo(int min_pwd, int max_pwd)
 {
-  cout << "Servo::Servo()" << std::endl;
+  SLOG << "Servo::Servo()" << std::endl;
 
   // We only need to calculate the slope if m_min_pwd or m_max_pwd change
   // slope = (output_end - output_start) / (input_end - input_start);
@@ -49,12 +51,12 @@ bool Servo::set_servo_angle(int channel, int degrees)
     // output = output_start + round(slope * (angle_input - angle_min))
     output = m_min_pwd + round(m_slope_pwd * (degrees - (-90)) );
 
-    cout << "channel=" << channel << " degrees=" << degrees << " slope=" << m_slope_pwd << " output=" << output << std::endl;
+    SLOG << "channel=" << channel << " degrees=" << degrees << " slope=" << m_slope_pwd << " output=" << output << std::endl;
     success = true;
   }
   else
   {
-    cout << "Angle =" << degrees << " out of range (-90 to 90)" << std::endl;
+    SLOG << "Angle =" << degrees << " out of range (-90 to 90)" << std::endl;
   }
 
   PCA9685::Instance()->set_pwm(channel, 0, output);
@@ -72,7 +74,7 @@ void Servo::set_min_max_pwm(int min_pwm, int max_pwm)
   m_max_pwd = max_pwm;
   m_slope_pwd = float(m_max_pwd - m_min_pwd) / float(90 - (-90));
 
-  cout << "Slope=" << m_slope_pwd <<  " min=" << m_min_pwd << " max=" << m_max_pwd << std::endl;
+  SLOG << "Slope=" << m_slope_pwd <<  " min=" << m_min_pwd << " max=" << m_max_pwd << std::endl;
 }
 
 /*------------------------------------------------------------------------------

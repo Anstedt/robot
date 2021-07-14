@@ -7,6 +7,8 @@ PURPOSE:
 #include "Config.h"
 #include <iostream>
 
+#include "Slog.h"
+
 /* METHODS ********************************************************************/
 /*------------------------------------------------------------------------------
 FUNCTION:  Leg::Leg()
@@ -29,7 +31,7 @@ FUNCTION:  bool Leg::Stand()
 ------------------------------------------------------------------------------*/
 bool Leg::Stand()
 {
-  std::cout << "Leg::Stand()" << std::endl;
+  SLOG << "Leg::Stand()" << std::endl;
 
   return(m_hip.Angle(0) && m_knee.Angle(0));
 }
@@ -39,7 +41,7 @@ FUNCTION:  bool Leg::Walk()
 ------------------------------------------------------------------------------*/
 bool Leg::Walk()
 {
-  std::cout << "Leg::Walk()" << std::endl;
+  SLOG << "Leg::Walk()" << std::endl;
 
   return(m_hip.Angle(20) && m_knee.Angle(-60));
 }
@@ -49,7 +51,7 @@ FUNCTION:  bool Leg::Crouch()
 ------------------------------------------------------------------------------*/
 bool Leg::Crouch()
 {
-  std::cout << "Leg::Crouch()" << std::endl;
+  SLOG << "Leg::Crouch()" << std::endl;
 
   return(m_hip.Angle(90) && m_knee.Angle(-90));
 }
@@ -59,7 +61,7 @@ FUNCTION:  bool Leg::Sit()
 ------------------------------------------------------------------------------*/
 bool Leg::Sit()
 {
-  std::cout << "Leg::Sit() On Chair" << std::endl;
+  SLOG << "Leg::Sit() On Chair" << std::endl;
 
   return(m_hip.Angle(90) && m_knee.Angle(-90));
 }
@@ -126,7 +128,7 @@ double Leg::GetHipAngle(double knee_angle, double wheel_offset)
   hip_angle = 90 - hip_angle;
 
   // Display results
-  std::cout << "hip_angle=" << hip_angle << " Shin:" << shin << " Thigh:" << thigh << " Knee:" << knee_angle << " Offset:" << wheel_offset << std::endl;
+  SLOG << "hip_angle=" << hip_angle << " Shin:" << shin << " Thigh:" << thigh << " Knee:" << knee_angle << " Offset:" << wheel_offset << std::endl;
   
   return(hip_angle);
 }
