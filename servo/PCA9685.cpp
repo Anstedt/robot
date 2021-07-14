@@ -6,6 +6,8 @@ FILE:     PCA9685.cpp
 #include <pigpio.h>
 #include "PCA9685.h"
 
+#include "Slog.h"
+
 using namespace std;
 
 /* METHODS ********************************************************************/
@@ -16,12 +18,12 @@ PCA9685::PCA9685()
 {
   int mode1;
 
-  cout << "PCA9685::PCA9685()" << std::endl;
+  SLOG << "PCA9685::PCA9685()" << std::endl;
 
   // Should not need this but stops i2cClose from complaining on shutdown
   if (gpioInitialise() < 0)
   {
-    cout << "PCA9685 pigpio initialization failed" << std::endl;
+    SLOG << "PCA9685 pigpio initialization failed" << std::endl;
   }
 
   // RP uses bus 1
@@ -34,14 +36,14 @@ PCA9685::PCA9685()
   gpioDelay(0.005 * 1000000); // Micro seconds, wait for oscillator
 
   mode1 = ReadByte(PCA9685::MODE1);
-  cout << "READ mode1=" << mode1 << std::endl;
+  SLOG << "READ mode1=" << mode1 << std::endl;
   mode1 = mode1 & ~SLEEP;  // wake up (reset sleep)
-  cout << "mode1=" << mode1 << "~SLEEP=" << ~SLEEP << std::endl;
+  SLOG << "mode1=" << mode1 << "~SLEEP=" << ~SLEEP << std::endl;
   WriteByte(PCA9685::MODE1, mode1);
 
   gpioDelay(0.005 * 1000000); // Micro seconds, wait for oscillator
 
-  cout << "PCA9685 Set frequency" << std::endl;
+  SLOG << "PCA9685 Set frequency" << std::endl;
   set_pwm_freq(60);
 }
 
@@ -53,14 +55,14 @@ PCA9685::~PCA9685()
     // Should not need this but stops i2cClose from complaining on shutdown
   if (gpioInitialise() < 0)
   {
-    cout << "~MPU6050 pigpio initialization failed" << std::endl;
+    SLOG << "~MPU6050 pigpio initialization failed" << std::endl;
   }
 
   i2cClose(device_fd);
 
   gpioTerminate(); // Now that the MPU6050 is gone we can close pigpio
 
-  cout << "PCA9685::~PCA9685()" << std::endl;
+  SLOG << "PCA9685::~PCA9685()" << std::endl;
 }
 
 /*------------------------------------------------------------------------------
@@ -78,10 +80,10 @@ void PCA9685::set_pwm_freq(int freq_hz)
   prescaleval /= float(freq_hz);
   prescaleval -= 1.0;
 
-  cout << "After math.floor(prescaleval + 0.5) prescale=" << prescale << std::endl;
+  SLOG << "After math.floor(prescaleval + 0.5) prescale=" << prescale << std::endl;
   // prescale = int(math.floor(prescaleval + 0.5));
   prescale = int(static_cast<int>(prescaleval + 0.5));
-  cout << "After math.floor(prescaleval + 0.5) prescale=" << prescale << std::endl;
+  SLOG << "After math.floor(prescaleval + 0.5) prescale=" << prescale << std::endl;
   oldmode = ReadByte(PCA9685::MODE1);
   newmode = (oldmode & 0x7F) | 0x10; // sleep
 

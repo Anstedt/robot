@@ -1,4 +1,5 @@
 #include <iostream>
+
 #include "Controller.h"
 #include "PCA9685.h"
 #include "keypress.h"
@@ -6,13 +7,16 @@
 #include <unistd.h>
 #include <signal.h>
 
+#include "Slog.h"
+
 static sigset_t sigs_to_catch; // Signals
 
 int main(int argc, char *argv[])
 {
   int sig_caught; // signal caught
 
-  std::cout << "Hello Robbie" << std::endl;
+  SLOG << "" << std::endl;
+  SLOG << "++++++++++++++++++++++++++++++++++++++++ Hello Robbie ++++++++++++++++++++++++++++++++++++++++" << std::endl;
 
   // Signals turn off control-c, etc
 	sigemptyset(&sigs_to_catch);
@@ -22,10 +26,10 @@ int main(int argc, char *argv[])
   sigaddset(&sigs_to_catch, SIGTERM);
   sigaddset(&sigs_to_catch, SIGSEGV);
 
-  // Block all above signals from all spawned threads
+    // Block all above signals from all spawned threads
   if (pthread_sigmask(SIG_BLOCK, &sigs_to_catch, NULL) != 0)
   {
-    std::cout << "main::pthread_sigmask() failed" << std::endl;
+    SLOG << "main::pthread_sigmask() failed" << std::endl;
   }
   // Signals are now off so we can create threads
 
@@ -45,7 +49,7 @@ int main(int argc, char *argv[])
   // Got a signal so shut things down
   delete p_controller;
 
-  // delete p_servo;
-
+  SLOG << "---------------------------------------- Bye Robbie ----------------------------------------" << std::endl;
+    
   return(0);
 }
