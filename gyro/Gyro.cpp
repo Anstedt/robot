@@ -4,14 +4,9 @@ FILE:    Gyro.cpp
 
 PURPOSE: Gyroscope Accelorometer Interface
 *******************************************************************************/
-#include <iostream>
 #include <pigpio.h>
-#include <stdlib.h>
-#include <stdio.h>
 #include <math.h>
 #include "Gyro.h"
-
-#include <unistd.h>
 
 #include "Slog.h"
 

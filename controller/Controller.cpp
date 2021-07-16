@@ -6,7 +6,6 @@ PURPOSE: Creates and controls the Balancer/Motor and the Legs
 
 /* INCLUDE ********************************************************************/
 #include "Controller.h"
-#include <iostream>
 #include <unistd.h>
 
 #include "Slog.h"

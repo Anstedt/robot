@@ -5,7 +5,6 @@ PURPOSE:
 /* INCLUDE ********************************************************************/
 #include "Leg.h"
 #include "Config.h"
-#include <iostream>
 
 #include "Slog.h"
 

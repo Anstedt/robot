@@ -4,7 +4,6 @@ FILE:     Threads.cpp
 
 PURPOSE:  Linux Thread Support
 *******************************************************************************/
-#include <iostream>
 #include "Threads.h"
 
 #include "Slog.h"

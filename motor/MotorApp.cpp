@@ -5,6 +5,7 @@ FILE:     Motor.cpp
 PURPOSE:  Controls one motor of the 2 the robot has
 *******************************************************************************/
 #include <pigpio.h>
+#include <unistd.h>
 #include "Config.h"
 #include "Motor.h"
 
@@ -23,10 +24,13 @@ ARGUMENTS: steps_rev = number of steps for 1 full revolution, mode = 0
            revs_per_min = revolutions per minute
 ------------------------------------------------------------------------------*/
 Motor::Motor(int steps_rev, GPIO pulse_gpio, GPIO dir_gpio, GPIO microstep0, GPIO microstep1, GPIO microstep2, int mode, int revs_per_min, int dir)
-  : m_motorDriver(pulse_gpio, dir_gpio, microstep0, microstep1, microstep2)
 {
   SLOG << "Motor::Motor()" << std::endl;
 
+  m_motorDriver = new MotorDriver(pulse_gpio, dir_gpio, microstep0, microstep1, microstep2);
+
+  m_motorDriver->Activate(SCHED_FIFO, 1); // Make the motor the highest priority
+  
   m_motor_steps_rev = steps_rev;
 
   m_motor_dir = dir;
@@ -42,6 +46,20 @@ FUNCTION: Motor:: Motor()
 Motor::~Motor()
 {
   SLOG << "Motor::~Motor()" <<std::endl;
+
+  // Remove Right MotorDriver
+  SLOG << "Motor MotorDriver->JoinThread" << std::endl;
+  m_motorDriver->StopThreadRun();
+  while(!m_motorDriver->ThreadStopped())
+  {
+    SLOG << "Waiting for MotorDriver to stop" << std::endl;
+    sleep(1);
+  }
+
+  m_motorDriver->JoinThread();
+
+  SLOG << "Motor delete MotorDriver" << std::endl;
+  delete m_motorDriver;
 }
 
 /*------------------------------------------------------------------------------
@@ -51,7 +69,6 @@ RETURNS:       None
 bool Motor::AddGyroData(int y, int x, float angle_gyro, float angle_acc)
 {
   // SLOG << "Angle Gyro=" << angle_gyro << "\tAngle Accel=" << angle_acc << "\tGyro Y=" << y << "\tGyro X=" << x << std::endl;
-
   m_angle_gyro_fifo.push(angle_gyro);
 
   return(true);
@@ -133,7 +150,7 @@ int Motor::Run(void)
       // / 60 = rp second = 0.5
       // * 200 which is pulses per rev of the motor = 100
       // * mode modifier for example 1/32 = 100 * 32 = 3200
-      m_motorDriver.MotorCmd(m_motor_steps_to_go, (m_motor_revs_per_min * 200 * 32) / 60, m_motor_mode);
+      m_motorDriver->MotorCmd(m_motor_steps_to_go, (m_motor_revs_per_min * 200 * 32) / 60, m_motor_mode);
 
       // SLOG << " Fifo Angle=" << motor_angle_cmd << " Direction=" << m_motor_dir << " steps_to_go=" << m_motor_steps_to_go << std::endl;
     }
