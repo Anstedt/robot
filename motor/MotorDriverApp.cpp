@@ -83,7 +83,7 @@ MotorDriver::MotorDriver(GPIO pulse_gpio, GPIO dir_gpio, GPIO microstep0, GPIO m
 
 MotorDriver::~MotorDriver()
 {
-  // gpioTerminate(); // Close pigpio
+  gpioTerminate(); // Close pigpio
 
   SLOG << "MotorDriver::~MotorDriver()" <<std::endl;
 }

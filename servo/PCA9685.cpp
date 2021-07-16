@@ -22,7 +22,7 @@ PCA9685::PCA9685()
   // Should not need this but stops i2cClose from complaining on shutdown
   if (gpioInitialise() < 0)
   {
-    SLOG << "PCA9685 pigpio initialization failed" << std::endl;
+    SLOG << "ERROR PCA9685 pigpio initialization failed" << std::endl;
   }
 
   // RP uses bus 1
@@ -121,7 +121,12 @@ FUNCTION:  PCA9685::WriteByte(addr, value)
 ------------------------------------------------------------------------------*/
 void PCA9685::WriteByte(int addr, int value)
 {
-  i2cWriteByteData(device_fd, addr, value);
+  int status = i2cWriteByteData(device_fd, addr, value);
+
+  if (status < 0)
+  {
+    SLOG << "ERROR WriteByte " << addr << ", " << value << " ret=" << status << std::endl;
+  }
 }
 
 /*------------------------------------------------------------------------------

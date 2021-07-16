@@ -124,22 +124,42 @@ void MPU6050::calibrate(void)
 // Set power management configs5
 void MPU6050::set_power_mgmt(int value)
 {
-  i2cWriteByteData(device_fd, PWR_MGMT_1, value);
+  int status = i2cWriteByteData(device_fd, PWR_MGMT_1, value);
+  
+  if (status < 0)
+  {
+    SLOG << "ERROR set_power_mgmt ret=" << status << std::endl;
+  }  
 }
 
 void MPU6050::set_gyro_config(int value)
 {
-  i2cWriteByteData(device_fd, GYRO_CONFIG, value);
+  int status = i2cWriteByteData(device_fd, GYRO_CONFIG, value);
+
+  if (status < 0)
+  {
+    SLOG << "ERROR set_gyro_config ret=" << status << std::endl;
+  }
 }
 
 void MPU6050::set_accel_config(int value)
 {
-  i2cWriteByteData(device_fd, ACCEL_CONFIG, value);
+  int status = i2cWriteByteData(device_fd, ACCEL_CONFIG, value);
+
+  if (status < 0)
+  {
+    SLOG << "ERROR set_accel_config ret=" << status << std::endl;
+  }
 }
 
 void MPU6050::set_filter_config(int value)
 {
-  i2cWriteByteData(device_fd, CONFIG, value);
+  int status = i2cWriteByteData(device_fd, CONFIG, value);
+
+  if (status < 0)
+  {
+    SLOG << "ERROR set_filter_config ret=" << status << std::endl;
+  }
 }
 
 /*------------------------------------------------------------------------------
