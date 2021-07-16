@@ -209,6 +209,10 @@ int MotorDriver::Run(void)
 
   MotorCMD motor_cmd; // steps, speed in pulses per second, mode
 
+  // Set defaults on startup
+  motor_cmd.steps = 0;
+  motor_cmd.mode = MOTORS_MODE_DEFAULT;
+  
   SLOG << "MotorDriver:Run() in a separate thread" << std::endl;
 
   uint32_t loop_time_hja = gpioTick();
