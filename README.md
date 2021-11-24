@@ -1,7 +1,20 @@
 # Robot
 
-### See /mnt/robot/RP/notes.txt for important information on driver
-    and implementation
+# See /mnt/robot/RP/notes.txt for important information on driver and implementation
+
+### Using user space app driver for testing
+- Swap out real driver by renaming
+  - motor/MotorDriver.h -> motor/MotorDriver.h.REAL
+  - motor/MotorDriver.cpp -> motor/MotorDriver.cpp.REAL
+  - motor/Motor.h -> motor/Motor.h.REAL
+  - motor/Motor.cpp -> motor/Motor.cpp.REAL
+- Swap in app by renaming
+  - motor/MotorDriverApp.h -> motor/MotorDriverApp.h
+  - motor/MotorDriverApp.cpp -> motor/MotorDriver.cpp
+  - motor/MotorApp.h -> motor/Motor.h
+  - motor/MotorApp.cpp -> motor/Motor.cpp
+- Rebuild Robot with App driver
+- The App mimics the kernel driver interface but is a user space application
 
 ### Transition to NEW motor system
 - Options
