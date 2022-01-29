@@ -25,7 +25,7 @@ class MotorDriver
 public:
   // Local Classes
   // Constructors
-  MotorDriver(GPIO pulse_gpio, GPIO dir_gpio, GPIO microstep0, GPIO microstep1, GPIO microstep2);
+  MotorDriver(GPIO pulse_gpio, GPIO dir_gpio, GPIO microstep0, GPIO microstep1, GPIO microstep2, pthread_mutex_t* p_driver_mutex);
   // Mutators: non-const operations
   bool MotorCmd(s32 distance_raw, u32 max_speed_raw, u8 microstep_mode);
   // Accessors: const operations
@@ -47,6 +47,7 @@ private:
   int m_distance_raw;
   int m_max_speed_raw;
   int m_motor_microstep_mode;
+  pthread_mutex_t* m_p_driver_mutex;
   // Static (shared) class variables
 };
 /* GLOBALS ********************************************************************/
