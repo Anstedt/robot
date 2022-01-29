@@ -1,6 +1,6 @@
 /*******************************************************************************
 PACKAGE:  Robot
-FILE:     MotorDriver.cpp
+FILE:     MotorsDriver.cpp
 
 PURPOSE:  Low level driver access to motor
 *******************************************************************************/
@@ -13,7 +13,7 @@ PURPOSE:  Low level driver access to motor
 #include <fcntl.h>
 #include "Config.h"
 
-#include "MotorDriver.h"
+#include "MotorsDriver.h"
 
 #include "Slog.h"
 
@@ -22,11 +22,11 @@ PURPOSE:  Low level driver access to motor
 /* METHODS ********************************************************************/
 
 /*------------------------------------------------------------------------------
-FUNCTION:  MotorDriver::MotorDriver()
+FUNCTION:  MotorsDriver::MotorsDriver()
 
 PURPOSE:   Setup constants for the motor
 ------------------------------------------------------------------------------*/
-MotorDriver::MotorDriver(GPIO pulse_gpio, GPIO dir_gpio, GPIO microstep0, GPIO microstep1, GPIO microstep2, pthread_mutex_t* p_driver_mutex)
+MotorsDriver::MotorsDriver(GPIO m1_pulse_gpio, GPIO m1_dir_gpio, GPIO m2_pulse_gpio, GPIO m2_dir_gpio, GPIO microstep0, GPIO microstep1, GPIO microstep2, pthread_mutex_t* p_driver_mutex)
 {
   // Defaults for motor control
   m_motor_control.distance  = 0; // in steps NOTE: signed, if = 0 then stop
@@ -52,7 +52,7 @@ MotorDriver::MotorDriver(GPIO pulse_gpio, GPIO dir_gpio, GPIO microstep0, GPIO m
 }
 
 /*------------------------------------------------------------------------------
-FUNCTION:  bool MotorCmd(s32 distance_raw, u32 max_speed_raw, u8 microstep_mode)
+FUNCTION:  bool MotorsCmd(s32 distance_raw, u32 max_speed_raw, u8 microstep_mode)
 PURPOSE:   Driver motor at the specified rate at the specified speed
 
 ASSUMES:   steps per revolution is 200
@@ -75,7 +75,7 @@ motor steps = 2 or 1/100 of a revolution
 
 RETURNS:   worked
 ------------------------------------------------------------------------------*/
-bool MotorDriver::MotorCmd(s32 distance, u32 speed, u8 microstep_mode)
+bool MotorsDriver::MotorsCmd(s32 distance, u32 speed, u8 microstep_mode)
 {
   bool status = true;
 
@@ -91,7 +91,7 @@ bool MotorDriver::MotorCmd(s32 distance, u32 speed, u8 microstep_mode)
   // Speeds the same since we are not ramping
   m_motor_control.speed = speed;
 
-  SLOG << "DEBUG: Motor steps per second=" << speed << " distance=" << distance << std::endl;
+  SLOG << "DEBUG: Motors steps per second=" << speed << " distance=" << distance << std::endl;
 
   m_motor_control.microstep_control = microstep_mode;
 
@@ -108,7 +108,7 @@ bool MotorDriver::MotorCmd(s32 distance, u32 speed, u8 microstep_mode)
   }
   else
   {
-    SLOG << "ERROR: MotorDriver: pthread_mutex_lock failed" << std::endl;
+    SLOG << "ERROR: MotorsDriver: pthread_mutex_lock failed" << std::endl;
   }
   
   pthread_mutex_unlock(m_p_driver_mutex);
@@ -117,8 +117,8 @@ bool MotorDriver::MotorCmd(s32 distance, u32 speed, u8 microstep_mode)
 }
 
 /*------------------------------------------------------------------------------
-FUNCTION:  MotorDriver::~MotorDriver()
+FUNCTION:  MotorsDriver::~MotorsDriver()
 ------------------------------------------------------------------------------*/
-MotorDriver::~MotorDriver()
+MotorsDriver::~MotorsDriver()
 {
 }
