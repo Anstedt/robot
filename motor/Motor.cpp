@@ -22,8 +22,8 @@ ARGUMENTS: steps_rev = number of steps for 1 full revolution, mode = 0
            mode = default stepper/chop mode for the motor
            revs_per_min = revolutions per minute
 ------------------------------------------------------------------------------*/
-Motor::Motor(int steps_rev, GPIO pulse_gpio, GPIO dir_gpio, GPIO microstep0, GPIO microstep1, GPIO microstep2, int mode, int revs_per_min, int dir)
-  : m_motorDriver(pulse_gpio, dir_gpio, microstep0, microstep1, microstep2)
+Motor::Motor(int steps_rev, GPIO pulse_gpio, GPIO dir_gpio, GPIO microstep0, GPIO microstep1, GPIO microstep2, int mode, int revs_per_min, int dir, pthread_mutex_t* p_driver_mutex)
+  : m_motorDriver(pulse_gpio, dir_gpio, microstep0, microstep1, microstep2, p_driver_mutex)
 {
   SLOG << "Motor::Motor()" << std::endl;
 

@@ -22,17 +22,23 @@ FUNCTION:      Balancer::Balancer()
 ------------------------------------------------------------------------------*/
 Balancer::Balancer()
 {
+  // Create a shared mutex for the motor driver
+  if (pthread_mutex_init(&m_driver_mutex, NULL) != 0)
+  {
+    SLOG << "ERROR: Balancer: pthread_mutex_init failed" << std::endl;
+  }
+  
   // Right Motor uses Gyro data so start it first
   m_motorRight = new Motor(MOTORS_STEPS_PER_REV, MOTOR1_GPIO_STEP, MOTOR1_GPIO_DIR,
                            MOTOR1_GPIO_MODE_0, MOTOR1_GPIO_MODE_1, MOTOR1_GPIO_MODE_2,
-                           MOTORS_MODE_DEFAULT, MOTORS_RPM_DEFAULT, MOTOR1_DIRECTION);
+                           MOTORS_MODE_DEFAULT, MOTORS_RPM_DEFAULT, MOTOR1_DIRECTION, &m_driver_mutex);
 
   m_motorRight->Activate(SCHED_FIFO, 1); // Make the motor the highest priority
 
   // Left Motor uses Gyro data so start it first
   m_motorLeft = new Motor(MOTORS_STEPS_PER_REV, MOTOR2_GPIO_STEP, MOTOR2_GPIO_DIR,
                           MOTOR2_GPIO_MODE_0, MOTOR2_GPIO_MODE_1, MOTOR2_GPIO_MODE_2,
-                          MOTORS_MODE_DEFAULT, MOTORS_RPM_DEFAULT, MOTOR2_DIRECTION);
+                          MOTORS_MODE_DEFAULT, MOTORS_RPM_DEFAULT, MOTOR2_DIRECTION, &m_driver_mutex);
 
   m_motorLeft->Activate(SCHED_FIFO, 1); // Make the motor the highest priority
 
@@ -98,6 +104,9 @@ Balancer::~Balancer()
   
   SLOG << "~Balancer IS RUNNING gpioTerminate" << std::endl;
   gpioTerminate(); // Now that the MPU6050 is gone we can close pigpio
+
+  // Unlock and destroy mutex so that motors can run to completion
+  pthread_mutex_lock(&m_driver_mutex);
 }
 
 /*------------------------------------------------------------------------------

@@ -23,7 +23,7 @@ class Motor : public Threads
 public:
   // Local Classes
   // Constructors
-  Motor(int steps_rev, GPIO pulse_gpio, GPIO dir_gpio, GPIO a, GPIO b, GPIO c, int motor_mode, int revs_per_min, int direction);
+  Motor(int steps_rev, GPIO pulse_gpio, GPIO dir_gpio, GPIO a, GPIO b, GPIO c, int motor_mode, int revs_per_min, int direction, pthread_mutex_t* p_driver_mutex);
   // Mutators: non-const operations
   bool AddGyroData(int pitch, int yaw, float angle_acc, float angle_gyro);
   bool SetMotorMode(int mode);
@@ -50,7 +50,6 @@ private:
   // Motor control
   int m_motor_mode;
   int m_motor_dir;
-
   MotorDriver m_motorDriver;
 
   LockingQueue<float> m_angle_gyro_fifo;

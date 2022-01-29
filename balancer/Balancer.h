@@ -9,6 +9,8 @@ FILE:    Balancer.h
 #include "Gyro.h"
 #include "Motor.h"
 
+#include <pthread.h>
+
 /* CLASSES ********************************************************************/
 /*------------------------------------------------------------------------------
 CLASS:	       Balancer
@@ -25,6 +27,7 @@ public:
   // Mutators: non-const operations
   // Accessors: const operations
   // Static and friend functions
+  pthread_mutex_t m_driver_mutex;  /* Protects critical region */
   // Memory management: copy constructor, destructor, operator=
   ~Balancer();
 private:
