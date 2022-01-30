@@ -1,7 +1,19 @@
 # Robot
 
-# See /mnt/robot/RP/notes.txt for important information on driver and implementation
+### Sitching to array based driver dor more efficient driver processing
 
+### Redesign of commands to control speed and distance required
+- Distance needs to be based on mode, speed and 250Hz and of course direction for +/-
+  - Example distance = speed in pulses/steps per second
+  - Seems like mode should not be needed for this calculations
+  - 4ms is 250Hz period
+  - Example speed is 125 meaning 125 pulses per second, so we need 125/250 pulses per 4ms period.
+  - Even at 1/32 the least I can send is speed=250 and distance=1 which is 250/32 steps 200/7 degrees per second
+  - 250 times per second
+  - Smallest I can go is distance(p) = speed(p/s)*seconds(s) but I do this 250 times per second.
+  - So lets say I want a speed of 1/32 rev per second, witch chopper at 1/32 I need 6400/32 per second.
+  - I need a speed of 200 p/s, but I cannot get that since I need to call rick 250 times per second
+  - That means I need to feed rick minimum speed=250 and distance=1
 ### Using user space app driver for testing
 - Swap out real driver by renaming
   - motor/MotorDriver.h -> motor/MotorDriver.h.REAL

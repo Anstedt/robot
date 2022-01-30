@@ -42,7 +42,7 @@ private:
   MotorsDriver(const  MotorsDriver&);
   MotorsDriver& operator=(const  MotorsDriver& rhs);
   // Data fields
-  struct STEPPER_SETUP m_motor_control;
+  struct STEPPER_SETUP m_motor_control[2]; // One for each motor
   int m_motor_fd;
   int m_distance_raw;
   int m_max_speed_raw;

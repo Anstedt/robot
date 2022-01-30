@@ -55,6 +55,14 @@ bool Motors::AddGyroData(int y, int x, float angle_gyro, float angle_acc)
 {
   // SLOG << "Angle Gyro=" << angle_gyro << "\tAngle Accel=" << angle_acc << "\tGyro Y=" << y << "\tGyro X=" << x << std::endl;
 
+  // HJA At this point we will call the driver cmd may take x calls, such as
+  // HJA Init motor 1 array
+  // HJA Init motor 2 array
+  // HJA Send array
+  // HJA MotorsDriver::MotorsCmd(
+  // m1_distance, m2_distance
+  // m1_speed, m2_speed
+  // m1_mode, m2_mode, maybe we will delete this
   m_angle_gyro_fifo.push(angle_gyro);
 
   return(true);

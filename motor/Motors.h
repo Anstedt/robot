@@ -48,13 +48,13 @@ private:
   // Data fields
   int m_motor_steps_rev;
   int m_motor_revs_per_min;
+  u8 m_motor_mode; // In our case this will be the same for both motors
+
   // Motor control
-  u8 m_motor1_mode;      // In most cases this will be the same for both motors
   s32 m_motor1_distance; // +/- controls direction, 0 is stop
   u32 m_motor1_speed;    // steps/second
   s32 m_motor1_dir;      // this is 1 or -1 since each motor goes in the opposite direction
   
-  u8 m_motor2_mode;      // In most cases this will be the same for both motors
   s32 m_motor2_distance; // +/- controls direction, 0 is stop
   u32 m_motor2_speed;    // steps/second
   s32 m_motor2_dir;      // this is 1 or -1 since each motor goes in the opposite direction
