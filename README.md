@@ -1,6 +1,39 @@
 # Robot
 
-### Sitching to array based driver dor more efficient driver processing
+# March 20, 2022
+- Looks like Motors and MotorsDriver are in process but have much work to do.
+- Big change is focus on speed not distance
+
+- Bigger change is handling speeds of 250 pulses/second or less since the
+  driver/design can handle 1 pulse/sec. at 250Hz, which would be 250
+  pulses/sec., we will need to handle this in application space.
+  - Concepts
+
+    - See driver README.md which makes a point that the speed and distance
+      values should not be set such that the driver finishes before new cmd's
+      are sent.
+
+    - This seems to say we should always have a distance slightly large than the
+      speed/distance we select based on our thread rate of 250Hz.
+
+      - Based on this we may need some little algorithm to select distance based
+        on speed since the higher the speed the faster the driver completes the
+        distance as well as could hot the finish before we get back.
+    
+  - Examples:
+    - Speed = 250Hz: call driver with 250 speed and distance of 2, 1 more than we need so the motor does not stop if we are a little late
+    - Speed = 500Hz: speed=500, distance=2, 1 more
+
+    - t_rate = thread rate which is fixed at 250Hz
+    - t_jitter = estimate of t_rate jitter compared to set value of 250Hz. Maybe units of Hz.
+    - a_speed = speed we comes from the application space
+    - a_distance = distance from the applications space, seems like this is not needed since we drive the robot by speed not distance
+    - d_speed = the speed we send the driver
+    - d_distance = the distance we send the driver
+
+    (d_speed, d_distance) = some_func(a_speed, 250, t_jitter)
+    
+### Switching to array based driver be more efficient driver processing
 
 ### Redesign of commands to control speed and distance required
 - Distance needs to be based on mode, speed and 250Hz and of course direction for +/-

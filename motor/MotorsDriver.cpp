@@ -103,9 +103,9 @@ bool MotorsDriver::MotorsCmd(s32 distance, u32 speed, u8 microstep_mode)
   // HJA controls rotations direction which needs to be the opposite for each
   // HJA motor in most cases.
 
-  // We will shift mode to meed the required speed and distance
+  // We will shift mode to meet the required speed and distance
   m_motor_control[0].distance =  distance;
-  m_motor_control[0].distance =  distance;
+  m_motor_control[1].distance =  distance;
 
   // Speeds the same since we are not ramping
   m_motor_control[0].speed = speed;
