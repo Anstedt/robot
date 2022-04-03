@@ -1,5 +1,68 @@
 # Robot
 
+# April 03, 2022
+if (rate > 250)
+  driver_rate(rate) // Adjusts rate,distance calls to driver knowing this is called at 250Hz
+else
+  thread_rate(rate) // Handle driver calls periodically for low rates
+
+
+MAYBE this should just adjust the runs_per_pulse which is really the
+time between pulses every time we get a new value. The issue doing
+that is how to make sure this runs at least at a reasonable rate with
+changing input values since this will be a count down scheme.
+
+thread_rate(rate)
+{
+  // Calc runs_per_pulse then update runs_per_pulse_counter
+  // If done all the time driver() is never called, maybe do the following
+  
+  // Run till counter is counted down
+     then hit driver and get a new value
+	 always keeping track of current pulse per counter
+	 if the new rate is lower, conversely the old runs_per_pulse is lower
+	 update to the lower rate, larger runs_per_pulse
+	 still run the driver at least one time ????, NEED TO TEST IF NEEDED
+
+  if (--runs_per_pulse_counter <= 0)
+    driver(rate,distance)
+	runs_per_pulse_counter = runs_per_pulse
+    curr_per_pulse = runs_per_pulse
+  else if (runs_per_pulse > curr_per_pulse) // meaning go slower
+    driver(rate,distance) // at least pulse once
+    runs_per_pulse_counter = runs_per_pulse
+    curr_per_pulse = runs_per_pulse
+	
+  // Is this easier to think about if we stick to rates until we need
+     the values for the counter. I think we need these static
+     variables then curr_rate, runs_per_pulse_counter
+    
+  if (--runs_per_pulse_counter <= 0 || rate < curr_rate)
+    driver(rate,distance)
+	runs_per_pulse_counter = rate_to_runs(rate)
+    curr_rate = rate
+}
+
+bool thread_rate(rate)
+{
+  static int curr_per_pulse = 0; // Really set in constructor
+  static int runs_per_pulse = 0; // Really set in constructor
+  
+  250hz(runs/second)/rate(pulses/second)
+  // runs_per_pulse = 250 / 25 == 10
+
+  static int curr_rate = 250;
+  
+  if (rate 
+  
+  
+  // If the new runs per pulse is less than the current runs per pulse
+  // Meaning we need to pulse slower
+  if (250/rate < curr_per_pulse
+  
+  This indicates that the 250Hz thread should call the driver every
+  10th time through.
+}
 # March 20, 2022
 - Looks like Motors and MotorsDriver are in process but have much work to do.
 - Big change is focus on speed not distance
