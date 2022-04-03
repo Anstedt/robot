@@ -1,6 +1,6 @@
 /*******************************************************************************
 PACKAGE:  Robot
-FILE:     MotorDriver.cpp
+FILE:     MotorsDriver.cpp
 
 PURPOSE:  Low level driver access to motor
 *******************************************************************************/
@@ -13,7 +13,7 @@ PURPOSE:  Low level driver access to motor
 #include <fcntl.h>
 #include "Config.h"
 
-#include "MotorDriver.h"
+#include "MotorsDriver.h"
 
 #include "Slog.h"
 
@@ -22,24 +22,36 @@ PURPOSE:  Low level driver access to motor
 /* METHODS ********************************************************************/
 
 /*------------------------------------------------------------------------------
-FUNCTION:  MotorDriver::MotorDriver()
+FUNCTION:  MotorsDriver::MotorsDriver()
 
 PURPOSE:   Setup constants for the motor
 ------------------------------------------------------------------------------*/
-MotorDriver::MotorDriver(GPIO pulse_gpio, GPIO dir_gpio, GPIO microstep0, GPIO microstep1, GPIO microstep2, pthread_mutex_t* p_driver_mutex)
+MotorsDriver::MotorsDriver(GPIO m1_pulse_gpio, GPIO m1_dir_gpio, GPIO m2_pulse_gpio, GPIO m2_dir_gpio, GPIO microstep0, GPIO microstep1, GPIO microstep2, pthread_mutex_t* p_driver_mutex)
 {
   // Defaults for motor control
-  m_motor_control.distance  = 0; // in steps NOTE: signed, if = 0 then stop
-  m_motor_control.speed = 0; // min speed in steps, 0 is stopped
-	m_motor_control.microstep_control = 0; // bit 0 is value for gpio_microstep0, bit 1 = microstep1, etc
+  m_motor_control[0].distance  = 0;         // in steps NOTE: signed, if = 0 then stop
+  m_motor_control[0].speed = 0;             // min speed in steps, 0 is stopped
+	m_motor_control[0].microstep_control = MOTORS_MODE_DEFAULT; // bit 0 is value for gpio_microstep0, bit 1 = microstep1, etc
+
+  m_motor_control[1].distance  = 0;         // in steps NOTE: signed, if = 0 then stop
+  m_motor_control[1].speed = 0;             // min speed in steps, 0 is stopped
+	m_motor_control[1].microstep_control = MOTORS_MODE_DEFAULT; // bit 0 is value for gpio_microstep0, bit 1 = microstep1, etc
+
   m_p_driver_mutex = p_driver_mutex;
     
-  // Constants for the hardware
-  m_motor_control.gpios[GPIO_STEP] = pulse_gpio;       // constant
-  m_motor_control.gpios[GPIO_DIRECTION] = dir_gpio;    // constant
-  m_motor_control.gpios[GPIO_MICROSTEP0] = microstep0; // constant
-  m_motor_control.gpios[GPIO_MICROSTEP1] = microstep1; // constant
-  m_motor_control.gpios[GPIO_MICROSTEP2] = microstep2; // constant
+  // Constants for the motor 1 hardware
+  m_motor_control[0].gpios[GPIO_STEP]       = m1_pulse_gpio; // constant
+  m_motor_control[0].gpios[GPIO_DIRECTION]  = m1_dir_gpio;   // constant
+  m_motor_control[0].gpios[GPIO_MICROSTEP0] = microstep0;    // constant
+  m_motor_control[0].gpios[GPIO_MICROSTEP1] = microstep1;    // constant
+  m_motor_control[0].gpios[GPIO_MICROSTEP2] = microstep2;    // constant
+
+  // Constants for the motor 2 hardware, notice mode lines are the same
+  m_motor_control[1].gpios[GPIO_STEP]       = m2_pulse_gpio; // constant
+  m_motor_control[1].gpios[GPIO_DIRECTION]  = m2_dir_gpio;   // constant
+  m_motor_control[1].gpios[GPIO_MICROSTEP0] = microstep0;    // constant
+  m_motor_control[1].gpios[GPIO_MICROSTEP1] = microstep1;    // constant
+  m_motor_control[1].gpios[GPIO_MICROSTEP2] = microstep2;    // constant
 
   m_motor_fd = open(STEP_CMD_FILE, O_RDWR | O_SYNC);  /* might need root access */
 	if (m_motor_fd < 0)
@@ -52,7 +64,7 @@ MotorDriver::MotorDriver(GPIO pulse_gpio, GPIO dir_gpio, GPIO microstep0, GPIO m
 }
 
 /*------------------------------------------------------------------------------
-FUNCTION:  bool MotorCmd(s32 distance_raw, u32 max_speed_raw, u8 microstep_mode)
+FUNCTION:  bool MotorsCmd(s32 distance_raw, u32 max_speed_raw, u8 microstep_mode)
 PURPOSE:   Driver motor at the specified rate at the specified speed
 
 ASSUMES:   steps per revolution is 200
@@ -75,7 +87,7 @@ motor steps = 2 or 1/100 of a revolution
 
 RETURNS:   worked
 ------------------------------------------------------------------------------*/
-bool MotorDriver::MotorCmd(s32 distance, u32 speed, u8 microstep_mode)
+bool MotorsDriver::MotorsCmd(s32 distance, u32 speed, u8 microstep_mode)
 {
   bool status = true;
 
@@ -85,15 +97,24 @@ bool MotorDriver::MotorCmd(s32 distance, u32 speed, u8 microstep_mode)
     distance = 0;
   }
   
-  // We will shift mode to meed the required speed and distance
-  m_motor_control.distance =  distance;
+  // HJA distance and speed need to be controlled per motor. For pure balancing
+  // HJA the will be the same but for turning and moving they will be different
+  // HJA remember distance needs to be the opposite for each motor since that
+  // HJA controls rotations direction which needs to be the opposite for each
+  // HJA motor in most cases.
+
+  // We will shift mode to meet the required speed and distance
+  m_motor_control[0].distance =  distance;
+  m_motor_control[1].distance =  distance;
 
   // Speeds the same since we are not ramping
-  m_motor_control.speed = speed;
+  m_motor_control[0].speed = speed;
+  m_motor_control[1].speed = speed;
 
-  SLOG << "DEBUG: Motor steps per second=" << speed << " distance=" << distance << std::endl;
+  SLOG << "DEBUG: Motors steps per second=" << speed << " distance=" << distance << std::endl;
 
-  m_motor_control.microstep_control = microstep_mode;
+  m_motor_control[0].microstep_control = microstep_mode;
+  m_motor_control[1].microstep_control = microstep_mode;
 
   // Lock and make sure we got the lock
   if (pthread_mutex_lock(m_p_driver_mutex) == 0)
@@ -108,7 +129,7 @@ bool MotorDriver::MotorCmd(s32 distance, u32 speed, u8 microstep_mode)
   }
   else
   {
-    SLOG << "ERROR: MotorDriver: pthread_mutex_lock failed" << std::endl;
+    SLOG << "ERROR: MotorsDriver: pthread_mutex_lock failed" << std::endl;
   }
   
   pthread_mutex_unlock(m_p_driver_mutex);
@@ -117,8 +138,8 @@ bool MotorDriver::MotorCmd(s32 distance, u32 speed, u8 microstep_mode)
 }
 
 /*------------------------------------------------------------------------------
-FUNCTION:  MotorDriver::~MotorDriver()
+FUNCTION:  MotorsDriver::~MotorsDriver()
 ------------------------------------------------------------------------------*/
-MotorDriver::~MotorDriver()
+MotorsDriver::~MotorsDriver()
 {
 }

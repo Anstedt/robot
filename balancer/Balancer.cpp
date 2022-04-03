@@ -29,18 +29,10 @@ Balancer::Balancer()
   }
   
   // Right Motor uses Gyro data so start it first
-  m_motorRight = new Motor(MOTORS_STEPS_PER_REV, MOTOR1_GPIO_STEP, MOTOR1_GPIO_DIR,
-                           MOTOR1_GPIO_MODE_0, MOTOR1_GPIO_MODE_1, MOTOR1_GPIO_MODE_2,
-                           MOTORS_MODE_DEFAULT, MOTORS_RPM_DEFAULT, MOTOR1_DIRECTION, &m_driver_mutex);
-
-  m_motorRight->Activate(SCHED_FIFO, 1); // Make the motor the highest priority
-
-  // Left Motor uses Gyro data so start it first
-  m_motorLeft = new Motor(MOTORS_STEPS_PER_REV, MOTOR2_GPIO_STEP, MOTOR2_GPIO_DIR,
-                          MOTOR2_GPIO_MODE_0, MOTOR2_GPIO_MODE_1, MOTOR2_GPIO_MODE_2,
-                          MOTORS_MODE_DEFAULT, MOTORS_RPM_DEFAULT, MOTOR2_DIRECTION, &m_driver_mutex);
-
-  m_motorLeft->Activate(SCHED_FIFO, 1); // Make the motor the highest priority
+  m_motors = new Motors(MOTOR1_GPIO_STEP, MOTOR1_GPIO_DIR,
+                        MOTOR2_GPIO_STEP, MOTOR2_GPIO_DIR,
+                        MOTOR1_GPIO_MODE_0, MOTOR1_GPIO_MODE_1, MOTOR1_GPIO_MODE_2,
+                        &m_driver_mutex);
 
   m_gyro = new Gyro();
 
@@ -70,38 +62,10 @@ Balancer::~Balancer()
   SLOG << "Balancer delete Gyro" << std::endl;
   delete m_gyro;
 
-  // STOP AND REMOVE MOTORS
-  
-  // Remove Right Motor
-  SLOG << "Balancer Right Motor->JoinThread" << std::endl;
-  m_motorRight->StopThreadRun();
-  while(!m_motorRight->ThreadStopped())
-  {
-    SLOG << "Waiting for Right Motor to stop" << std::endl;
-    sleep(1);
-  }
+  // Remove Motors
+  SLOG << "Balancer Motors" << std::endl;
+  delete m_motors;
 
-  m_motorRight->JoinThread();
-
-  SLOG << "Balancer delete Right Motor" << std::endl;
-  delete m_motorRight;
-
-  // Remove Left Motor
-  SLOG << "Balancer Left Motor->JoinThread" << std::endl;
-  m_motorLeft->StopThreadRun();
-  while(!m_motorLeft->ThreadStopped())
-  {
-    SLOG << "Waiting for Left Motor to stop" << std::endl;
-    sleep(1);
-  }
-
-  m_motorLeft->JoinThread();
-
-  SLOG << "Balancer delete Left Motor" << std::endl;
-  delete m_motorLeft;
-
-  // MOTORS STOPPED AND REMOVED
-  
   SLOG << "~Balancer IS RUNNING gpioTerminate" << std::endl;
   gpioTerminate(); // Now that the MPU6050 is gone we can close pigpio
 
@@ -117,6 +81,5 @@ void Balancer::CallBack(int gyro_pitch, int gyro_yaw, float angle_gyro, float an
   // SLOG << "Angle Gyro=" << angle_gyro << "\tAngle Accel=" << angle_acc << "\tGyro Pitch=" << gyro_pitch << "\tGyro Yaw=" << gyro_yaw << std::endl;
   // SLOG << "Angle Gyro=" << angle_gyro << "\tAngle Accel=" << angle_acc << std::endl;
 
-  m_motorRight->AddGyroData(gyro_pitch, gyro_yaw, angle_gyro, angle_acc);
-  m_motorLeft->AddGyroData(gyro_pitch, gyro_yaw, angle_gyro, angle_acc);
+  m_motors->AddGyroData(gyro_pitch, gyro_yaw, angle_gyro, angle_acc);
 }

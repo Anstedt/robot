@@ -7,7 +7,7 @@ FILE:    Balancer.h
 
 /* INCLUDE ********************************************************************/
 #include "Gyro.h"
-#include "Motor.h"
+#include "Motors.h"
 
 #include <pthread.h>
 
@@ -44,8 +44,7 @@ private:
   Balancer& operator=(const Balancer& rhs);
   // Data fields
   Gyro* m_gyro;
-  Motor* m_motorRight;
-  Motor* m_motorLeft;
+  Motors* m_motors;
   // Static (shared) class variables
 };
 /* GLOBALS ********************************************************************/

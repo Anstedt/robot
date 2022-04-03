@@ -1,7 +1,5 @@
-# Make sure we have at least this version of cmake
-cmake_minimum_required(VERSION 3.1 FATAL_ERROR)
-
-project (robot)
+cmake_minimum_required(VERSION 3.18 FATAL_ERROR)
+project(Robot)
 
 include_directories("${PROJECT_SOURCE_DIR}")
 include_directories("${PROJECT_SOURCE_DIR}/mpu6050")

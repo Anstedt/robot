@@ -1,66 +1,77 @@
 /*******************************************************************************
 PACKAGE:  Robot
-FILE:     Motor.cpp
+FILE:     Motors.cpp
 
 PURPOSE:  Controls one motor of the 2 the robot has
 *******************************************************************************/
 #include <pigpio.h>
 #include "Config.h"
-#include "Motor.h"
+#include "Motors.h"
 
 #include "Slog.h"
 
 using namespace std;
 
 /*------------------------------------------------------------------------------
-FUNCTION:  Motor::Motor()
+FUNCTION:  Motors::Motors()
 
-ARGUMENTS: steps_rev = number of steps for 1 full revolution, mode = 0
-           pulse_gpio = gpio number for pulse control
-           dir_gpio = gpio number for direction control
+ARGUMENTS: motor1/2_pulse_gpio = gpio number for pulse control
+           motor1/2_dir_gpio = gpio number for direction control
            mode_gpio = array of 3 gpio pins used for mode
-           mode = default stepper/chop mode for the motor
-           revs_per_min = revolutions per minute
+           mutex = locking mutex for driver
 ------------------------------------------------------------------------------*/
-Motor::Motor(int steps_rev, GPIO pulse_gpio, GPIO dir_gpio, GPIO microstep0, GPIO microstep1, GPIO microstep2, int mode, int revs_per_min, int dir, pthread_mutex_t* p_driver_mutex)
-  : m_motorDriver(pulse_gpio, dir_gpio, microstep0, microstep1, microstep2, p_driver_mutex)
+Motors::Motors(GPIO m1_pulse_gpio, GPIO m1_dir_gpio, GPIO m2_pulse_gpio, GPIO m2_dir_gpio, GPIO microstep0, GPIO microstep1, GPIO microstep2, pthread_mutex_t* p_driver_mutex)
+  : m_motorsDriver(m1_pulse_gpio, m1_dir_gpio, m2_pulse_gpio, m2_dir_gpio, microstep0, microstep1, microstep2, p_driver_mutex)
 {
-  SLOG << "Motor::Motor()" << std::endl;
+  SLOG << "Motors::Motors()" << std::endl;
 
-  m_motor_steps_rev = steps_rev;
-
-  m_motor_dir = dir;
-  m_motor_revs_per_min = revs_per_min;
-
+  // Setup for motor 1
+  m_motor1_distance = 0;               // +/- controls direction, 0 is stop
+  m_motor1_speed = 0;                  // steps/second
+  m_motor1_dir = MOTOR1_DIRECTION;     // this is 1 or -1 since each motor goes in the opposite direction
+  
+  // Setup for motor 2  
+  m_motor1_distance = 0;               // +/- controls direction, 0 is stop
+  m_motor1_speed = 0;                  // steps/second
+  m_motor1_dir = MOTOR2_DIRECTION;     // this is 1 or -1 since each motor goes in the opposite direction
+  
   // Now set the motor mode
-  SetMotorMode(mode);
+  SetMotorsMode(MOTORS_MODE_DEFAULT); // In most cases this will be the same for both motors
 }
 
 /*------------------------------------------------------------------------------
-FUNCTION: Motor:: Motor()
+FUNCTION: Motors:: Motors()
 ------------------------------------------------------------------------------*/
-Motor::~Motor()
+Motors::~Motors()
 {
-  SLOG << "Motor::~Motor()" <<std::endl;
+  SLOG << "Motors::~Motors()" <<std::endl;
 }
 
 /*------------------------------------------------------------------------------
-FUNCTION:      Motor::AddGyroData(int pitch, int yaw, float angle_gyro, float angle_acc)
+FUNCTION:      Motors::AddGyroData(int pitch, int yaw, float angle_gyro, float angle_acc)
 RETURNS:       None
 ------------------------------------------------------------------------------*/
-bool Motor::AddGyroData(int y, int x, float angle_gyro, float angle_acc)
+bool Motors::AddGyroData(int y, int x, float angle_gyro, float angle_acc)
 {
   // SLOG << "Angle Gyro=" << angle_gyro << "\tAngle Accel=" << angle_acc << "\tGyro Y=" << y << "\tGyro X=" << x << std::endl;
 
+  // HJA At this point we will call the driver cmd may take x calls, such as
+  // HJA Init motor 1 array
+  // HJA Init motor 2 array
+  // HJA Send array
+  // HJA MotorsDriver::MotorsCmd(
+  // m1_distance, m2_distance
+  // m1_speed, m2_speed
+  // m1_mode, m2_mode, maybe we will delete this
   m_angle_gyro_fifo.push(angle_gyro);
 
   return(true);
 }
 
 /*------------------------------------------------------------------------------
-FUNCTION:      Motor::SetMotorMode(int mode)
+FUNCTION:      Motors::SetMotorsMode(int mode)
 ------------------------------------------------------------------------------*/
-bool Motor::SetMotorMode(int mode)
+bool Motors::SetMotorsMode(int mode)
 {
   bool status = false;
 
@@ -80,12 +91,12 @@ bool Motor::SetMotorMode(int mode)
 }
 
 /*------------------------------------------------------------------------------
-FUNCTION:      int Motor::AngleToSteps(float angle)
+FUNCTION:      int Motors::AngleToSteps(float angle)
 RETURNS:       None
 ------------------------------------------------------------------------------*/
-int Motor::AngleToSteps(float angle)
+int Motors::AngleToSteps(float angle)
 {
-  // Motor mode lookup
+  // Motors mode lookup
   const int motor_mode[6] = {
     1,   // Full
     2,   // Half
@@ -103,15 +114,16 @@ int Motor::AngleToSteps(float angle)
 }
 
 /*------------------------------------------------------------------------------
-FUNCTION:  Motor::Run(void)
+FUNCTION:  Motors::Run(void)
 PURPOSE:   Run the motor is a separate thread
 ------------------------------------------------------------------------------*/
-int Motor::Run(void)
+/*
+int Motors::Run(void)
 {
   float motor_angle_cmd = 0;
   int m_motor_steps_to_go = 0;
   
-  SLOG << "Motor:Run() in a separate thread" << std::endl;
+  SLOG << "Motors:Run() in a separate thread" << std::endl;
 
   uint32_t loop_time_hja = gpioTick();
 
@@ -139,7 +151,8 @@ int Motor::Run(void)
     }
   }
 
-  SLOG << "Motor::Run return" << std::endl;
+  SLOG << "Motors::Run return" << std::endl;
 
   return(ThreadReturn());
 }
+*/

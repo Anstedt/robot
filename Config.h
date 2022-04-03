@@ -27,12 +27,7 @@ const int MOTORS_STEPS_PER_REV = 200;
 const int MOTORS_MODE_DEFAULT  = 5; // 1/32 stepping
 const int MOTORS_RPM_DEFAULT   = 30;
 
-// Based on comments from driver designer
-const u32 MOTORS_RAMP_AGGRESSIVENESS    = 10; // lower 8 bits are fraction
-const u32 MOTORS_WAIT_TIMEOUT           = 0;
-const u32 MOTORS_COMBINE_TICKS_PER_STEP = 0; // No timeout unless an issue is logged
-
-// Motor 2
+// Motor 1
 const GPIO MOTOR1_GPIO_STEP   = GPIO_10; // 10; // 21
 const GPIO MOTOR1_GPIO_DIR    = GPIO_18; // 18; // 20
 const GPIO MOTOR1_GPIO_MODE_0 = GPIO_17; // 17; // 14
