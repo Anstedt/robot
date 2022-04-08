@@ -41,6 +41,8 @@ private:
   // Accessors: const operations
   int GetPulseLowTime(int pulse_high_us);
   int AngleToSteps(float angle);
+  bool DriverRateControl(int rate, int distance);
+  bool ThreadRateControl(int rate, int distance);
   // Static and friend functions
   // Memory management
   Motors(const Motors&);
@@ -61,7 +63,6 @@ private:
 
   MotorsDriver m_motorsDriver;
 
-  LockingQueue<float> m_angle_gyro_fifo;
   // Static (shared) class variables
 };
 

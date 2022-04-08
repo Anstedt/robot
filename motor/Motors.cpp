@@ -48,8 +48,10 @@ Motors::~Motors()
 }
 
 /*------------------------------------------------------------------------------
-FUNCTION:      Motors::AddGyroData(int pitch, int yaw, float angle_gyro, float angle_acc)
-RETURNS:       None
+FUNCTION:  Motors::AddGyroData(int pitch, int yaw, float angle_gyro, float angle_acc)
+PURPOSE:   Use the Gyro data to control the motors
+
+RETURNS:   None
 ------------------------------------------------------------------------------*/
 bool Motors::AddGyroData(int y, int x, float angle_gyro, float angle_acc)
 {
@@ -63,8 +65,20 @@ bool Motors::AddGyroData(int y, int x, float angle_gyro, float angle_acc)
   // m1_distance, m2_distance
   // m1_speed, m2_speed
   // m1_mode, m2_mode, maybe we will delete this
-  m_angle_gyro_fifo.push(angle_gyro);
+  // m_angle_gyro_fifo.push(angle_gyro);
 
+  // April 08, 2022
+  // At this point we need to convert angle_gyro to distance and we need speed
+  // from thee PID. In reality we need speed and rate worked out so Rick can
+  // finish in on thread run. So we only need rate.
+  // Example rate = 500 then distance is 
+  if (rate > PRIMARY_THREAD_PERIOD)
+    // Make calls directly to the driver for rates higher than the thread rate
+    DriverRateControl(rate, distance);
+  else
+    // For lower rates us the thread to determine when to call the driver
+    ThreadRateControl(rate, distance);
+  
   return(true);
 }
 
@@ -111,6 +125,33 @@ int Motors::AngleToSteps(float angle)
   // 1 revolution is 360 degrees
   // So if we need to turn say 60 degrees we need (60/360) of the pulses
   return(pulses_per_rev * (angle / 360));
+}
+
+/*------------------------------------------------------------------------------
+FUNCTION:    Motors::bool DriverRateControl(int rate, int distance)
+PURPOSE:       
+
+ARGUMENTS:   rate: motor pulses per second
+             distance: motor distance in steps
+
+RETURNS:     true: all went well
+------------------------------------------------------------------------------*/
+Motors::bool DriverRateControl(int rate, int distance)
+{
+  m_motorDriver.MotorCmd(rate, distance, m_motor_mode);
+}
+
+/*------------------------------------------------------------------------------
+FUNCTION:    Motors::bool ThreadRateControl(int rate, int distance)
+PURPOSE:       
+
+ARGUMENTS:   rate: motor pulses per second
+             distance: motor distance in steps
+
+RETURNS:     true: all went well
+------------------------------------------------------------------------------*/
+Motors::bool ThreadRateControl(int rate, int distance)
+{
 }
 
 /*------------------------------------------------------------------------------

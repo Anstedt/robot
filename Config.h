@@ -22,6 +22,11 @@ PURPOSE:  Hardware based configs for the robot
 // Converts radians to degrees.
 #define RadiansToDegrees(angleRadians) ((angleRadians) * 180.0 / M_PI)
 
+// Thread Constants
+// The gyro thread drives data all the way to the motors
+const unsigned int PRIMARY_THREAD_PERIOD = 4000;
+const int PRIMARY_THREAD_PERIOD = (1000000 / PRIMARY_THREAD_PERIOD)
+
 // Motor Constants
 const int MOTORS_STEPS_PER_REV = 200;
 const int MOTORS_MODE_DEFAULT  = 5; // 1/32 stepping

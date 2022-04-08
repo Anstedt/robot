@@ -1,5 +1,12 @@
 # Robot
 
+# April 08, 2022
+Gyro::Run() pulls data from mpu6050 and calls Balancer::m_callback(DATA) with data
+Balancer::m_callback(DATA) calls m_motors->AddGyroData(DATA)
+m_motors->AddGyroData(DATA) calls m_angle_gyro_fifo.push(DATA)
+  currently this fills fifo buffer we no longer need since we can
+  directly run motors in same thread.
+
 # April 03, 2022
 if (rate > 250)
   driver_rate(rate) // Adjusts rate,distance calls to driver knowing this is called at 250Hz
