@@ -25,7 +25,7 @@ PURPOSE:  Hardware based configs for the robot
 // Thread Constants
 // The gyro thread drives data all the way to the motors
 const unsigned int PRIMARY_THREAD_PERIOD = 4000;
-const int PRIMARY_THREAD_PERIOD = (1000000 / PRIMARY_THREAD_PERIOD)
+const int PRIMARY_THREAD_RATE = (1000000 / PRIMARY_THREAD_PERIOD);
 
 // Motor Constants
 const int MOTORS_STEPS_PER_REV = 200;

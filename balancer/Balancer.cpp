@@ -38,6 +38,10 @@ Balancer::Balancer()
 
   // Registers Balancer::CallBack(), including passed parameters, with the Gyro
   using namespace std::placeholders; // for `_1, _2, _3, _4`
+
+  // This makes sense since Gyro is a thread and needs to call into the
+  // balance. Gyro only has a pointer to the method but the method being part of
+  // the balancer needs the balancers this pointer.
   m_gyro->RegisterForCallback(std::bind(&Balancer::CallBack, this, _1, _2, _3, _4));
 
   m_gyro->Activate(SCHED_FIFO, 1);
@@ -74,7 +78,9 @@ Balancer::~Balancer()
 }
 
 /*------------------------------------------------------------------------------
-FUNCTION:      Balancer::CallBack(int pitch, int yaw, float angle_gyro, float angle_acc);
+FUNCTION: Balancer::CallBack(int pitch, int yaw, float angle_gyro, float angle_acc);
+
+PURPOSE:  See RegisterForCallback() above.
 ------------------------------------------------------------------------------*/
 void Balancer::CallBack(int gyro_pitch, int gyro_yaw, float angle_gyro, float angle_acc)
 {

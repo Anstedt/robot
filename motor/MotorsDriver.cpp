@@ -87,34 +87,29 @@ motor steps = 2 or 1/100 of a revolution
 
 RETURNS:   worked
 ------------------------------------------------------------------------------*/
-bool MotorsDriver::MotorsCmd(s32 distance, u32 speed, u8 microstep_mode)
+bool MotorsDriver::MotorsCmd(u32 m1_speed, s32 m1_distance, u32 m2_speed, s32 m2_distance, u8 mode)
 {
   bool status = true;
 
-  // If not at least =/-4 just set to 0 for driver
-  if (distance > -4 && distance < 4)
-  {
-    distance = 0;
-  }
-  
   // HJA distance and speed need to be controlled per motor. For pure balancing
   // HJA the will be the same but for turning and moving they will be different
   // HJA remember distance needs to be the opposite for each motor since that
   // HJA controls rotations direction which needs to be the opposite for each
   // HJA motor in most cases.
 
-  // We will shift mode to meet the required speed and distance
-  m_motor_control[0].distance =  distance;
-  m_motor_control[1].distance =  distance;
-
   // Speeds the same since we are not ramping
-  m_motor_control[0].speed = speed;
-  m_motor_control[1].speed = speed;
+  m_motor_control[0].speed = m1_speed;
+  m_motor_control[1].speed = m2_speed;
 
-  SLOG << "DEBUG: Motors steps per second=" << speed << " distance=" << distance << std::endl;
+  // We will shift mode to meet the required speed and distance
+  m_motor_control[0].distance =  m1_distance;
+  m_motor_control[1].distance =  m1_distance;
 
-  m_motor_control[0].microstep_control = microstep_mode;
-  m_motor_control[1].microstep_control = microstep_mode;
+  SLOG << "DEBUG: Motors steps per second=" << m1_speed << ":" << m2_speed << " distance=" << m1_distance << ":" << m2_distance << std::endl;
+
+  // Robot hardware limits us to same mode for both motors
+  m_motor_control[0].microstep_control = mode;
+  m_motor_control[1].microstep_control = mode;
 
   // Lock and make sure we got the lock
   if (pthread_mutex_lock(m_p_driver_mutex) == 0)

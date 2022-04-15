@@ -1,5 +1,23 @@
 # Robot
 
+# April 14, 2022
+Notice that MotorsDriver::MotorsCmd() always uses the same distance,
+speed, and mode for both motors. Should really look like this.
+
+OLD: MotorsCmd(s32 distance, u32 speed, u8 microstep_mode)
+NEW: MotorsCmd(u32 m1_speed, s32 m1_distance, u32 m2_speed, s32 m2_distance, u8 mode)
+
+Notice we put speed first since speed is more used in new design than
+distance. We have separate speed and distance for both motors. BUT
+mode is shared since our hardware uses the same mode for both motors.
+
+Seems like we may need a command like this as well. So we can change
+the speed of one motor when we start to correct for turning errors as
+well as turning in general. In general this would be more like a
+command to adjust the speed not really control it. Need more thought
+on this.
+MotorsCmd(u32 motor_select, u32 speed, s32 distance)
+
 # April 08, 2022
 Gyro::Run() pulls data from mpu6050 and calls Balancer::m_callback(DATA) with data
 Balancer::m_callback(DATA) calls m_motors->AddGyroData(DATA)
