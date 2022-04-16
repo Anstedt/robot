@@ -44,7 +44,7 @@ private:
   bool DriverRateControl(int rate, int distance);
   bool ThreadRateControl(int rate, int distance);
   u32 AngleToSpeed(float angle);
-  s32 SpeedToDistance(u32 speed);
+  s32 SpeedToDistance(u32 speed, float angle);
   
   // Static and friend functions
   // Memory management

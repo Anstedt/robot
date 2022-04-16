@@ -1,5 +1,15 @@
 # Robot
 
+# Ranges
+Speed(Pulses per second)( Assume mode 32)
+Notes indicate = 3124, which is about 30 RPM
+But this is for constant speed, we need maximum when we are a long way off.
+Max = 25000 based on my testing, see email, = 235 RPM
+So lets try a maximum of 10000, 94 RPM
+
+## Maximum motor pulses per second == 10000
+### 94 RPM ~= 1 MPH assuming wheels are 1 ft in diameter
+
 # April 14, 2022
 Notice that MotorsDriver::MotorsCmd() always uses the same distance,
 speed, and mode for both motors. Should really look like this.

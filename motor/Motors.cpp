@@ -58,27 +58,11 @@ bool Motors::AddGyroData(int y, int x, float angle_gyro, float angle_acc)
   u32 speed; // The pulses per second for the motors, using angle AND mode
   s32 distance; // Distance based on speed, mode, as well as 250Hz thread rate
    
-  // SLOG << "Angle Gyro=" << angle_gyro << "\tAngle Accel=" << angle_acc << "\tGyro Y=" << y << "\tGyro X=" << x << std::endl;
+  SLOG << "Angle Gyro=" << angle_gyro << "\tAngle Accel=" << angle_acc << "\tGyro Y=" << y << "\tGyro X=" << x << std::endl;
 
-  // HJA At this point we will call the driver cmd may take x calls, such as
-  // HJA Init motor 1 array
-  // HJA Init motor 2 array
-  // HJA Send array
-  // HJA MotorsDriver::MotorsCmd(
-  // m1_distance, m2_distance
-  // m1_speed, m2_speed
-  // m1_mode, m2_mode, maybe we will delete this
-  // m_angle_gyro_fifo.push(angle_gyro);
-
-  // April 08, 2022
-  // At this point we need to convert angle_gyro to distance and we need speed
-  // from thee PID. In reality we need speed and rate worked out so Rick can
-  // finish in on thread run. So we only need rate.
-  // Example rate = 500 then distance is
-
-  // Find the rate we need, then the distance
-  speed = AngleToRate(angle_gyro);
-  distance = RateToDistance(speed);
+  // Find the speed we need, then the distance
+  speed = AngleToSpeed(angle_gyro);
+  distance = SpeedToDistance(speed, angle_gyro);
   
   if (speed > PRIMARY_THREAD_PERIOD) // 250Hz
     // Make calls directly to the driver for rates higher than the thread rate
@@ -91,50 +75,98 @@ bool Motors::AddGyroData(int y, int x, float angle_gyro, float angle_acc)
 }
 
 /*------------------------------------------------------------------------------
-FUNCTION:    Motors::bool DriverRateControl(int rate, int distance)
+FUNCTION:  Motors::DriverRateControl(int rate, int distance)
 PURPOSE:       
 
-ARGUMENTS:   rate: motor pulses per second
-             distance: motor distance in steps
+ARGUMENTS: rate: motor pulses per second
+           distance: motor distance in steps
 
-RETURNS:     true: all went well
+RETURNS:   true: all went well
 ------------------------------------------------------------------------------*/
-Motors::bool DriverRateControl(int rate, int distance)
+bool Motors::DriverRateControl(int speed, int distance)
 {
-  m_motorDriver.MotorCmd(rate, distance, m_motor_mode);
+  bool ret;
+
+  // Tell motors to go the same speed and distance
+  ret = m_motorsDriver.MotorsCmd(speed, distance, speed, distance, m_motor_mode);
+
+  return(ret);
 }
 
 /*------------------------------------------------------------------------------
-FUNCTION:    Motors::bool ThreadRateControl(int rate, int distance)
+FUNCTION:  Motors::ThreadRateControl(int rate, int distance)
 PURPOSE:       
 
-ARGUMENTS:   rate: motor pulses per second
-             distance: motor distance in steps
+ARGUMENTS: rate: motor pulses per second
+           distance: motor distance in steps
 
-RETURNS:     true: all went well
+RETURNS:   true: all went well
 ------------------------------------------------------------------------------*/
-Motors::bool ThreadRateControl(int rate, int distance)
+bool Motors::ThreadRateControl(int speed, int distance)
 {
+ bool ret;
+
+  // Tell motors to go the same speed and distance
+  ret = m_motorsDriver.MotorsCmd(speed, distance, speed, distance, m_motor_mode);
+
+  return(ret);
 }
 
 /*------------------------------------------------------------------------------
-FUNCTION:  Motors::AngleToSpeed(float angle);
-PURPOSE:   Use angle and mode to determine the speed
+FUNCTION: Motors::AngleToSpeed(float angle);
+PURPOSE:  Use angle and mode to determine the speed
 
-RETURNS:   speed : pluses per second
+          Should have PID as part of this but for now just hack in something
+          simple. Basically the bigger the error the greater the speed.  In out
+          case error should be 0.
+
+RETURNS:  speed : pluses per second
 ------------------------------------------------------------------------------*/
-u32 Motors::AngleToSpeed(float angle, u8 mode);
+u32 Motors::AngleToSpeed(float angle)
 {
+  // The fraction of the revolution want to go
+  float fraction_of_rev = fabs(angle) / 360;
+
+  u32 speed = 0;
+  
+  if (fraction_of_rev > 0)
+  {
+    // HJA PID Emulation
+    // Since we are making a simple PID here all we want is the speed to be
+    // relative to the distance we want to go. If we need a full 360 then we
+    // should go full speed to get there
+    // Weirdly this works because MAX_PULSES is based on mode 32
+    speed = MOTORS_MAX_PULSES_PER_SEC / fraction_of_rev;
+  }
+
+  SLOG << "Motors:AngleToSpeed() speed=" << speed << " Frac of Rev=" << fraction_of_rev << " angle=" << angle << std::endl;
+  
+  return(speed);
 }
 
 /*------------------------------------------------------------------------------
-FUNCTION:  s32 Motors::SpeedToDistance(u32 speed);
-PURPOSE:   Use speed, mode and thread rate to determine distance
+FUNCTION: s32 Motors::SpeedToDistance(u32 speed, float angle);
+PURPOSE:  Use speed, angle , mode and thread rate to determine distance
 
-RETURNS:       None
+RETURNS:  Distance including direction +/-
 ------------------------------------------------------------------------------*/
-s32 Motors::SpeedToDistance(u32 speed);
+s32 Motors::SpeedToDistance(u32 speed, float angle)
 {
+  s32 distance;
+
+  // Handle driver being slightly faster than us, maybe this should change based
+  // on speed and/or distance
+  distance = (speed / PRIMARY_THREAD_RATE) + 1;
+
+  // Now adjust the distance for direction
+  if (angle < 0)
+  {
+    distance *= -1;
+  }
+
+  SLOG << "Motors::SpeedToDistance():" << " speed=" << speed << " angle=" << angle << " distance=" << distance << std::endl;
+  
+  return(distance);
 }
 
 /*------------------------------------------------------------------------------
@@ -161,7 +193,8 @@ bool Motors::SetMotorsMode(int mode)
 
 /*------------------------------------------------------------------------------
 FUNCTION:      int Motors::AngleToSteps(float angle)
-RETURNS:       None
+
+RETURNS:       distance we need to go to get stand straight up
 ------------------------------------------------------------------------------*/
 int Motors::AngleToSteps(float angle)
 {
