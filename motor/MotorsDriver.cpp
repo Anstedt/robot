@@ -88,9 +88,59 @@ bool MotorsDriver::MotorsCmd(u32 m1_speed, s32 m1_distance, u32 m2_speed, s32 m2
 
   // We will shift mode to meet the required speed and distance
   m_motor_control[0].distance =  m1_distance;
-  m_motor_control[1].distance =  m1_distance;
+  m_motor_control[1].distance =  m2_distance;
 
   SLOG << "DEBUG: Motors steps per second=" << m1_speed << ":" << m2_speed << " distance=" << m1_distance << ":" << m2_distance << std::endl;
+
+  // Robot hardware limits us to same mode for both motors
+  m_motor_control[0].microstep_control = mode;
+  m_motor_control[1].microstep_control = mode;
+
+  // Lock and make sure we got the lock
+  if (pthread_mutex_lock(m_p_driver_mutex) == 0)
+  {
+    lseek(m_motor_fd, 0, SEEK_SET); // Start at the beginning
+
+    if (write(m_motor_fd, &m_motor_control, sizeof(m_motor_control)) != sizeof(m_motor_control))
+    {
+      SLOG << "ERROR: write to motor driver handle=" << m_motor_fd << " failed" << std::endl;
+      status = false;
+    }
+  }
+  else
+  {
+    SLOG << "ERROR: MotorsDriver: pthread_mutex_lock failed" << std::endl;
+  }
+  
+  pthread_mutex_unlock(m_p_driver_mutex);
+  
+  return(status);
+}
+
+/*------------------------------------------------------------------------------
+FUNCTION:  bool MotorsCmdSimple(speed, distance, mode)
+PURPOSE:   Driver motor at the specified rate at the specified speed
+
+ASSUMES:   both motors go same speed and distance and are opposite rotation
+           
+RETURNS:   worked
+------------------------------------------------------------------------------*/
+bool MotorsDriver::MotorsCmdSimple(u32 speed, s32 distance, u8 mode)
+{
+  bool status = true;
+
+  // distance controls motors rotational direction and needs to be the opposite
+  // for each motor. The application needs to control this.
+
+  // Speeds the same since we are not ramping
+  m_motor_control[0].speed = speed;
+  m_motor_control[1].speed = speed;
+
+  // We will shift mode to meet the required speed and distance
+  m_motor_control[0].distance =  distance*MOTOR1_DIRECTION;
+  m_motor_control[1].distance =  distance*MOTOR2_DIRECTION;
+
+  SLOG << "DEBUG: Motors steps per second=" << speed << " distance=" << distance << std::endl;
 
   // Robot hardware limits us to same mode for both motors
   m_motor_control[0].microstep_control = mode;

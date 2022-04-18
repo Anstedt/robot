@@ -99,9 +99,7 @@ bool Motors::DriverRateControl(u32 speed, s32 distance)
   // Note distance has already been adjusted for thread rate and mode
   // distance still need adjust for rotation direction
   // Tell motors to go the same speed and distance
-  ret = m_motorsDriver.MotorsCmd(speed, distance*m_motor1_dir, // m1
-                                 speed, distance*m_motor2_dir, // m2
-                                 m_motor_mode);
+  ret = m_motorsDriver.MotorsCmdSimple(speed, distance, m_motor_mode);
 
   return(ret);
 }
@@ -135,17 +133,14 @@ bool Motors::ThreadRateControl(u32 speed, s32 distance)
       m_thread_speed_cnt = PRIMARY_THREAD_RATE / speed;
 
       // To prevents missed pulses, clock the driver on a speed increase
-      ret = m_motorsDriver.MotorsCmd(speed, distance*m_motor1_dir, // m1
-                                     speed, distance*m_motor2_dir, // m2
-                                     m_motor_mode);
+      ret = m_motorsDriver.MotorsCmdSimple(speed, distance, m_motor_mode);
     }
 
     // Clock the driver based on the counter
     if (--m_thread_speed_cnt <= 0)
     {
-      ret = m_motorsDriver.MotorsCmd(speed, distance*m_motor1_dir, // m1
-                                     speed, distance*m_motor2_dir, // m2
-                                     m_motor_mode);
+      ret = m_motorsDriver.MotorsCmdSimple(speed, distance, m_motor_mode);
+
       // Since we have clocked the driver, get the new speed
       m_thread_speed = speed;
     }
