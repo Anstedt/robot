@@ -1,7 +1,7 @@
 # Robot
 
 # Ranges
-Speed(Pulses per second)( Assume mode 32)
+Speed(Pulses per second)(Assume mode 32)
 Notes indicate = 3124, which is about 30 RPM
 But this is for constant speed, we need maximum when we are a long way off.
 Max = 25000 based on my testing, see email, = 235 RPM
@@ -11,16 +11,6 @@ So lets try a maximum of 10000, 94 RPM
 ### 94 RPM ~= 1 MPH assuming wheels are 1 ft in diameter
 
 # April 14, 2022
-Notice that MotorsDriver::MotorsCmd() always uses the same distance,
-speed, and mode for both motors. Should really look like this.
-
-OLD: MotorsCmd(s32 distance, u32 speed, u8 microstep_mode)
-NEW: MotorsCmd(u32 m1_speed, s32 m1_distance, u32 m2_speed, s32 m2_distance, u8 mode)
-
-Notice we put speed first since speed is more used in new design than
-distance. We have separate speed and distance for both motors. BUT
-mode is shared since our hardware uses the same mode for both motors.
-
 Seems like we may need a command like this as well. So we can change
 the speed of one motor when we start to correct for turning errors as
 well as turning in general. In general this would be more like a

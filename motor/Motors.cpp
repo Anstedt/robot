@@ -4,7 +4,6 @@ FILE:     Motors.cpp
 
 PURPOSE:  Controls one motor of the 2 the robot has
 *******************************************************************************/
-#include <pigpio.h>
 #include "Config.h"
 #include "Motors.h"
 
@@ -27,13 +26,9 @@ Motors::Motors(GPIO m1_pulse_gpio, GPIO m1_dir_gpio, GPIO m2_pulse_gpio, GPIO m2
   SLOG << "Motors::Motors()" << std::endl;
 
   // Setup for motor 1
-  m_motor1_distance = 0;               // +/- controls direction, 0 is stop
-  m_motor1_speed = 0;                  // steps/second
   m_motor1_dir = MOTOR1_DIRECTION;     // this is 1 or -1 since each motor goes in the opposite direction
   
   // Setup for motor 2  
-  m_motor2_distance = 0;               // +/- controls direction, 0 is stop
-  m_motor2_speed = 0;                  // steps/second
   m_motor2_dir = MOTOR2_DIRECTION;     // this is 1 or -1 since each motor goes in the opposite direction
   
   // Now set the motor mode
@@ -235,11 +230,7 @@ bool Motors::SetMotorsMode(int mode)
   return(status);
 }
 
-/*------------------------------------------------------------------------------
-FUNCTION:      int Motors::AngleToSteps(float angle)
-
-RETURNS:       distance we need to go to get stand straight up
-------------------------------------------------------------------------------*/
+/*
 int Motors::AngleToSteps(float angle)
 {
   // Motors mode lookup
@@ -258,47 +249,5 @@ int Motors::AngleToSteps(float angle)
   // So if we need to turn say 60 degrees we need (60/360) of the pulses
   return(pulses_per_rev * (angle / 360));
 }
-
-/*------------------------------------------------------------------------------
-FUNCTION:  Motors::Run(void)
-PURPOSE:   Run the motor is a separate thread
-------------------------------------------------------------------------------*/
-/*
-int Motors::Run(void)
-{
-  float motor_angle_cmd = 0;
-  int m_motor_steps_to_go = 0;
-  
-  SLOG << "Motors:Run() in a separate thread" << std::endl;
-
-  uint32_t loop_time_hja = gpioTick();
-
-  while (ThreadRunning())
-  {
-    // Wait up to 100ms for the data then try again on next loop
-    // Normally data comes at 4ms but on shutdown that may not happen
-    if (m_angle_gyro_fifo.tryWaitAndPop(motor_angle_cmd, 100))
-    {
-      // Convert the angle to steps based on the current chopper mode
-      m_motor_steps_to_go = AngleToSteps(motor_angle_cmd);
-
-      // Correct motor direction since each motor runs in the opposite direction
-      m_motor_steps_to_go *= m_motor_dir;
-      
-      // HJA At this point we can call Ricks driver
-      // HJA Issue here is the mode should be in the equation rather than 32 constant
-      // MOTORS_RPM_DEFAULT = 30 rpm
-      // / 60 = rp second = 0.5
-      // * 200 which is pulses per rev of the motor = 100
-      // * mode modifier for example 1/32 = 100 * 32 = 3200
-      m_motorDriver.MotorCmd(m_motor_steps_to_go, (m_motor_revs_per_min * 200 * 32) / 60, m_motor_mode);
-
-      // SLOG << " Fifo Angle=" << motor_angle_cmd << " Direction=" << m_motor_dir << " steps_to_go=" << m_motor_steps_to_go << std::endl;
-    }
-  }
-
-  SLOG << "Motors::Run return" << std::endl;
-
-  return(ThreadReturn());
-}
 */
+

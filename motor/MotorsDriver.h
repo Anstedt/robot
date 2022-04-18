@@ -45,9 +45,6 @@ private:
   // Data fields
   struct STEPPER_SETUP m_motor_control[2]; // One for each motor
   int m_motor_fd;
-  int m_distance_raw;
-  int m_max_speed_raw;
-  int m_motor_microstep_mode;
   pthread_mutex_t* m_p_driver_mutex;
   // Static (shared) class variables
 };
