@@ -21,7 +21,8 @@ ARGUMENTS: motor1/2_pulse_gpio = gpio number for pulse control
            mutex = locking mutex for driver
 ------------------------------------------------------------------------------*/
 Motors::Motors(GPIO m1_pulse_gpio, GPIO m1_dir_gpio, GPIO m2_pulse_gpio, GPIO m2_dir_gpio, GPIO microstep0, GPIO microstep1, GPIO microstep2, pthread_mutex_t* p_driver_mutex)
-  : m_motorsDriver(m1_pulse_gpio, m1_dir_gpio, m2_pulse_gpio, m2_dir_gpio, microstep0, microstep1, microstep2, p_driver_mutex)
+  : m_thread_speed(0), m_thread_speed_cnt(0),
+    m_motorsDriver(m1_pulse_gpio, m1_dir_gpio, m2_pulse_gpio, m2_dir_gpio, microstep0, microstep1, microstep2, p_driver_mutex)
 {
   SLOG << "Motors::Motors()" << std::endl;
 
@@ -31,9 +32,9 @@ Motors::Motors(GPIO m1_pulse_gpio, GPIO m1_dir_gpio, GPIO m2_pulse_gpio, GPIO m2
   m_motor1_dir = MOTOR1_DIRECTION;     // this is 1 or -1 since each motor goes in the opposite direction
   
   // Setup for motor 2  
-  m_motor1_distance = 0;               // +/- controls direction, 0 is stop
-  m_motor1_speed = 0;                  // steps/second
-  m_motor1_dir = MOTOR2_DIRECTION;     // this is 1 or -1 since each motor goes in the opposite direction
+  m_motor2_distance = 0;               // +/- controls direction, 0 is stop
+  m_motor2_speed = 0;                  // steps/second
+  m_motor2_dir = MOTOR2_DIRECTION;     // this is 1 or -1 since each motor goes in the opposite direction
   
   // Now set the motor mode
   SetMotorsMode(MOTORS_MODE_DEFAULT); // In most cases this will be the same for both motors
@@ -64,12 +65,20 @@ bool Motors::AddGyroData(int y, int x, float angle_gyro, float angle_acc)
   speed = AngleToSpeed(angle_gyro);
   distance = SpeedToDistance(speed, angle_gyro);
   
-  if (speed >= PRIMARY_THREAD_PERIOD) // 250Hz
+  if (speed >= PRIMARY_THREAD_PERIOD)// 250Hz
+  {
+    // If the driver is controlling the speed, reset the thread speed control
+    m_thread_speed = 0;
+    m_thread_speed_cnt = 0;
+  
     // Make calls directly to the driver for rates higher than the thread rate
     DriverRateControl(speed, distance);
+  }
   else
+  {
     // For lower rates us the thread to determine when to call the driver
     ThreadRateControl(speed, distance);
+  }
   
   return(true);
 }
@@ -87,8 +96,12 @@ bool Motors::DriverRateControl(u32 speed, s32 distance)
 {
   bool ret;
 
+  // Note distance has already been adjusted for thread rate and mode
+  // distance still need adjust for rotation direction
   // Tell motors to go the same speed and distance
-  ret = m_motorsDriver.MotorsCmd(speed, distance, speed, distance, m_motor_mode);
+  ret = m_motorsDriver.MotorsCmd(speed, distance*m_motor1_dir, // m1
+                                 speed, distance*m_motor2_dir, // m2
+                                 m_motor_mode);
 
   return(ret);
 }
@@ -99,13 +112,6 @@ PURPOSE:   Control the speed when the it is less than 250 Pulses Per Second
            We do that by calling the driver at the rate we need and telling it
            speed 250 and distance 2, one over what we need.
 
-           Issues
-             We can switch between driver mode vs thread mode but we need a
-             counter to reset on these transitions
-
-             Since we have a counter controlling the rate we need to handle it
-             on speed changes which happen all the time
-
 ARGUMENTS: rate: motor pulses per second
            distance: motor distance in steps
 
@@ -115,11 +121,42 @@ bool Motors::ThreadRateControl(u32 speed, s32 distance)
 {
   bool ret;
 
-  //
+  // If the speed is not zero we need to clock the driver
+  if (speed != 0)
+  {
+    // If the new speed is greater than the old one, go to the new speed. For a
+    // new speed lower than the new speed, let the old speed clock the driver
+    // until it finishes
+    if (speed > m_thread_speed)
+    {
+      m_thread_speed = speed;
 
+      // Set counter to the count down to the next clock of the driver
+      m_thread_speed_cnt = PRIMARY_THREAD_RATE / speed;
 
-  // Tell motors to go the same speed and distance
-  ret = m_motorsDriver.MotorsCmd(speed, distance, speed, distance, m_motor_mode);
+      // To prevents missed pulses, clock the driver on a speed increase
+      ret = m_motorsDriver.MotorsCmd(speed, distance*m_motor1_dir, // m1
+                                     speed, distance*m_motor2_dir, // m2
+                                     m_motor_mode);
+    }
+
+    // Clock the driver based on the counter
+    if (--m_thread_speed_cnt <= 0)
+    {
+      ret = m_motorsDriver.MotorsCmd(speed, distance*m_motor1_dir, // m1
+                                     speed, distance*m_motor2_dir, // m2
+                                     m_motor_mode);
+      // Since we have clocked the driver, get the new speed
+      m_thread_speed = speed;
+    }
+  }
+  else
+  {
+    // If speed is zero clear for next speed command
+    m_thread_speed = 0;
+    m_thread_speed_cnt = 0;
+    ret = true;
+  }
 
   return(ret);
 }

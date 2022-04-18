@@ -64,26 +64,14 @@ MotorsDriver::MotorsDriver(GPIO m1_pulse_gpio, GPIO m1_dir_gpio, GPIO m2_pulse_g
 }
 
 /*------------------------------------------------------------------------------
-FUNCTION:  bool MotorsCmd(s32 distance_raw, u32 max_speed_raw, u8 microstep_mode)
+FUNCTION:  bool MotorsCmd(m1_speed, m1_distance, m2_speed, m2_distance, mode)
 PURPOSE:   Driver motor at the specified rate at the specified speed
 
 ASSUMES:   steps per revolution is 200
 
-ARGUMENTS: distance_raw  = pulses
-                           real distance depends on microstep_mode
-                           steps for motor to rotate 360 degrees, normally 200 
-                           circumference of wheel
-                             often only concerned with angle of rotation
-           max_speed_raw = max pulses per second
-                           real speed depends on microstep_mode
-                           steps for motor to rotate 360 degrees, normally 200 
-                           circumference of wheel
-                             often only concerned with angle of rotation
-
-EXAMPLE:
-
-steps = steps to take if chopper mode is 1/32 then steps=64 then
-motor steps = 2 or 1/100 of a revolution
+ARGUMENTS: mN_speed = pulses per second for motor N
+           mN_distance = in pulses for motor N
+           mode = stepping mode which is the same for both motors
 
 RETURNS:   worked
 ------------------------------------------------------------------------------*/
@@ -91,11 +79,8 @@ bool MotorsDriver::MotorsCmd(u32 m1_speed, s32 m1_distance, u32 m2_speed, s32 m2
 {
   bool status = true;
 
-  // HJA distance and speed need to be controlled per motor. For pure balancing
-  // HJA the will be the same but for turning and moving they will be different
-  // HJA remember distance needs to be the opposite for each motor since that
-  // HJA controls rotations direction which needs to be the opposite for each
-  // HJA motor in most cases.
+  // distance controls motors rotational direction and needs to be the opposite
+  // for each motor. The application needs to control this.
 
   // Speeds the same since we are not ramping
   m_motor_control[0].speed = m1_speed;
@@ -137,4 +122,5 @@ FUNCTION:  MotorsDriver::~MotorsDriver()
 ------------------------------------------------------------------------------*/
 MotorsDriver::~MotorsDriver()
 {
+  close(m_motor_fd);
 }

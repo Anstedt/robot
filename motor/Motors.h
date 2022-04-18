@@ -63,6 +63,10 @@ private:
   u32 m_motor2_speed;    // steps/second
   s32 m_motor2_dir;      // this is 1 or -1 since each motor goes in the opposite direction
 
+  // Thread rate control
+  int m_thread_speed;
+  int m_thread_speed_cnt;
+
   MotorsDriver m_motorsDriver;
 
   // Static (shared) class variables
