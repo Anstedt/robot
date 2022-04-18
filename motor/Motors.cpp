@@ -64,7 +64,7 @@ bool Motors::AddGyroData(int y, int x, float angle_gyro, float angle_acc)
   speed = AngleToSpeed(angle_gyro);
   distance = SpeedToDistance(speed, angle_gyro);
   
-  if (speed > PRIMARY_THREAD_PERIOD) // 250Hz
+  if (speed >= PRIMARY_THREAD_PERIOD) // 250Hz
     // Make calls directly to the driver for rates higher than the thread rate
     DriverRateControl(speed, distance);
   else
@@ -75,7 +75,7 @@ bool Motors::AddGyroData(int y, int x, float angle_gyro, float angle_acc)
 }
 
 /*------------------------------------------------------------------------------
-FUNCTION:  Motors::DriverRateControl(int rate, int distance)
+FUNCTION:  Motors::DriverRateControl(u32 speed, s32 distance)
 PURPOSE:       
 
 ARGUMENTS: rate: motor pulses per second
@@ -83,7 +83,7 @@ ARGUMENTS: rate: motor pulses per second
 
 RETURNS:   true: all went well
 ------------------------------------------------------------------------------*/
-bool Motors::DriverRateControl(int speed, int distance)
+bool Motors::DriverRateControl(u32 speed, s32 distance)
 {
   bool ret;
 
@@ -94,17 +94,29 @@ bool Motors::DriverRateControl(int speed, int distance)
 }
 
 /*------------------------------------------------------------------------------
-FUNCTION:  Motors::ThreadRateControl(int rate, int distance)
-PURPOSE:       
+FUNCTION:  Motors::ThreadRateControl(s32 speed, u32 distance)
+PURPOSE:   Control the speed when the it is less than 250 Pulses Per Second
+           We do that by calling the driver at the rate we need and telling it
+           speed 250 and distance 2, one over what we need.
+
+           Issues
+             We can switch between driver mode vs thread mode but we need a
+             counter to reset on these transitions
+
+             Since we have a counter controlling the rate we need to handle it
+             on speed changes which happen all the time
 
 ARGUMENTS: rate: motor pulses per second
            distance: motor distance in steps
 
 RETURNS:   true: all went well
 ------------------------------------------------------------------------------*/
-bool Motors::ThreadRateControl(int speed, int distance)
+bool Motors::ThreadRateControl(u32 speed, s32 distance)
 {
- bool ret;
+  bool ret;
+
+  //
+
 
   // Tell motors to go the same speed and distance
   ret = m_motorsDriver.MotorsCmd(speed, distance, speed, distance, m_motor_mode);

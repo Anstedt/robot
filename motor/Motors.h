@@ -39,10 +39,9 @@ private:
   // Constructors
   // Mutators: non-const operations
   // Accessors: const operations
-  int GetPulseLowTime(int pulse_high_us);
   int AngleToSteps(float angle);
-  bool DriverRateControl(int rate, int distance);
-  bool ThreadRateControl(int rate, int distance);
+  bool DriverRateControl(u32 rate, s32 distance);
+  bool ThreadRateControl(u32 rate, s32 distance);
   u32 AngleToSpeed(float angle);
   s32 SpeedToDistance(u32 speed, float angle);
   
