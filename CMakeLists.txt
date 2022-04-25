@@ -31,7 +31,7 @@ target_link_libraries(robot controller balancer gyro motor mpu6050 legs servo te
 # robot needs to run as root
 add_custom_command(TARGET robot POST_BUILD
   OUTPUT ${output}
-  COMMAND sudo chown root:pi robot
+  COMMAND sudo chown root:$ENV{USER} robot
   COMMAND sudo chmod ugoa+s robot
   COMMENT "Hello")
 
