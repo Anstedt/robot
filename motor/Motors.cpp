@@ -60,7 +60,7 @@ bool Motors::AddGyroData(int y, int x, float angle_gyro, float angle_acc)
   speed = AngleToSpeed(angle_gyro);
   distance = SpeedToDistance(speed, angle_gyro);
   
-  if (speed >= PRIMARY_THREAD_PERIOD)// 250Hz
+  if (speed >= PRIMARY_THREAD_RATE) // 250Hz
   {
     // If the driver is controlling the speed, reset the thread speed control
     m_thread_speed = 0;
@@ -91,6 +91,8 @@ bool Motors::DriverRateControl(u32 speed, s32 distance)
 {
   bool ret;
 
+  SLOG << "Motors:DriverRateControl speed=" << speed << " distance=" << distance << std::endl;  
+
   // Note distance has already been adjusted for thread rate and mode
   // distance still need adjust for rotation direction
   // Tell motors to go the same speed and distance
@@ -113,6 +115,8 @@ RETURNS:   true: all went well
 bool Motors::ThreadRateControl(u32 speed, s32 distance)
 {
   bool ret;
+
+  SLOG << "Motors:ThreadRateControl speed=" << speed << " distance=" << distance << std::endl;  
 
   // If the speed is not zero we need to clock the driver
   if (speed != 0)
@@ -163,7 +167,7 @@ RETURNS:  speed : pluses per second
 ------------------------------------------------------------------------------*/
 u32 Motors::AngleToSpeed(float angle)
 {
-  // The fraction of the revolution want to go
+  // The fraction of the revolution to go
   float fraction_of_rev = fabs(angle) / 360;
 
   u32 speed = 0;
@@ -175,7 +179,7 @@ u32 Motors::AngleToSpeed(float angle)
     // relative to the distance we want to go. If we need a full 360 then we
     // should go full speed to get there
     // Weirdly this works because MAX_PULSES is based on mode 32
-    speed = MOTORS_MAX_PULSES_PER_SEC / fraction_of_rev;
+    speed = MOTORS_MAX_PULSES_PER_SEC * fraction_of_rev;
   }
 
   SLOG << "Motors:AngleToSpeed() speed=" << speed << " Frac of Rev=" << fraction_of_rev << " angle=" << angle << std::endl;
