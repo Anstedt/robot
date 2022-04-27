@@ -64,57 +64,87 @@ MotorsDriver::MotorsDriver(GPIO m1_pulse_gpio, GPIO m1_dir_gpio, GPIO m2_pulse_g
 }
 
 /*------------------------------------------------------------------------------
-FUNCTION:  bool MotorsCmd(s32 distance_raw, u32 max_speed_raw, u8 microstep_mode)
+FUNCTION:  bool MotorsCmd(m1_speed, m1_distance, m2_speed, m2_distance, mode)
 PURPOSE:   Driver motor at the specified rate at the specified speed
 
 ASSUMES:   steps per revolution is 200
 
-ARGUMENTS: distance_raw  = pulses
-                           real distance depends on microstep_mode
-                           steps for motor to rotate 360 degrees, normally 200 
-                           circumference of wheel
-                             often only concerned with angle of rotation
-           max_speed_raw = max pulses per second
-                           real speed depends on microstep_mode
-                           steps for motor to rotate 360 degrees, normally 200 
-                           circumference of wheel
-                             often only concerned with angle of rotation
-
-EXAMPLE:
-
-steps = steps to take if chopper mode is 1/32 then steps=64 then
-motor steps = 2 or 1/100 of a revolution
+ARGUMENTS: mN_speed = pulses per second for motor N
+           mN_distance = in pulses for motor N
+           mode = stepping mode which is the same for both motors
 
 RETURNS:   worked
 ------------------------------------------------------------------------------*/
-bool MotorsDriver::MotorsCmd(s32 distance, u32 speed, u8 microstep_mode)
+bool MotorsDriver::MotorsCmd(u32 m1_speed, s32 m1_distance, u32 m2_speed, s32 m2_distance, u8 mode)
 {
   bool status = true;
 
-  // If not at least =/-4 just set to 0 for driver
-  if (distance > -4 && distance < 4)
-  {
-    distance = 0;
-  }
-  
-  // HJA distance and speed need to be controlled per motor. For pure balancing
-  // HJA the will be the same but for turning and moving they will be different
-  // HJA remember distance needs to be the opposite for each motor since that
-  // HJA controls rotations direction which needs to be the opposite for each
-  // HJA motor in most cases.
+  // distance controls motors rotational direction and needs to be the opposite
+  // for each motor. The application needs to control this.
+
+  // Speeds the same since we are not ramping
+  m_motor_control[0].speed = m1_speed;
+  m_motor_control[1].speed = m2_speed;
 
   // We will shift mode to meet the required speed and distance
-  m_motor_control[0].distance =  distance;
-  m_motor_control[1].distance =  distance;
+  m_motor_control[0].distance =  m1_distance;
+  m_motor_control[1].distance =  m2_distance;
+
+  SLOG << "DEBUG: Motors steps per second=" << m1_speed << ":" << m2_speed << " distance=" << m1_distance << ":" << m2_distance << std::endl;
+
+  // Robot hardware limits us to same mode for both motors
+  m_motor_control[0].microstep_control = mode;
+  m_motor_control[1].microstep_control = mode;
+
+  // Lock and make sure we got the lock
+  if (pthread_mutex_lock(m_p_driver_mutex) == 0)
+  {
+    lseek(m_motor_fd, 0, SEEK_SET); // Start at the beginning
+
+    if (write(m_motor_fd, &m_motor_control, sizeof(m_motor_control)) != sizeof(m_motor_control))
+    {
+      SLOG << "ERROR: write to motor driver handle=" << m_motor_fd << " failed" << std::endl;
+      status = false;
+    }
+  }
+  else
+  {
+    SLOG << "ERROR: MotorsDriver: pthread_mutex_lock failed" << std::endl;
+  }
+  
+  pthread_mutex_unlock(m_p_driver_mutex);
+  
+  return(status);
+}
+
+/*------------------------------------------------------------------------------
+FUNCTION:  bool MotorsCmdSimple(speed, distance, mode)
+PURPOSE:   Driver motor at the specified rate at the specified speed
+
+ASSUMES:   both motors go same speed and distance and are opposite rotation
+           
+RETURNS:   worked
+------------------------------------------------------------------------------*/
+bool MotorsDriver::MotorsCmdSimple(u32 speed, s32 distance, u8 mode)
+{
+  bool status = true;
+
+  // distance controls motors rotational direction and needs to be the opposite
+  // for each motor. The application needs to control this.
 
   // Speeds the same since we are not ramping
   m_motor_control[0].speed = speed;
   m_motor_control[1].speed = speed;
 
+  // We will shift mode to meet the required speed and distance
+  m_motor_control[0].distance =  distance*MOTOR1_DIRECTION;
+  m_motor_control[1].distance =  distance*MOTOR2_DIRECTION;
+
   SLOG << "DEBUG: Motors steps per second=" << speed << " distance=" << distance << std::endl;
 
-  m_motor_control[0].microstep_control = microstep_mode;
-  m_motor_control[1].microstep_control = microstep_mode;
+  // Robot hardware limits us to same mode for both motors
+  m_motor_control[0].microstep_control = mode;
+  m_motor_control[1].microstep_control = mode;
 
   // Lock and make sure we got the lock
   if (pthread_mutex_lock(m_p_driver_mutex) == 0)
@@ -142,4 +172,5 @@ FUNCTION:  MotorsDriver::~MotorsDriver()
 ------------------------------------------------------------------------------*/
 MotorsDriver::~MotorsDriver()
 {
+  close(m_motor_fd);
 }

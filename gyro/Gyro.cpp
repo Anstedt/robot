@@ -8,6 +8,8 @@ PURPOSE: Gyroscope Accelorometer Interface
 #include <math.h>
 #include "Gyro.h"
 
+#include "Config.h"
+
 #include "Slog.h"
 
 using namespace std;
@@ -130,7 +132,7 @@ int Gyro::Run(void)
     // SLOG << "Angle Gyro=" << m_angle_gyro << "\tAngle Accelerometer=" << m_angle_acc << "\tGyro X=" << m_gyro_X_data_raw << "\tGyro Y=" << m_gyro_Y_data_raw << std::endl;
 
     while(timer > gpioTick());
-    timer += 4000;
+    timer += PRIMARY_THREAD_PERIOD;
   }
 
   SLOG << "Gyro:Run() DONE in a separate thread : " << (gpioTick() - elapsed) << "us" << std::endl;

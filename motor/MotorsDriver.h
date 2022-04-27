@@ -27,7 +27,8 @@ public:
   // Constructors
   MotorsDriver(GPIO m1_pulse_gpio, GPIO m1_dir_gpio, GPIO m2_pulse_gpio, GPIO m2_dir_gpio, GPIO microstep0, GPIO microstep1, GPIO microstep2, pthread_mutex_t* p_driver_mutex);
   // Mutators: non-const operations
-  bool MotorsCmd(s32 distance_raw, u32 max_speed_raw, u8 microstep_mode);
+  bool MotorsCmd(u32 m1_speed, s32 m1_distance, u32 m2_speed, s32 m2_distance, u8 mode);
+  bool MotorsCmdSimple(u32 speed, s32 distance, u8 mode);
   // Accessors: const operations
   // Static and friend functions
   // Memory management: copy constructor, destructor, operator=
@@ -44,9 +45,6 @@ private:
   // Data fields
   struct STEPPER_SETUP m_motor_control[2]; // One for each motor
   int m_motor_fd;
-  int m_distance_raw;
-  int m_max_speed_raw;
-  int m_motor_microstep_mode;
   pthread_mutex_t* m_p_driver_mutex;
   // Static (shared) class variables
 };
