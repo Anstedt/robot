@@ -87,6 +87,8 @@ int Gyro::Run(void)
   timer = gpioTick() + 4000; // gpioTick is in micro seconds
   elapsed = gpioTick();
 
+  unsigned int late_max=0; // HJA
+    
   while (ThreadRunning())
   {
     // The 57.296 is the conversions from radians to degrees. The - is so that
@@ -131,7 +133,40 @@ int Gyro::Run(void)
     // CallBack now has all data
     // SLOG << "Angle Gyro=" << m_angle_gyro << "\tAngle Accelerometer=" << m_angle_acc << "\tGyro X=" << m_gyro_X_data_raw << "\tGyro Y=" << m_gyro_Y_data_raw << std::endl;
 
-    while(timer > gpioTick());
+    // HJA HJA ISSUE
+    // gpioDelay(4000); Busy loop uses allot of CPU time
+    // gpioDelay(4000); == 8%  of CPU for total robot
+    // while()          == 60% of cpu for total robot
+    unsigned int tick = gpioTick();
+    int diff = timer - tick;
+
+    if (diff < 0)
+    {
+      printf("### DIFF < 0 = %d ##################################\n", diff);
+      diff = 400; // HJA wait only a little
+    }
+    
+    // printf("diff=timer-tick %u=%u-%u\n", diff, timer, tick);
+    
+    // while(timer > gpioTick());
+    // timer += PRIMARY_THREAD_PERIOD;
+
+    // unsigned int diff = gpioTick() - timer;
+    unsigned int late = gpioDelay(diff);
+    late -= diff;
+
+    if (late > 400)
+    {
+      printf("late=%d\n", late);
+    }
+    
+    if (late > late_max)
+    {
+      late_max = late;
+      printf("late_max=%u late=%d\n", late_max, late);
+    }
+    
+    // printf("LATE=%u DIFF=%u\n", late, diff);
     timer += PRIMARY_THREAD_PERIOD;
   }
 
