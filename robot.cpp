@@ -11,6 +11,9 @@
 
 static sigset_t sigs_to_catch; // Signals
 
+// Globals for testing
+int g_heartbeat_driver;
+
 int main(int argc, char *argv[])
 {
   int sig_caught; // signal caught

@@ -22,6 +22,9 @@ PURPOSE:  Hardware based configs for the robot
 // Converts radians to degrees.
 #define RadiansToDegrees(angleRadians) ((angleRadians) * 180.0 / M_PI)
 
+// Globals for testing
+extern int g_heartbeat_driver;
+
 // Thread Constants
 // The gyro thread drives data all the way to the motors
 const unsigned int PRIMARY_THREAD_PERIOD = 4000; // ms
@@ -33,7 +36,7 @@ const int MOTORS_MODE_DEFAULT  = 5; // 1/32 stepping
 const int MOTORS_RPM_DEFAULT   = 30;
 // Based on email notes saying I tried 25000 but 3124 average speed would be
 // enough. But we need higher speed when we are far from our rotation point
-const int MOTORS_MAX_PULSES_PER_SEC = 10000;
+const int MOTORS_MAX_PULSES_PER_SEC = 20000;
 
 // Motor 1
 const GPIO MOTOR1_GPIO_STEP   = GPIO_10; // 10; // 21

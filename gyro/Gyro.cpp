@@ -18,6 +18,7 @@ using namespace std;
 FUNCTION: Gyro::Gyro()
 ------------------------------------------------------------------------------*/
 Gyro::Gyro()
+  : m_avgtime(1000), m_heartbeat(0), m_late_max(0)
 {
   m_callback = 0;
   m_start = 0;
@@ -74,7 +75,6 @@ PURPOSE: Process data for Gyro/Accel and send it registered module
 ------------------------------------------------------------------------------*/
 int Gyro::Run(void)
 {
-  uint32_t timer = 0;
   uint32_t elapsed = 0;
 
   SLOG << "Gyro:Run() in a separate thread" << std::endl;
@@ -84,11 +84,9 @@ int Gyro::Run(void)
   p_mpu6050->calibrate();
 
   // Each loop should take 4 ms
-  timer = gpioTick() + 4000; // gpioTick is in micro seconds
+  m_timer = gpioTick() + 4000; // gpioTick is in micro seconds
   elapsed = gpioTick();
 
-  unsigned int late_max=0; // HJA
-    
   while (ThreadRunning())
   {
     // The 57.296 is the conversions from radians to degrees. The - is so that
@@ -129,48 +127,80 @@ int Gyro::Run(void)
     {
       m_callback(m_gyro_Y_data_raw, m_gyro_X_data_raw, m_angle_gyro, m_angle_acc);
     }
-
+    
+    RateControlDelay(); // Control Loop Rate
+    
     // CallBack now has all data
     // SLOG << "Angle Gyro=" << m_angle_gyro << "\tAngle Accelerometer=" << m_angle_acc << "\tGyro X=" << m_gyro_X_data_raw << "\tGyro Y=" << m_gyro_Y_data_raw << std::endl;
-
-    // HJA HJA ISSUE
-    // gpioDelay(4000); Busy loop uses allot of CPU time
-    // gpioDelay(4000); == 8%  of CPU for total robot
-    // while()          == 60% of cpu for total robot
-    unsigned int tick = gpioTick();
-    int diff = timer - tick;
-
-    if (diff < 0)
-    {
-      printf("### DIFF < 0 = %d ##################################\n", diff);
-      diff = 400; // HJA wait only a little
-    }
-    
-    // printf("diff=timer-tick %u=%u-%u\n", diff, timer, tick);
-    
-    // while(timer > gpioTick());
-    // timer += PRIMARY_THREAD_PERIOD;
-
-    // unsigned int diff = gpioTick() - timer;
-    unsigned int late = gpioDelay(diff);
-    late -= diff;
-
-    if (late > 400)
-    {
-      printf("late=%d\n", late);
-    }
-    
-    if (late > late_max)
-    {
-      late_max = late;
-      printf("late_max=%u late=%d\n", late_max, late);
-    }
-    
-    // printf("LATE=%u DIFF=%u\n", late, diff);
-    timer += PRIMARY_THREAD_PERIOD;
   }
-
+  
   SLOG << "Gyro:Run() DONE in a separate thread : " << (gpioTick() - elapsed) << "us" << std::endl;
 
   return(ThreadReturn());
+}
+
+/*------------------------------------------------------------------------------
+FUNCTION:  int Gyro::RateControlDelay()
+PURPOSE:   
+
+ARGUMENTS: None
+RETURNS:   None
+------------------------------------------------------------------------------*/
+unsigned int Gyro::RateControlDelay()
+{
+  uint32_t late = 0;
+  uint32_t app_time = 0;
+  uint32_t tick = 0;
+  uint32_t late_test = 0;
+  int late_value = 0;
+  
+  struct timespec ts = { 0, ((4 % 1000) * 1000 * 1000) };
+
+  // How much time did we use since we got here last, this is only the
+  // application time. No we set m_timer so it does not include the sleep
+  tick = gpioTick();
+  int x = m_timer - tick; // The time it took to get back here
+  app_time = abs(x);
+
+  // This averaging time scheme seems to be more stable than all other
+  // schemes. It should have some error checking though.
+  m_avgtime = (m_avgtime - (m_avgtime/25)) + (app_time/25);
+    
+  // Sleep subtracting the average time from the thread period we want
+  // create a late time, how much more did we sleep than requested
+  late_test = gpioTick();
+  ts.tv_nsec =  ((PRIMARY_THREAD_PERIOD - m_avgtime) * 1000);
+  nanosleep(&ts, NULL);
+  late_value = gpioTick() - late_test;
+  late = abs(late_value);
+
+  printf("late=%u m_avgtime=%u app_time=%u\n", late, m_avgtime, app_time);
+    
+  // If all is working we should get back here in 4ms or less. m_timer is set
+  // later to be current time, tick, + 4ms (PRIMARY_THREAD_PERIOD).
+  if (app_time < 4000)
+  {
+    // Track how late we are because of gpioDelay() call
+    if (late > m_late_max)
+    {
+      m_late_max = late;
+      SLOG << "Track maximum thread delay late_max=" << m_late_max << "us late=" << late << "us app_time=" << app_time << "us"  << std::endl;
+    }
+  }
+  else
+  {
+    // HJA SLOG << "ERROR: app_time too large app_time=m_timer-tick app_time=" << app_time << " m_timer=" << m_timer << " tick=" << tick << "us late=" << late << "us"<< std::endl;
+  } 
+
+  // Print our heartbeat every 4 seconds, 1000/250
+  if (m_heartbeat++ > 1000)
+  {
+    SLOG << "Alive app_time=" << app_time  << "us driver hits=" << g_heartbeat_driver << " late=" << late << "us ts.tv_nsec=" << (ts.tv_nsec / 1000) << "us m_timer=" << m_timer << "us m_angle_gyro=" << m_angle_gyro << " m_avgtime=" << m_avgtime << std::endl;
+    m_heartbeat = 0;
+    g_heartbeat_driver = 0;
+  }
+  
+  m_timer = gpioTick();
+      
+  return(late);
 }

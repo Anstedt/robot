@@ -203,7 +203,7 @@ s32 Motors::SpeedToDistance(u32 speed, float angle)
 
   // Handle driver being slightly faster than us, maybe this should change based
   // on speed and/or distance
-  distance = (speed / PRIMARY_THREAD_RATE) + 1;
+  distance = (speed / PRIMARY_THREAD_RATE) + 10; // HJA hacking
     
   // Now adjust the distance for direction
   if (angle < 0)

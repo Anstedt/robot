@@ -31,6 +31,9 @@ PURPOSE:   Setup constants for the motor
 ------------------------------------------------------------------------------*/
 MotorsDriver::MotorsDriver(GPIO m1_pulse_gpio, GPIO m1_dir_gpio, GPIO m2_pulse_gpio, GPIO m2_dir_gpio, GPIO microstep0, GPIO microstep1, GPIO microstep2, pthread_mutex_t* p_driver_mutex)
 {
+  // Init global for testing
+  g_heartbeat_driver = 0;
+  
   // Defaults for motor control
   m_motor_control[0].distance  = 0;         // in steps NOTE: signed, if = 0 then stop
   m_motor_control[0].speed = 0;             // min speed in steps, 0 is stopped
@@ -104,15 +107,19 @@ bool MotorsDriver::MotorsCmd(u32 m1_speed, s32 m1_distance, u32 m2_speed, s32 m2
   
   lseek(m_motor_fd, 0, SEEK_SET); // Start at the beginning
 
+  // SLOG << "ENTER DRIVER m1_speed=" << m1_speed << " m1_distance=" << m1_distance << std::endl;
   if (write(m_motor_fd, &m_motor_control, sizeof(m_motor_control)) != sizeof(m_motor_control))
   {
-    SLOG << "TEST ERROR: write to motor driver handle=" << m_motor_fd << " failed" << std::endl;
+    SLOG << "ERROR: write to motor driver handle=" << m_motor_fd << " failed" << std::endl;
     status = false;
   }
+  g_heartbeat_driver++; // Track all attempt at running the driver
+  
+  // SLOG << "RETURN DRIVER" << std::endl;
 
   total = gpioTick() - start;
 
-  if (total > 100)
+  if (total > 4000)
     SLOG << "TEST total=" << total << "us speed=" << m1_speed << " distance=" << m1_distance << std::endl;
   
   return(status);
@@ -129,7 +136,9 @@ RETURNS:   worked
 bool MotorsDriver::MotorsCmdSimple(u32 speed, s32 distance, u8 mode)
 {
   // HJA Motor runs rough after we get to fast and distance is no large enough
-  if (abs(distance) > 10) distance += (distance / 4); // HJA
+  // if (abs(distance) > 10) distance += (distance / 4); // HJA
+  // HJA
+  distance = 100;
   // Both the motors running the same speed and distance other than direction
   return(MotorsCmd(speed, distance*MOTOR1_DIRECTION, speed, distance*MOTOR2_DIRECTION, mode));
 }
