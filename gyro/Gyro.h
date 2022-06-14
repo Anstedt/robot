@@ -48,7 +48,7 @@ private:
   unsigned int m_timer;
   unsigned int m_avgtime;
   unsigned int m_heartbeat;
-  unsigned int m_late_max;
+  unsigned int m_avgperiod;
   // Static (shared) class variables
 };
 

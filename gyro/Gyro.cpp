@@ -18,7 +18,7 @@ using namespace std;
 FUNCTION: Gyro::Gyro()
 ------------------------------------------------------------------------------*/
 Gyro::Gyro()
-  : m_avgtime(1000), m_heartbeat(0), m_late_max(0)
+  : m_avgtime(1000), m_heartbeat(0), m_avgperiod(PRIMARY_THREAD_PERIOD)
 {
   m_callback = 0;
   m_start = 0;
@@ -141,66 +141,62 @@ int Gyro::Run(void)
 
 /*------------------------------------------------------------------------------
 FUNCTION:  int Gyro::RateControlDelay()
-PURPOSE:   
+PURPOSE:   Control the thread rate using an average 
 
 ARGUMENTS: None
 RETURNS:   None
 ------------------------------------------------------------------------------*/
 unsigned int Gyro::RateControlDelay()
 {
-  uint32_t late = 0;
   uint32_t app_time = 0;
   uint32_t tick = 0;
-  uint32_t late_test = 0;
-  int late_value = 0;
   
   struct timespec ts = { 0, ((4 % 1000) * 1000 * 1000) };
 
   // How much time did we use since we got here last, this is only the
   // application time. No we set m_timer so it does not include the sleep
+
+  // Get the current time
   tick = gpioTick();
+
+  // Then use that to calculate how long it took the app to run
   int x = m_timer - tick; // The time it took to get back here
   app_time = abs(x);
 
-  // This averaging time scheme seems to be more stable than all other
-  // schemes. It should have some error checking though.
-  m_avgtime = (m_avgtime - (m_avgtime/25)) + (app_time/25);
+  // Average the app time, we assume nanosleep works well
+  // Testing of nanosleep on average was off by 62us
+  m_avgtime = (m_avgtime - ((m_avgtime)/50)) + (app_time/50);
     
-  // Sleep subtracting the average time from the thread period we want
-  // create a late time, how much more did we sleep than requested
-  late_test = gpioTick();
+  // Subtract the average time from the thread period we want
+  // This gets our rate to be close to our needed period
   ts.tv_nsec =  ((PRIMARY_THREAD_PERIOD - m_avgtime) * 1000);
   nanosleep(&ts, NULL);
-  late_value = gpioTick() - late_test;
-  late = abs(late_value);
 
-  printf("late=%u m_avgtime=%u app_time=%u\n", late, m_avgtime, app_time);
-    
-  // If all is working we should get back here in 4ms or less. m_timer is set
-  // later to be current time, tick, + 4ms (PRIMARY_THREAD_PERIOD).
-  if (app_time < 4000)
-  {
-    // Track how late we are because of gpioDelay() call
-    if (late > m_late_max)
-    {
-      m_late_max = late;
-      SLOG << "Track maximum thread delay late_max=" << m_late_max << "us late=" << late << "us app_time=" << app_time << "us"  << std::endl;
-    }
-  }
-  else
-  {
-    // HJA SLOG << "ERROR: app_time too large app_time=m_timer-tick app_time=" << app_time << " m_timer=" << m_timer << " tick=" << tick << "us late=" << late << "us"<< std::endl;
-  } 
+  // Capture the average period
+  tick = gpioTick();
+  int r = m_timer - tick; // The time it took to get back here
+  unsigned int rate = abs(r);
 
-  // Print our heartbeat every 4 seconds, 1000/250
-  if (m_heartbeat++ > 1000)
+  m_avgperiod = (m_avgperiod - ((m_avgperiod)/50)) + (rate/50);
+
+  // Print our heartbeat every 10 seconds, 2500/250
+  if (m_heartbeat++ > (PRIMARY_THREAD_RATE*HEARTBEAT))
   {
-    SLOG << "Alive app_time=" << app_time  << "us driver hits=" << g_heartbeat_driver << " late=" << late << "us ts.tv_nsec=" << (ts.tv_nsec / 1000) << "us m_timer=" << m_timer << "us m_angle_gyro=" << m_angle_gyro << " m_avgtime=" << m_avgtime << std::endl;
+    SLOG << "Alive app_time=" << app_time << "us driver hits=" << g_heartbeat_driver << " m_timer=" << m_timer << " m_angle_gyro=" << m_angle_gyro << " m_avgtime=" << m_avgtime << "us m_avgperiod=" << m_avgperiod << "us"<< std::endl;
     m_heartbeat = 0;
     g_heartbeat_driver = 0;
   }
   
+  // if (app_time < 2000)
+  //   printf("m_avgtime=%u <2000 app_time=%u rate=%d\n", m_avgtime, app_time, rate);
+  // else if  (app_time < 3000)
+  //   printf("m_avgtime=%u <3000 app_time=%u rate=%d ##\n", m_avgtime, app_time, rate);
+  // else if  (app_time < 4000)
+  //   printf("m_avgtime=%u <4000 app_time=%u rate=%d ####\n", m_avgtime, app_time, rate);
+  // else
+  //   printf("m_avgtime=%u >4000 app_time=%u rate=%d ########\n", m_avgtime, app_time, rate);
+      
   m_timer = gpioTick();
       
-  return(late);
+  return(0);
 }

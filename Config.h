@@ -31,12 +31,14 @@ const unsigned int PRIMARY_THREAD_PERIOD = 4000; // ms
 const int PRIMARY_THREAD_RATE = (1000000 / PRIMARY_THREAD_PERIOD); // HZ
 
 // Motor Constants
+const int HEARTBEAT = 10; // In seconds
+
 const int MOTORS_STEPS_PER_REV = 200;
 const int MOTORS_MODE_DEFAULT  = 5; // 1/32 stepping
 const int MOTORS_RPM_DEFAULT   = 30;
 // Based on email notes saying I tried 25000 but 3124 average speed would be
 // enough. But we need higher speed when we are far from our rotation point
-const int MOTORS_MAX_PULSES_PER_SEC = 20000;
+const int MOTORS_MAX_PULSES_PER_SEC = 10000;
 
 // Motor 1
 const GPIO MOTOR1_GPIO_STEP   = GPIO_10; // 10; // 21

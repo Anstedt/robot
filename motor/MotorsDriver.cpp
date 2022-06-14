@@ -135,10 +135,9 @@ RETURNS:   worked
 ------------------------------------------------------------------------------*/
 bool MotorsDriver::MotorsCmdSimple(u32 speed, s32 distance, u8 mode)
 {
-  // HJA Motor runs rough after we get to fast and distance is no large enough
-  // if (abs(distance) > 10) distance += (distance / 4); // HJA
-  // HJA
-  distance = 100;
+  // Make sure the driver has enough distance even if we are 2 periods late
+  distance = (speed / PRIMARY_THREAD_RATE) * 3; // 10000 / 250 = 40 *2 == 80
+
   // Both the motors running the same speed and distance other than direction
   return(MotorsCmd(speed, distance*MOTOR1_DIRECTION, speed, distance*MOTOR2_DIRECTION, mode));
 }
