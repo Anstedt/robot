@@ -20,6 +20,7 @@ public:
   // Mutators: non-const operations
   // C++ method for cleanly handling callbacks in classes
   bool RegisterForCallback(std::function<void(int, int, float, float)> callback);
+  unsigned int RateControlDelay(void);
   // Accessors: const operations
   // Static and friend functions
   // Memory management: copy constructor, destructor, operator=
@@ -44,6 +45,10 @@ private:
   int m_gyro_X_data_raw;
   float m_angle_acc;
   float m_angle_gyro;
+  unsigned int m_timer;
+  unsigned int m_avgtime;
+  unsigned int m_heartbeat;
+  unsigned int m_avgperiod;
   // Static (shared) class variables
 };
 

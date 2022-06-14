@@ -54,8 +54,8 @@ bool Motors::AddGyroData(int y, int x, float angle_gyro, float angle_acc)
   u32 speed; // The pulses per second for the motors, using angle AND mode
   s32 distance; // Distance based on speed, mode, as well as 250Hz thread rate
    
-  SLOG << "Angle Gyro=" << angle_gyro << "\tAngle Accel=" << angle_acc << "\tGyro Y=" << y << "\tGyro X=" << x << std::endl;
-
+  // HJA SLOG << "Angle Gyro=" << angle_gyro << "\tAngle Accel=" << angle_acc << "\tGyro Y=" << y << "\tGyro X=" << x << std::endl;
+  
   // Find the speed we need, then the distance
   speed = AngleToSpeed(angle_gyro);
   distance = SpeedToDistance(speed, angle_gyro);
@@ -66,11 +66,15 @@ bool Motors::AddGyroData(int y, int x, float angle_gyro, float angle_acc)
     m_thread_speed = 0;
     m_thread_speed_cnt = 0;
   
+    // HJA SLOG << "TEST DRIVER speed=" << speed << " distance=" << distance << " angle_gyro=" << angle_gyro << std::endl;
+
     // Make calls directly to the driver for rates higher than the thread rate
     DriverRateControl(speed, distance);
   }
   else
   {
+    // HJA SLOG << "TEST THREAD speed=" << speed << " distance=" << distance << " angle_gyro=" << angle_gyro << std::endl;
+
     // For lower rates us the thread to determine when to call the driver
     ThreadRateControl(speed, distance);
   }
@@ -91,7 +95,7 @@ bool Motors::DriverRateControl(u32 speed, s32 distance)
 {
   bool ret;
 
-  SLOG << "Motors:DriverRateControl speed=" << speed << " distance=" << distance << std::endl;  
+  // HJA SLOG << "Motors:DriverRateControl speed=" << speed << " distance=" << distance << std::endl;  
 
   // Note distance has already been adjusted for thread rate and mode
   // distance still need adjust for rotation direction
@@ -167,8 +171,8 @@ RETURNS:  speed : pluses per second
 ------------------------------------------------------------------------------*/
 u32 Motors::AngleToSpeed(float angle)
 {
-  // The fraction of the revolution to go
-  float fraction_of_rev = fabs(angle) / 360;
+  // The fraction of the revolution to go, the angles range is +/-180
+  float fraction_of_rev = fabs(angle) / 180;
 
   u32 speed = 0;
   
@@ -182,7 +186,7 @@ u32 Motors::AngleToSpeed(float angle)
     speed = MOTORS_MAX_PULSES_PER_SEC * fraction_of_rev;
   }
 
-  SLOG << "Motors:AngleToSpeed() speed=" << speed << " Frac of Rev=" << fraction_of_rev << " angle=" << angle << std::endl;
+  // HJA SLOG << "Motors:AngleToSpeed() speed=" << speed << " Frac of Rev=" << fraction_of_rev << " angle=" << angle << std::endl;
   
   return(speed);
 }
@@ -197,17 +201,16 @@ s32 Motors::SpeedToDistance(u32 speed, float angle)
 {
   s32 distance;
 
-  // Handle driver being slightly faster than us, maybe this should change based
-  // on speed and/or distance
-  distance = (speed / PRIMARY_THREAD_RATE) + 1;
-
+  // Make sure the driver has enough distance even if we are 2 periods late
+  distance = (speed / PRIMARY_THREAD_RATE) * 2;
+    
   // Now adjust the distance for direction
   if (angle < 0)
   {
     distance *= -1;
   }
 
-  SLOG << "Motors::SpeedToDistance():" << " speed=" << speed << " angle=" << angle << " distance=" << distance << std::endl;
+  // HJA SLOG << "Motors::SpeedToDistance():" << " speed=" << speed << " angle=" << angle << " distance=" << distance << std::endl;
   
   return(distance);
 }

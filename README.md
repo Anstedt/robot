@@ -1,5 +1,9 @@
 # Robot
 
+# Driver Control
+Increasing distance causes the driver to take longer on the write calls but also
+uses more CPU time. distance=100 %CPU=8 distance=500 %CPU=20
+
 # Ranges
 Speed(Pulses per second)(Assume mode 32)
 Notes indicate = 3124, which is about 30 RPM
