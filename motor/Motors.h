@@ -6,7 +6,7 @@ FILE:          Motors.h
 #define MOTORS_H
 
 /* INCLUDE ********************************************************************/
-#include "PID.h"
+#include "PID_v1.h"
 #include "StandardTypes.h"
 #include "rpi4-stepper.h"
 #include "MotorsDriver.h"
