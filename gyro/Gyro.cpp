@@ -18,6 +18,7 @@ using namespace std;
 FUNCTION: Gyro::Gyro()
 ------------------------------------------------------------------------------*/
 Gyro::Gyro()
+  : m_avgtime(1000), m_heartbeat(0), m_avgperiod(PRIMARY_THREAD_PERIOD)
 {
   m_callback = 0;
   m_start = 0;
@@ -74,7 +75,6 @@ PURPOSE: Process data for Gyro/Accel and send it registered module
 ------------------------------------------------------------------------------*/
 int Gyro::Run(void)
 {
-  uint32_t timer = 0;
   uint32_t elapsed = 0;
 
   SLOG << "Gyro:Run() in a separate thread" << std::endl;
@@ -84,7 +84,7 @@ int Gyro::Run(void)
   p_mpu6050->calibrate();
 
   // Each loop should take 4 ms
-  timer = gpioTick() + 4000; // gpioTick is in micro seconds
+  m_timer = gpioTick() + 4000; // gpioTick is in micro seconds
   elapsed = gpioTick();
 
   while (ThreadRunning())
@@ -127,15 +127,76 @@ int Gyro::Run(void)
     {
       m_callback(m_gyro_Y_data_raw, m_gyro_X_data_raw, m_angle_gyro, m_angle_acc);
     }
-
+    
+    RateControlDelay(); // Control Loop Rate
+    
     // CallBack now has all data
     // SLOG << "Angle Gyro=" << m_angle_gyro << "\tAngle Accelerometer=" << m_angle_acc << "\tGyro X=" << m_gyro_X_data_raw << "\tGyro Y=" << m_gyro_Y_data_raw << std::endl;
-
-    while(timer > gpioTick());
-    timer += PRIMARY_THREAD_PERIOD;
   }
-
+  
   SLOG << "Gyro:Run() DONE in a separate thread : " << (gpioTick() - elapsed) << "us" << std::endl;
 
   return(ThreadReturn());
+}
+
+/*------------------------------------------------------------------------------
+FUNCTION:  int Gyro::RateControlDelay()
+PURPOSE:   Control the thread rate using an average 
+
+ARGUMENTS: None
+RETURNS:   None
+------------------------------------------------------------------------------*/
+unsigned int Gyro::RateControlDelay()
+{
+  uint32_t app_time = 0;
+  uint32_t tick = 0;
+  
+  struct timespec ts = { 0, ((4 % 1000) * 1000 * 1000) };
+
+  // How much time did we use since we got here last, this is only the
+  // application time. No we set m_timer so it does not include the sleep
+
+  // Get the current time
+  tick = gpioTick();
+
+  // Then use that to calculate how long it took the app to run
+  int x = m_timer - tick; // The time it took to get back here
+  app_time = abs(x);
+
+  // Average the app time, we assume nanosleep works well
+  // Testing of nanosleep on average was off by 62us
+  m_avgtime = (m_avgtime - ((m_avgtime)/50)) + (app_time/50);
+    
+  // Subtract the average time from the thread period we want
+  // This gets our rate to be close to our needed period
+  ts.tv_nsec =  ((PRIMARY_THREAD_PERIOD - m_avgtime) * 1000);
+  nanosleep(&ts, NULL);
+
+  // Capture the average period
+  tick = gpioTick();
+  int r = m_timer - tick; // The time it took to get back here
+  unsigned int rate = abs(r);
+
+  m_avgperiod = (m_avgperiod - ((m_avgperiod)/50)) + (rate/50);
+
+  // Print our heartbeat every 10 seconds, 2500/250
+  if (m_heartbeat++ > (PRIMARY_THREAD_RATE*HEARTBEAT))
+  {
+    SLOG << "Alive app_time=" << app_time << "us driver hits=" << g_heartbeat_driver << " m_timer=" << m_timer << " m_angle_gyro=" << m_angle_gyro << " m_avgtime=" << m_avgtime << "us m_avgperiod=" << m_avgperiod << "us"<< std::endl;
+    m_heartbeat = 0;
+    g_heartbeat_driver = 0;
+  }
+  
+  // if (app_time < 2000)
+  //   printf("m_avgtime=%u <2000 app_time=%u rate=%d\n", m_avgtime, app_time, rate);
+  // else if  (app_time < 3000)
+  //   printf("m_avgtime=%u <3000 app_time=%u rate=%d ##\n", m_avgtime, app_time, rate);
+  // else if  (app_time < 4000)
+  //   printf("m_avgtime=%u <4000 app_time=%u rate=%d ####\n", m_avgtime, app_time, rate);
+  // else
+  //   printf("m_avgtime=%u >4000 app_time=%u rate=%d ########\n", m_avgtime, app_time, rate);
+      
+  m_timer = gpioTick();
+      
+  return(0);
 }
