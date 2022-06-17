@@ -22,6 +22,11 @@ PURPOSE:  Hardware based configs for the robot
 // Converts radians to degrees.
 #define RadiansToDegrees(angleRadians) ((angleRadians) * 180.0 / M_PI)
 
+// PID Constants
+const double PID_Kp = 15.0;
+const double PID_Ki = 1.5;
+const double PID_Kd = 30.0;
+
 // Globals for testing
 extern int g_heartbeat_driver;
 

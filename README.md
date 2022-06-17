@@ -1,5 +1,10 @@
 # Robot
 
+# PID
+PID is running and checked in on branch pid-dev. It reacts very slowly but
+does work in both directions.  Seems like the range of my output +/- 10000 vs
+the input range +/-180 may be part of this issues.
+
 # Driver Control
 Increasing distance causes the driver to take longer on the write calls but also
 uses more CPU time. distance=100 %CPU=8 distance=500 %CPU=20
