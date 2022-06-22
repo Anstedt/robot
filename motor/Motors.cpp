@@ -20,11 +20,16 @@ ARGUMENTS: motor1/2_pulse_gpio = gpio number for pulse control
            mutex = locking mutex for driver
 ------------------------------------------------------------------------------*/
 Motors::Motors(GPIO m1_pulse_gpio, GPIO m1_dir_gpio, GPIO m2_pulse_gpio, GPIO m2_dir_gpio, GPIO microstep0, GPIO microstep1, GPIO microstep2, pthread_mutex_t* p_driver_mutex)
-  : m_thread_speed(0), m_thread_speed_cnt(0),
+  : m_thread_speed(0), m_thread_speed_cnt(0), m_input_degrees(0), m_output_speed(0), m_setpoint(0),
+    m_pid(&m_input_degrees, &m_output_speed, &m_setpoint, PID_Kp, PID_Ki, PID_Kd, DIRECT),
     m_motorsDriver(m1_pulse_gpio, m1_dir_gpio, m2_pulse_gpio, m2_dir_gpio, microstep0, microstep1, microstep2, p_driver_mutex)
 {
   SLOG << "Motors::Motors()" << std::endl;
 
+  m_pid.SetSampleTime(PRIMARY_THREAD_RATE);
+  m_pid.SetOutputLimits(-MOTORS_MAX_PULSES_PER_SEC, MOTORS_MAX_PULSES_PER_SEC);
+  m_pid.SetMode(AUTOMATIC);
+      
   // Setup for motor 1
   m_motor1_dir = MOTOR1_DIRECTION;     // this is 1 or -1 since each motor goes in the opposite direction
   
@@ -57,8 +62,7 @@ bool Motors::AddGyroData(int y, int x, float angle_gyro, float angle_acc)
   // HJA SLOG << "Angle Gyro=" << angle_gyro << "\tAngle Accel=" << angle_acc << "\tGyro Y=" << y << "\tGyro X=" << x << std::endl;
   
   // Find the speed we need, then the distance
-  speed = AngleToSpeed(angle_gyro);
-  distance = SpeedToDistance(speed, angle_gyro);
+  speed = AngleToSpeed(angle_gyro, &distance);
   
   if (speed >= PRIMARY_THREAD_RATE) // 250Hz
   {
@@ -169,50 +173,36 @@ PURPOSE:  Use angle and mode to determine the speed
 
 RETURNS:  speed : pluses per second
 ------------------------------------------------------------------------------*/
-u32 Motors::AngleToSpeed(float angle)
+u32 Motors::AngleToSpeed(float angle, s32* distance)
 {
-  // The fraction of the revolution to go, the angles range is +/-180
-  float fraction_of_rev = fabs(angle) / 180;
-
+  bool dist_reverse = false;
   u32 speed = 0;
   
-  if (fraction_of_rev > 0)
+  m_input_degrees = angle; // This has a range of +/-180
+  m_setpoint = 0; // HJA really never changes but we make sure it is set here
+    
+  // After everything is setup in the constructor we are ready to go
+  m_pid.Compute();
+
+  // In our system speed is always positive, since distance handles direction
+  if (m_output_speed < 0)
   {
-    // HJA PID Emulation
-    // Since we are making a simple PID here all we want is the speed to be
-    // relative to the distance we want to go. If we need a full 360 then we
-    // should go full speed to get there
-    // Weirdly this works because MAX_PULSES is based on mode 32
-    speed = MOTORS_MAX_PULSES_PER_SEC * fraction_of_rev;
+    m_output_speed *= -1;
+
+    // If the speed was negative distance needs to be negative
+    dist_reverse = true;
   }
 
-  // HJA SLOG << "Motors:AngleToSpeed() speed=" << speed << " Frac of Rev=" << fraction_of_rev << " angle=" << angle << std::endl;
+  speed = m_output_speed;
+  
+  // Make sure the driver has enough distance even if we are 2 periods late
+  *distance = (speed / PRIMARY_THREAD_RATE) * 2;
+
+  // negate distance if speed was negative, note at this point speed is positive
+  if (dist_reverse)
+    *distance *= -1;
   
   return(speed);
-}
-
-/*------------------------------------------------------------------------------
-FUNCTION: s32 Motors::SpeedToDistance(u32 speed, float angle);
-PURPOSE:  Use speed, angle , mode and thread rate to determine distance
-
-RETURNS:  Distance including direction +/-
-------------------------------------------------------------------------------*/
-s32 Motors::SpeedToDistance(u32 speed, float angle)
-{
-  s32 distance;
-
-  // Make sure the driver has enough distance even if we are 2 periods late
-  distance = (speed / PRIMARY_THREAD_RATE) * 2;
-    
-  // Now adjust the distance for direction
-  if (angle < 0)
-  {
-    distance *= -1;
-  }
-
-  // HJA SLOG << "Motors::SpeedToDistance():" << " speed=" << speed << " angle=" << angle << " distance=" << distance << std::endl;
-  
-  return(distance);
 }
 
 /*------------------------------------------------------------------------------

@@ -40,6 +40,14 @@ const int MOTORS_RPM_DEFAULT   = 30;
 // enough. But we need higher speed when we are far from our rotation point
 const int MOTORS_MAX_PULSES_PER_SEC = 10000;
 
+// Use this to align max motor speed to max angle
+const double MOTOR_ANGLE_RATIO = (MOTORS_MAX_PULSES_PER_SEC/180);
+
+// PID Constants
+const double PID_Kp = (MOTOR_ANGLE_RATIO*15);
+const double PID_Ki = 20.0;
+const double PID_Kd = 30.0;
+
 // Motor 1
 const GPIO MOTOR1_GPIO_STEP   = GPIO_10; // 10; // 21
 const GPIO MOTOR1_GPIO_DIR    = GPIO_18; // 18; // 20
