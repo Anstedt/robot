@@ -7,6 +7,8 @@ FILE: Gyro.h
 /* INCLUDE ********************************************************************/
 #include "Threads.h"
 #include "MPU6050.h"
+#include "WaitTimer.h"
+
 #include <functional>
 
 using namespace std;
@@ -45,6 +47,8 @@ private:
   int m_gyro_X_data_raw;
   float m_angle_acc;
   float m_angle_gyro;
+
+  WaitTimer m_waittimer;
   unsigned int m_timer;
   unsigned int m_avgtime;
   unsigned int m_heartbeat;

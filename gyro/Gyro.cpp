@@ -45,7 +45,7 @@ FUNCTION: Gyro::~Gyro()
 Gyro::~Gyro()
 {
   delete p_mpu6050;
-
+  
   SLOG << "~GYRO NOT RUNNING gpioTerminate" << std::endl;
   // gpioTerminate(); // Now that the MPU6050 is gone we can close pigpio
 
@@ -151,8 +151,6 @@ unsigned int Gyro::RateControlDelay()
   uint32_t app_time = 0;
   uint32_t tick = 0;
   
-  struct timespec ts = { 0, ((4 % 1000) * 1000 * 1000) };
-
   // How much time did we use since we got here last, this is only the
   // application time. No we set m_timer so it does not include the sleep
 
@@ -163,14 +161,13 @@ unsigned int Gyro::RateControlDelay()
   int x = m_timer - tick; // The time it took to get back here
   app_time = abs(x);
 
-  // Average the app time, we assume nanosleep works well
+  // Average the app time, we assume WaitTimer works well
   // Testing of nanosleep on average was off by 62us
   m_avgtime = (m_avgtime - ((m_avgtime)/50)) + (app_time/50);
-    
+  
   // Subtract the average time from the thread period we want
   // This gets our rate to be close to our needed period
-  ts.tv_nsec =  ((PRIMARY_THREAD_PERIOD - m_avgtime) * 1000);
-  nanosleep(&ts, NULL);
+  m_waittimer.Sleep(PRIMARY_THREAD_PERIOD - m_avgtime);
 
   // Capture the average period
   tick = gpioTick();
@@ -187,15 +184,6 @@ unsigned int Gyro::RateControlDelay()
     g_heartbeat_driver = 0;
   }
   
-  // if (app_time < 2000)
-  //   printf("m_avgtime=%u <2000 app_time=%u rate=%d\n", m_avgtime, app_time, rate);
-  // else if  (app_time < 3000)
-  //   printf("m_avgtime=%u <3000 app_time=%u rate=%d ##\n", m_avgtime, app_time, rate);
-  // else if  (app_time < 4000)
-  //   printf("m_avgtime=%u <4000 app_time=%u rate=%d ####\n", m_avgtime, app_time, rate);
-  // else
-  //   printf("m_avgtime=%u >4000 app_time=%u rate=%d ########\n", m_avgtime, app_time, rate);
-      
   m_timer = gpioTick();
       
   return(0);
