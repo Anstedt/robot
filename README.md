@@ -1,13 +1,11 @@
 # Robot
 
 # PID
-PID is running and checked in on branch pid-dev. It reacts very slowly but
-does work in both directions.  Seems like the range of my output +/- 10000 vs
-the input range +/-180 may be part of this issues.
+PID tuning first pass with robot in test harness working and checked in on
+branch pid-tune.
 
-# Driver Control
-Increasing distance causes the driver to take longer on the write calls but also
-uses more CPU time. distance=100 %CPU=8 distance=500 %CPU=20
+For some reason the motor directions where the opposite of what I
+expected. Still need to investigate this issue,
 
 # Ranges
 Speed(Pulses per second)(Assume mode 32)
@@ -16,26 +14,14 @@ But this is for constant speed, we need maximum when we are a long way off.
 Max = 25000 based on my testing, see email, = 235 RPM
 So lets try a maximum of 10000, 94 RPM
 
+# Motor at low speeds
+- For speeds lower than 250 pulses per second cannot use driver directly.
+- For speeds lower than 250 the Motor code switches to a mode that controls the
+  commands to the driver. For example a speed of 125 the Motor code only calls
+  the driver 125 times per second to get the required low speed.
+
 ## Maximum motor pulses per second == 10000
 ### 94 RPM ~= 1 MPH assuming wheels are 1 ft in diameter
-
-### Using user space app driver for testing
-- Swap out real driver by renaming
-  - motor/MotorDriver.h -> motor/MotorDriver.h.REAL
-  - motor/MotorDriver.cpp -> motor/MotorDriver.cpp.REAL
-  - motor/Motor.h -> motor/Motor.h.REAL
-  - motor/Motor.cpp -> motor/Motor.cpp.REAL
-- Swap in app by renaming
-  - motor/MotorDriverApp.h -> motor/MotorDriverApp.h
-  - motor/MotorDriverApp.cpp -> motor/MotorDriver.cpp
-  - motor/MotorApp.h -> motor/Motor.h
-  - motor/MotorApp.cpp -> motor/Motor.cpp
-- Rebuild Robot with App driver
-- The App mimics the kernel driver interface but is a user space application
-
-### Implement PID based off of Arduino Code
-- Add code to mys system and get it to build
-- Move from angle based control to speed and distance control
 
 ### Implement mechanism to control robot motion; turning and traveling
 
@@ -52,12 +38,7 @@ The front is where the holes are in the upper body. The angles are in reference 
 ### NOTES
 
 ### System Logging
-- #include "Slog.h" in robot.cpp
-- slog << "My Notes" << std::endl;
-  "My Notes" in /var/log/message
-- SLOG << "My Notes" << std::endl;
-  "My Notes" in /var/log/message
-  "robot.cpp:33 My Notes" in /var/log/message
+- Done
 
 ### Legs
 
@@ -73,7 +54,7 @@ The front is where the holes are in the upper body. The angles are in reference 
 - Controller - just a shell at this time, needs controller interfaces and commands
   - Balancer - needs pid, motion commands, dual motor testing, balance testing
     - Motor - works
-    - DRV8825 - works but should be a Linux driver
+    - DRV8825 - works
     - Gyro - works but needs Z averaging on startup
     - MPU6050 - works and tested
   - Legs

@@ -44,9 +44,9 @@ const int MOTORS_MAX_PULSES_PER_SEC = 10000;
 const double MOTOR_ANGLE_RATIO = (MOTORS_MAX_PULSES_PER_SEC/180);
 
 // PID Constants
-const double PID_Kp = (MOTOR_ANGLE_RATIO*15);
+const double PID_Kp = 30.0; // Will be multiple by MOTOR_ANGLE_RATIO for PID
 const double PID_Ki = 20.0;
-const double PID_Kd = 30.0;
+const double PID_Kd = 40.0;
 
 // Motor 1
 const GPIO MOTOR1_GPIO_STEP   = GPIO_10; // 10; // 21
@@ -54,7 +54,7 @@ const GPIO MOTOR1_GPIO_DIR    = GPIO_18; // 18; // 20
 const GPIO MOTOR1_GPIO_MODE_0 = GPIO_17; // 17; // 14
 const GPIO MOTOR1_GPIO_MODE_1 = GPIO_27; // 27; // 15
 const GPIO MOTOR1_GPIO_MODE_2 = GPIO_22; // 22; // 18
-const int  MOTOR1_DIRECTION   = 1; // Set to 1 or -1
+const int  MOTOR1_DIRECTION   = -1; // Set to 1 or -1
 
 // Motor 2
 const GPIO MOTOR2_GPIO_STEP   = GPIO_24; // 24;

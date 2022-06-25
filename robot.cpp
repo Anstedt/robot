@@ -2,6 +2,7 @@
 
 #include "Controller.h"
 #include "PCA9685.h"
+#include "CmdLine.h"
 #include "keypress.h"
 
 #include <unistd.h>
@@ -20,6 +21,8 @@ int main(int argc, char *argv[])
 
   SLOG << "" << std::endl;
   SLOG << "++++++++++++++++++++++++++++++++++++++++ Hello Robbie ++++++++++++++++++++++++++++++++++++++++" << std::endl;
+
+  CmdLine::Instance()->Parse(argc, argv);
 
   // Signals turn off control-c, etc
 	sigemptyset(&sigs_to_catch);

@@ -7,6 +7,8 @@ PURPOSE:  Controls one motor of the 2 the robot has
 #include "Config.h"
 #include "Motors.h"
 
+#include "CmdLine.h"
+
 #include "Slog.h"
 
 using namespace std;
@@ -21,11 +23,25 @@ ARGUMENTS: motor1/2_pulse_gpio = gpio number for pulse control
 ------------------------------------------------------------------------------*/
 Motors::Motors(GPIO m1_pulse_gpio, GPIO m1_dir_gpio, GPIO m2_pulse_gpio, GPIO m2_dir_gpio, GPIO microstep0, GPIO microstep1, GPIO microstep2, pthread_mutex_t* p_driver_mutex)
   : m_thread_speed(0), m_thread_speed_cnt(0), m_input_degrees(0), m_output_speed(0), m_setpoint(0),
-    m_pid(&m_input_degrees, &m_output_speed, &m_setpoint, PID_Kp, PID_Ki, PID_Kd, DIRECT),
+    m_pid(&m_input_degrees, &m_output_speed, &m_setpoint, (PID_Kp*MOTOR_ANGLE_RATIO), PID_Ki, PID_Kd, DIRECT),
     m_motorsDriver(m1_pulse_gpio, m1_dir_gpio, m2_pulse_gpio, m2_dir_gpio, microstep0, microstep1, microstep2, p_driver_mutex)
 {
   SLOG << "Motors::Motors()" << std::endl;
 
+  double kp, ki, kd;
+  if (CmdLine::Instance()->GetKp(&kp))
+  {
+    if (CmdLine::Instance()->GetKi(&ki))
+    {
+      if (CmdLine::Instance()->GetKd(&kd))
+      {
+        // All values passed on command line
+        SLOG << "PID kp=" << kp << " ki=" << ki << " kd=" << kd << std::endl;
+        m_pid.SetTunings(kp*MOTOR_ANGLE_RATIO, ki, kd);
+      }
+    }
+  }
+  
   m_pid.SetSampleTime(PRIMARY_THREAD_RATE);
   m_pid.SetOutputLimits(-MOTORS_MAX_PULSES_PER_SEC, MOTORS_MAX_PULSES_PER_SEC);
   m_pid.SetMode(AUTOMATIC);
@@ -124,7 +140,7 @@ bool Motors::ThreadRateControl(u32 speed, s32 distance)
 {
   bool ret;
 
-  SLOG << "Motors:ThreadRateControl speed=" << speed << " distance=" << distance << std::endl;  
+  // SLOG << "Motors:ThreadRateControl speed=" << speed << " distance=" << distance << std::endl;  
 
   // If the speed is not zero we need to clock the driver
   if (speed != 0)

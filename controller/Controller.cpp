@@ -21,7 +21,7 @@ Controller::Controller()
   SLOG << "Controller::Controller()" << std::endl;
 
   m_balancer = new Balancer();
-  // HJA TEST m_legs = new Legs();
+  m_legs = new Legs();
 
   // This should be in Balancer so it can adjust offset but is fine here for now
   // knee angle, wheel offset
@@ -30,7 +30,7 @@ Controller::Controller()
   sleep(2); // Let other threads start 
   
   // This should be in Balancer so it can adjust offset but is fine here for now
-  //m_legs->Balance(-40, 0); // Knee bent back and wheel offset from robot center
+  m_legs->Balance(-40, 0); // Knee bent back and wheel offset from robot center
 }
 
 /*------------------------------------------------------------------------------
@@ -40,6 +40,6 @@ Controller::~Controller()
 {
   SLOG << "Controller::~Controller()" << std::endl;
 
+  delete m_legs;
   delete m_balancer;
-  // HJA TEST delete m_legs;
 }
