@@ -67,6 +67,10 @@ const int  MOTOR2_DIRECTION   = (MOTOR1_DIRECTION*-1); // motor 2 is opposite di
 
 // Of course right and left legs are reversed as well as the joints
 
+// Legs constance for Legs::Balance
+const double LEGS_KNEE_ANGLE = -40; // Bend kneed back
+const double LEGS_OFFSET     = 0;   // Offset from center of robot
+
 // Left Leg HIP servo constants
 const int L_CHAN_HIP       = 0;
 const int L_MIN_PULSE_HIP  = 144;

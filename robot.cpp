@@ -22,7 +22,9 @@ int main(int argc, char *argv[])
   SLOG << "" << std::endl;
   SLOG << "++++++++++++++++++++++++++++++++++++++++ Hello Robbie ++++++++++++++++++++++++++++++++++++++++" << std::endl;
 
-  CmdLine::Instance()->Parse(argc, argv);
+  int status = 0;
+  if ((status = CmdLine::Instance()->Parse(argc, argv)) != 0)
+    exit(status);
 
   // Signals turn off control-c, etc
 	sigemptyset(&sigs_to_catch);

@@ -5,9 +5,12 @@ PURPOSE: Creates and controls the Balancer/Motor and the Legs
 *******************************************************************************/
 
 /* INCLUDE ********************************************************************/
-#include "Controller.h"
 #include <unistd.h>
 
+#include "Controller.h"
+#include "Config.h"
+
+#include "CmdLine.h"
 #include "Slog.h"
 
 #include "TestModLegs.h"
@@ -30,7 +33,8 @@ Controller::Controller()
   sleep(2); // Let other threads start 
   
   // This should be in Balancer so it can adjust offset but is fine here for now
-  m_legs->Balance(-40, 0); // Knee bent back and wheel offset from robot center
+
+  m_legs->Balance(CmdLine::Instance()->GetKneeAngle(), CmdLine::Instance()->GetLegsOffset()); // Knee bent back and wheel offset from robot center
 }
 
 /*------------------------------------------------------------------------------

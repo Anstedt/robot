@@ -54,7 +54,7 @@ int CmdLine::Parse(int argc, char * const argv[])
   int out = 0;
   char c = 'X';
   
-  while ((out = getopt (argc, argv, "p:i:d:")) != -1)
+  while ((out = getopt (argc, argv, "p:i:d:k:o:h")) != -1)
   {
     switch (out)
     {
@@ -70,13 +70,43 @@ int CmdLine::Parse(int argc, char * const argv[])
         m_Kd_set = true;
         m_PID_Kd = atof(optarg);
         break;
+      case 'a':
+        m_KneeAngle_set = true;
+        m_Legs_KneeAngle = atof(optarg);
+        break;
+      case 'o':
+        m_Offset_set = true;
+        m_Legs_Offset = atof(optarg);
+        break;
+      case 'h':
+        Help();
+        return(1);
+        break;
       case '?':
         c = optopt;
         SLOG << "ERROR: Unknown option -" << c << std::endl;        
-        return(-1);
+        Help();
+        return(1);
       default:
         return(0);
     }
   }
   return(0);
+}
+
+/*------------------------------------------------------------------------------
+FUNCTION:  void CmdLine::Help(void)
+------------------------------------------------------------------------------*/
+void CmdLine::Help(void)
+{
+  printf("Usage:  %s options\n", "Robot");
+  printf("  -p  PID: Proportional constant\n"
+         "  -i  PID: Integral constant\n"
+         "  -d  PID: Derivative constant\n"
+         "  -k  LEGS: Knee angle, negative values bend back\n"
+         "  -o  LEGS: Offset from center of robot\n"
+         "  -h  Help: This help\n"
+         );
+
+  return;
 }

@@ -14,6 +14,8 @@ PURPOSE:
 /* INCLUDE ********************************************************************/
 #include <getopt.h>
 
+#include "Config.h"
+
 /* CLASSES ********************************************************************/
 /*------------------------------------------------------------------------------
 CLASS:	 CmdLine
@@ -28,9 +30,12 @@ public:
   static CmdLine* Instance();
   // Mutators: non-const operations
   // Accessors: const operations
+  void Help(void);
   inline bool GetKp(double* p) { *p =m_PID_Kp; return(m_Kp_set); }
   inline bool GetKi(double* p) { *p =m_PID_Ki; return(m_Ki_set); }
   inline bool GetKd(double* p) { *p =m_PID_Kd; return(m_Kd_set); }
+  inline double GetKneeAngle(void)  { return(m_KneeAngle_set ? m_Legs_KneeAngle : LEGS_KNEE_ANGLE); }
+  inline double GetLegsOffset(void) { return(m_Offset_set    ? m_Legs_Offset    : LEGS_OFFSET); }
   // Static and friend functions
   int Parse(int argc, char * const argv[]);
   // Memory management: copy constructor, destructor, operator=
@@ -46,12 +51,20 @@ private:
   CmdLine(const CmdLine&);
   CmdLine& operator=(const CmdLine& rhs);
   // Data fields
-  double m_PID_Kp;
+  // PID
   bool   m_Kp_set;
-  double m_PID_Ki;
+  double m_PID_Kp;
   bool   m_Ki_set;
-  double m_PID_Kd;
+  double m_PID_Ki;
   bool   m_Kd_set;
+  double m_PID_Kd;
+
+  // Legs
+  bool   m_KneeAngle_set;
+  double m_Legs_KneeAngle;
+  bool   m_Offset_set;
+  double m_Legs_Offset;
+  
   // Static (shared) class variables
 };
 
