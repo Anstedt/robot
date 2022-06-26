@@ -28,18 +28,13 @@ Motors::Motors(GPIO m1_pulse_gpio, GPIO m1_dir_gpio, GPIO m2_pulse_gpio, GPIO m2
 {
   SLOG << "Motors::Motors()" << std::endl;
 
+  // Only support all three PID options set, since SetTunings requires all three
   double kp, ki, kd;
-  if (CmdLine::Instance()->GetKp(&kp))
+  if (CmdLine::Instance()->GetKp(&kp) && CmdLine::Instance()->GetKi(&ki) && CmdLine::Instance()->GetKd(&kd))
   {
-    if (CmdLine::Instance()->GetKi(&ki))
-    {
-      if (CmdLine::Instance()->GetKd(&kd))
-      {
-        // All values passed on command line
-        SLOG << "PID kp=" << kp << " ki=" << ki << " kd=" << kd << std::endl;
-        m_pid.SetTunings(kp*MOTOR_ANGLE_RATIO, ki, kd);
-      }
-    }
+    // All values passed on command line
+    SLOG << "PID kp=" << kp << " ki=" << ki << " kd=" << kd << std::endl;
+    m_pid.SetTunings(kp*MOTOR_ANGLE_RATIO, ki, kd);
   }
   
   m_pid.SetSampleTime(PRIMARY_THREAD_RATE);

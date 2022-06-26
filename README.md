@@ -7,6 +7,10 @@ branch pid-tune.
 For some reason the motor directions where the opposite of what I
 expected. Still need to investigate this issue,
 
+# CmdLine
+Implemented for PID values
+Implemented for Legs knee angle and offset, most common options
+
 # Ranges
 Speed(Pulses per second)(Assume mode 32)
 Notes indicate = 3124, which is about 30 RPM
