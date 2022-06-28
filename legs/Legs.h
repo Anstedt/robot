@@ -26,7 +26,7 @@ public:
   bool Crouch();
   bool Sit();
 
-  bool Balance(double knee_angle, int wheel_offset);
+  bool Balance(double knee_angle, double wheel_offset);
 
   void Set_RL_HipAngle(int val)  { m_right.Set_HipAngle(val); };
   void Set_RL_KneeAngle(int val) { m_right.Set_KneeAngle(val); };

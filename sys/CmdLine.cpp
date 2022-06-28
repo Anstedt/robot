@@ -36,6 +36,11 @@ CmdLine::CmdLine()
 
   m_PID_Kd = PID_Kd;
   m_Kd_set = false;
+
+  m_KneeAngle_set = LEGS_KNEE_ANGLE;
+  m_Legs_KneeAngle = false;
+  m_Offset_set = LEGS_OFFSET;
+  m_Legs_Offset = false;
 }
 
 /*------------------------------------------------------------------------------
@@ -70,13 +75,15 @@ int CmdLine::Parse(int argc, char * const argv[])
         m_Kd_set = true;
         m_PID_Kd = atof(optarg);
         break;
-      case 'a':
+      case 'k':
         m_KneeAngle_set = true;
         m_Legs_KneeAngle = atof(optarg);
+        printf("m_Legs_KneeAngle=%f\n", m_Legs_KneeAngle);
         break;
       case 'o':
         m_Offset_set = true;
         m_Legs_Offset = atof(optarg);
+        printf("m_Legs_Offset=%f\n", m_Legs_Offset);
         break;
       case 'h':
         Help();

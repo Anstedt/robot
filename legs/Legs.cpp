@@ -81,7 +81,7 @@ ARGUMENTS: knee_angle   in degrees
 
 RETURNS:   true if all goes well
 ------------------------------------------------------------------------------*/
-bool Legs::Balance(double knee_angle, int wheel_offset)
+bool Legs::Balance(double knee_angle, double wheel_offset)
 {
   bool lstatus = true;
   bool rstatus = true;
@@ -89,5 +89,7 @@ bool Legs::Balance(double knee_angle, int wheel_offset)
   lstatus = m_left.Balance(knee_angle, wheel_offset);
   rstatus = m_right.Balance(knee_angle, wheel_offset);
 
+  printf("knee=%f offset=%f\n", knee_angle, wheel_offset);
+  
   return(lstatus && rstatus);
 }
