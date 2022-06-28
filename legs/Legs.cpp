@@ -89,7 +89,7 @@ bool Legs::Balance(double knee_angle, double wheel_offset)
   lstatus = m_left.Balance(knee_angle, wheel_offset);
   rstatus = m_right.Balance(knee_angle, wheel_offset);
 
-  printf("knee=%f offset=%f\n", knee_angle, wheel_offset);
+  SLOG << "LEG: knee=" << knee_angle << " offset=" << wheel_offset << std::endl;
   
   return(lstatus && rstatus);
 }

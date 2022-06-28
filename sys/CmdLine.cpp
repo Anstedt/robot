@@ -37,10 +37,10 @@ CmdLine::CmdLine()
   m_PID_Kd = PID_Kd;
   m_Kd_set = false;
 
-  m_KneeAngle_set = LEGS_KNEE_ANGLE;
-  m_Legs_KneeAngle = false;
-  m_Offset_set = LEGS_OFFSET;
-  m_Legs_Offset = false;
+  m_KneeAngle_set = false;
+  m_Legs_KneeAngle = LEGS_KNEE_ANGLE;
+  m_Offset_set = false;
+  m_Legs_Offset = LEGS_OFFSET;
 }
 
 /*------------------------------------------------------------------------------

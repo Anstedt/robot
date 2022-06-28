@@ -11,6 +11,8 @@ expected. Still need to investigate this issue,
 Implemented for PID values
 Implemented for Legs knee angle and offset, most common options
 
+# Balance tuning completed with battery attached
+
 # Ranges
 Speed(Pulses per second)(Assume mode 32)
 Notes indicate = 3124, which is about 30 RPM

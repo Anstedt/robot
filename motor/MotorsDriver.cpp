@@ -108,11 +108,11 @@ bool MotorsDriver::MotorsCmd(u32 m1_speed, s32 m1_distance, u32 m2_speed, s32 m2
   lseek(m_motor_fd, 0, SEEK_SET); // Start at the beginning
 
   // SLOG << "ENTER DRIVER m1_speed=" << m1_speed << " m1_distance=" << m1_distance << std::endl;
-  // if (write(m_motor_fd, &m_motor_control, sizeof(m_motor_control)) != sizeof(m_motor_control))
-  // {
-  //   SLOG << "ERROR: write to motor driver handle=" << m_motor_fd << " failed" << std::endl;
-  //   status = false;
-  // }
+  if (write(m_motor_fd, &m_motor_control, sizeof(m_motor_control)) != sizeof(m_motor_control))
+  {
+    SLOG << "ERROR: write to motor driver handle=" << m_motor_fd << " failed" << std::endl;
+    status = false;
+  }
   g_heartbeat_driver++; // Track all attempt at running the driver
   
   // SLOG << "RETURN DRIVER" << std::endl;
