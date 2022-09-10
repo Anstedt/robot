@@ -1,5 +1,33 @@
 # Robot
 
+# Building the Driver (fast method)
+- sudo apt update
+- sudo apt install raspberrypi-kernel-headers flex bison
+- cd /opt/git
+- git clone --recursive https://github.com/rickbronson/RPI-Stepper-Motor-Linux-Kernel-Driver2.git
+- git clone --depth=1 https://github.com/raspberrypi/linux
+- cd linux
+- make bcm2711_defconfig # This configures dtb's for building
+- Paste the following on the command line
+cat >> arch/arm/boot/dts/bcm270x.dtsi <<'EOF'
+&pwm {
+      dmas = <&dma 5>;
+      dma-names = "rx-tx";
+      status = "okay";
+};
+EOF
+
+- make -j4 dtbs
+- sudo cp arch/arm/boot/dts/*.dtb /boot/
+- sudo reboot
+
+- After reboot
+- cd /opt/git/RPI-Stepper-Motor-Linux-Kernel-Driver2/src
+- make
+- sudo rmmod pwm-bcm2835
+- sudo rmmod pwm-stepper-bcm2835
+- sudo insmod ./pwm-stepper-bcm2835.ko
+
 # PID
 PID is running and checked in on branch pid-dev. It reacts very slowly but
 does work in both directions.  Seems like the range of my output +/- 10000 vs
