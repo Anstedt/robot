@@ -9,6 +9,7 @@
 - cd linux
 - make bcm2711_defconfig # This configures dtb's for building
 - Paste the following on the command line
+```
 cat >> arch/arm/boot/dts/bcm270x.dtsi <<'EOF'
 &pwm {
       dmas = <&dma 5>;
@@ -16,6 +17,7 @@ cat >> arch/arm/boot/dts/bcm270x.dtsi <<'EOF'
       status = "okay";
 };
 EOF
+```
 
 - make -j4 dtbs
 - sudo cp arch/arm/boot/dts/*.dtb /boot/
