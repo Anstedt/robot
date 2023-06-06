@@ -9,3 +9,5 @@ lib*
 cmake_install.cmake
 robot
 mpu
+*.bkp
+*.dtmp
