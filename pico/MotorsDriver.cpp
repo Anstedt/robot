@@ -24,12 +24,25 @@ gcc -o MotorsDriver MotorsDriver.cpp
 /* FUNCTIONS ******************************************************************/
 int main()
 {
-  unsigned char msg[] = { 'M', 'e', 'l', 'l', 'o', '\r' };
+  unsigned char msg1[6] = { 'M', 'e', 'l', 'l', 'o', '\n' };
+
+  // Note adding /n to string add a / and n to the string but we need the actual
+  // control character instead so we can stick it at the end. Note this is no
+  // longer a proper string because it does not have null at the end.
+  unsigned char msg2[] = "Hello World";
+  unsigned char msg3[] = "Hello World NOW\n";
+  
+  
+  msg2[sizeof(msg2)-1] = '\n';
+  
+  printf("msg1 %s size=%d\n", msg1, sizeof(msg1));
+  printf("msg2 %s size=%d\n", msg2, sizeof(msg2));
+  printf("msg3 %s size=%d\n", msg3, sizeof(msg3));
+  
   char read_buf [256];
   int serial_port = open("/dev/ttyACM0", O_RDWR);
 
   struct termios tty;
-  
   
   if (serial_port < 0)
   {
@@ -43,31 +56,9 @@ int main()
       printf("Error %i from tcgetattr: %s\n", errno, strerror(errno));
       return 1;
     }
-
-    /*
-      tty.c_cflag &= ~PARENB; // Clear parity bit, disabling parity (most common)
-      tty.c_cflag &= ~CSTOPB; // Clear stop field, only one stop bit used in communication (most common)
-      tty.c_cflag &= ~CSIZE; // Clear all bits that set the data size 
-      tty.c_cflag |= CS8; // 8 bits per byte (most common)
-      tty.c_cflag &= ~CRTSCTS; // Disable RTS/CTS hardware flow control (most common)
-      tty.c_cflag |= CREAD | CLOCAL; // Turn on READ & ignore ctrl lines (CLOCAL = 1)
-
-      tty.c_lflag &= ~ICANON;
-      tty.c_lflag &= ~ECHO; // Disable echo
-      tty.c_lflag &= ~ECHOE; // Disable erasure
-      tty.c_lflag &= ~ECHONL; // Disable new-line echo
-      tty.c_lflag &= ~ISIG; // Disable interpretation of INTR, QUIT and SUSP
-      tty.c_iflag &= ~(IXON | IXOFF | IXANY); // Turn off s/w flow ctrl
-      tty.c_iflag &= ~(IGNBRK|BRKINT|PARMRK|ISTRIP|INLCR|IGNCR|ICRNL); // Disable any special handling of received bytes
-
-      tty.c_oflag &= ~OPOST; // Prevent special interpretation of output bytes (e.g. newline chars)
-      tty.c_oflag &= ~ONLCR; // Prevent conversion of newline to carriage return/line feed
-      // tty.c_oflag &= ~OXTABS; // Prevent conversion of tabs to spaces (NOT PRESENT ON LINUX)
-      // tty.c_oflag &= ~ONOEOT; // Prevent removal of C-d chars (0x004) in output (NOT PRESENT ON LINUX)
-      */
-
-    tty.c_cc[VTIME] = 1;    // Wait for up to 1s (10 deciseconds), returning as soon as any data is received.
-    tty.c_cc[VMIN] = 20;
+    
+    tty.c_cc[VTIME] = 1; // Wait for up to 0.1s (1 deciseconds)
+    tty.c_cc[VMIN] = 29; //returning as soon as any data is received.
 
     // Save tty settings, also checking for error
     if (tcsetattr(serial_port, TCSANOW, &tty) != 0)
@@ -77,7 +68,9 @@ int main()
 
     printf("Serial Port opened with FH %d\n", serial_port);
 
-    write(serial_port, msg, sizeof(msg));
+    dprintf(serial_port, "%s", msg3);
+    
+    // write(serial_port, msg2, sizeof(msg2));
     fsync(serial_port);
 
     //sleep(1); // Hack to give PICO time to send, real method uses termios to
