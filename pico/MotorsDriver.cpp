@@ -19,6 +19,27 @@ gcc -o MotorsDriver MotorsDriver.cpp
 #include <unistd.h> // write(), read(), close()
 #include <cstdio>
 
+#include <ostream>
+#include <iostream>
+#include <cstring>
+
+#include <memory>
+#include <string>
+#include <stdexcept>
+
+template<typename ... Args>
+std::string string_format( const std::string& format, Args ... args )
+{
+    int size_s = std::snprintf( nullptr, 0, format.c_str(), args ... ) + 1; // Extra space for '\0'
+    if( size_s <= 0 ){ throw std::runtime_error( "Error during formatting." ); }
+    auto size = static_cast<size_t>( size_s );
+    std::unique_ptr<char[]> buf( new char[ size ] );
+    std::snprintf( buf.get(), size, format.c_str(), args ... );
+    return std::string( buf.get(), buf.get() + size - 1 ); // We don't want the '\0' inside
+}
+
+using namespace std;
+
 /* CLASSES ********************************************************************/
 /* GLOBALS ********************************************************************/
 /* FUNCTIONS ******************************************************************/
@@ -31,14 +52,32 @@ int main()
   // longer a proper string because it does not have null at the end.
   unsigned char msg2[] = "Hello World";
   unsigned char msg3[] = "Hello World NOW\n";
-  
-  
   msg2[sizeof(msg2)-1] = '\n';
+  
+  //string s = string_format("{:x}", 42); // s == 2a
+  //printf("s=%s\n", s.c_str());
   
   printf("msg1 %s size=%d\n", msg1, sizeof(msg1));
   printf("msg2 %s size=%d\n", msg2, sizeof(msg2));
   printf("msg3 %s size=%d\n", msg3, sizeof(msg3));
+
+  // Hex conversion example
+  char s1[100];
+  char s2[100];
+  char s3[100];
+  char s4[100];
   
+  int s1s = sprintf(s1, "%#.4X\n", 49999);
+  int s2s = sprintf(s2, "%#.4x\n", 49999);
+  int s3s = sprintf(s3, "%#.4X\n", 15);
+  int s4s = sprintf(s4, "%#.4x\n", 99);
+  
+  printf("s1 %s", s1);
+  printf("s2 %s", s2);
+  printf("s3 %s", s3);
+  printf("s4 %s", s4);
+  
+      
   char read_buf [256];
   int serial_port = open("/dev/ttyACM0", O_RDWR);
 
