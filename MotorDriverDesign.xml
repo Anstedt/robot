@@ -1,4 +1,4 @@
-<mxfile host="Electron" modified="2023-06-06T23:03:57.274Z" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) draw.io/21.2.8 Chrome/112.0.5615.165 Electron/24.2.0 Safari/537.36" etag="LcB6edZLtZ5x_Q_BqryG" version="21.2.8" type="device">
+<mxfile host="Electron" modified="2023-06-10T17:47:02.808Z" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) draw.io/21.3.7 Chrome/112.0.5615.204 Electron/24.5.0 Safari/537.36" etag="2KAa1KAl3kDZn08rXOKs" version="21.3.7" type="device">
   <diagram name="Page-1" id="p8HDmUjHi0EyzVaa5-nM">
     <mxGraphModel dx="1434" dy="884" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
       <root>
@@ -6,6 +6,9 @@
         <mxCell id="1" parent="0" />
         <mxCell id="IVKhwUNjnq6BaXW-idlU-1" value="PI4" style="whiteSpace=wrap;html=1;aspect=fixed;rotation=1;" parent="1" vertex="1">
           <mxGeometry x="80" y="80" width="80" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="pr3j2gSoKRtnAloFrgpQ-2" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" parent="1" source="IVKhwUNjnq6BaXW-idlU-3" target="pr3j2gSoKRtnAloFrgpQ-1" edge="1">
+          <mxGeometry relative="1" as="geometry" />
         </mxCell>
         <mxCell id="IVKhwUNjnq6BaXW-idlU-3" value="PICO" style="whiteSpace=wrap;html=1;aspect=fixed;" parent="1" vertex="1">
           <mxGeometry x="240" y="80" width="80" height="80" as="geometry" />
@@ -22,7 +25,7 @@
         <mxCell id="IVKhwUNjnq6BaXW-idlU-7" value="Stepper Motor" style="whiteSpace=wrap;html=1;aspect=fixed;" parent="1" vertex="1">
           <mxGeometry x="560" y="240" width="80" height="80" as="geometry" />
         </mxCell>
-        <mxCell id="IVKhwUNjnq6BaXW-idlU-8" value="" style="shape=flexArrow;endArrow=classic;startArrow=classic;html=1;rounded=0;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" parent="1" source="IVKhwUNjnq6BaXW-idlU-1" target="IVKhwUNjnq6BaXW-idlU-3" edge="1">
+        <mxCell id="IVKhwUNjnq6BaXW-idlU-8" value="" style="shape=flexArrow;endArrow=classic;startArrow=classic;html=1;rounded=0;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;width=9;startSize=5.68;" parent="1" source="IVKhwUNjnq6BaXW-idlU-1" target="IVKhwUNjnq6BaXW-idlU-3" edge="1">
           <mxGeometry width="100" height="100" relative="1" as="geometry">
             <mxPoint x="370" y="470" as="sourcePoint" />
             <mxPoint x="470" y="370" as="targetPoint" />
@@ -55,8 +58,93 @@
             <mxPoint x="450" y="390" as="targetPoint" />
           </mxGeometry>
         </mxCell>
-        <mxCell id="mNse-C4MXtQT2vlrBPu1-1" value="Speed&lt;br&gt;Distance, Not Used&lt;br&gt;MicroSteps, maybe just default&lt;br&gt;Direction" style="strokeWidth=2;html=1;shape=mxgraph.flowchart.document2;whiteSpace=wrap;size=0.25;" vertex="1" parent="1">
-          <mxGeometry x="50" y="200" width="160" height="120" as="geometry" />
+        <mxCell id="mNse-C4MXtQT2vlrBPu1-1" value="Delay based on rate and direction, in hex where upper bit is direction.&lt;br&gt;&lt;br&gt;MicroSteps, default in HW" style="strokeWidth=2;html=1;shape=mxgraph.flowchart.document2;whiteSpace=wrap;size=0.25;" parent="1" vertex="1">
+          <mxGeometry x="50" y="200" width="200" height="100" as="geometry" />
+        </mxCell>
+        <mxCell id="pr3j2gSoKRtnAloFrgpQ-1" value="PI&lt;br&gt;" style="whiteSpace=wrap;html=1;aspect=fixed;" parent="1" vertex="1">
+          <mxGeometry x="80" y="80" width="80" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="pr3j2gSoKRtnAloFrgpQ-7" value="PICO&lt;br&gt;Main" style="whiteSpace=wrap;html=1;aspect=fixed;" parent="1" vertex="1">
+          <mxGeometry x="80" y="360" width="80" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="pr3j2gSoKRtnAloFrgpQ-8" value="PICO&lt;br&gt;PIO 1" style="whiteSpace=wrap;html=1;aspect=fixed;" parent="1" vertex="1">
+          <mxGeometry x="240" y="360" width="80" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="pr3j2gSoKRtnAloFrgpQ-9" value="PICO&lt;br&gt;PIO 2" style="whiteSpace=wrap;html=1;aspect=fixed;" parent="1" vertex="1">
+          <mxGeometry x="240" y="550" width="80" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="pr3j2gSoKRtnAloFrgpQ-10" value="Lower Pulse Delay" style="shape=flexArrow;endArrow=classic;html=1;rounded=0;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" parent="1" source="pr3j2gSoKRtnAloFrgpQ-7" target="pr3j2gSoKRtnAloFrgpQ-8" edge="1">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="400" y="470" as="sourcePoint" />
+            <mxPoint x="450" y="420" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="pr3j2gSoKRtnAloFrgpQ-11" value="Lower Pulse Delay" style="shape=flexArrow;endArrow=classic;html=1;rounded=0;exitX=0.25;exitY=1;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" parent="1" source="pr3j2gSoKRtnAloFrgpQ-7" target="pr3j2gSoKRtnAloFrgpQ-9" edge="1">
+          <mxGeometry x="0.4483" width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="400" y="470" as="sourcePoint" />
+            <mxPoint x="450" y="420" as="targetPoint" />
+            <Array as="points">
+              <mxPoint x="100" y="590" />
+            </Array>
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="pr3j2gSoKRtnAloFrgpQ-12" value="Main sets dir based on upper bit for each motor. Main processes and sends to respective PIO. Delay is the pulse low signal delay. High signal delay is accounted for before it is sent to the PIO.&amp;nbsp;" style="shape=document;whiteSpace=wrap;html=1;boundedLbl=1;" parent="1" vertex="1">
+          <mxGeometry x="560" y="360" width="230" height="170" as="geometry" />
+        </mxCell>
+        <mxCell id="X8AdQj3eu7jRoiakym0k-1" value="DRV8255" style="whiteSpace=wrap;html=1;aspect=fixed;" vertex="1" parent="1">
+          <mxGeometry x="400" y="80" width="80" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="X8AdQj3eu7jRoiakym0k-2" value="DRV8255" style="whiteSpace=wrap;html=1;aspect=fixed;" vertex="1" parent="1">
+          <mxGeometry x="400" y="360" width="80" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="X8AdQj3eu7jRoiakym0k-3" value="DRV8255" style="whiteSpace=wrap;html=1;aspect=fixed;" vertex="1" parent="1">
+          <mxGeometry x="400" y="550" width="80" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="X8AdQj3eu7jRoiakym0k-4" value="" style="shape=flexArrow;endArrow=classic;html=1;rounded=0;exitX=0.75;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=1;entryDx=0;entryDy=0;" edge="1" parent="1" source="pr3j2gSoKRtnAloFrgpQ-7" target="X8AdQj3eu7jRoiakym0k-2">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="410" y="480" as="sourcePoint" />
+            <mxPoint x="430" y="500" as="targetPoint" />
+            <Array as="points">
+              <mxPoint x="140" y="470" />
+              <mxPoint x="440" y="470" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="X8AdQj3eu7jRoiakym0k-7" value="Direction" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" vertex="1" connectable="0" parent="X8AdQj3eu7jRoiakym0k-4">
+          <mxGeometry x="-0.0722" y="1" relative="1" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="X8AdQj3eu7jRoiakym0k-5" value="Pulse" style="shape=flexArrow;endArrow=classic;html=1;rounded=0;exitX=1;exitY=0.5;exitDx=0;exitDy=0;" edge="1" parent="1" source="pr3j2gSoKRtnAloFrgpQ-9" target="X8AdQj3eu7jRoiakym0k-3">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="520" y="520" as="sourcePoint" />
+            <mxPoint x="570" y="470" as="targetPoint" />
+            <Array as="points" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="X8AdQj3eu7jRoiakym0k-6" value="Pulse" style="shape=flexArrow;endArrow=classic;html=1;rounded=0;exitX=1;exitY=0.5;exitDx=0;exitDy=0;" edge="1" parent="1">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="320" y="399.5" as="sourcePoint" />
+            <mxPoint x="400" y="399.5" as="targetPoint" />
+            <Array as="points" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="X8AdQj3eu7jRoiakym0k-8" value="" style="shape=flexArrow;endArrow=classic;html=1;rounded=0;exitX=0.5;exitY=1;exitDx=0;exitDy=0;" edge="1" parent="1" source="pr3j2gSoKRtnAloFrgpQ-7" target="X8AdQj3eu7jRoiakym0k-3">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="120" y="520" as="sourcePoint" />
+            <mxPoint x="420" y="520" as="targetPoint" />
+            <Array as="points">
+              <mxPoint x="120" y="510" />
+              <mxPoint x="290" y="510" />
+              <mxPoint x="440" y="510" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="X8AdQj3eu7jRoiakym0k-9" value="Direction" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" vertex="1" connectable="0" parent="X8AdQj3eu7jRoiakym0k-8">
+          <mxGeometry x="-0.0722" y="1" relative="1" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
         </mxCell>
       </root>
     </mxGraphModel>
