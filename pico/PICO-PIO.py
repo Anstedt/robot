@@ -8,11 +8,11 @@ def paral_prog():
   out(pins, 1)
 
 # GPIO PIN 25 should be the onboard LED for the PICO non-W
-paral_sm = StateMachine(0, paral_prog, freq=10000000, out_base=Pin(25))
-paral_sm.active(1)
+sm = StateMachine(0, paral_prog, freq=10000000, out_base=Pin(25))
+sm.active(1)
 
 while True:
-  sm.write(bytes((1,)))
-  time.sleep(0.5)
-  sm.write(bytes((0,)))
-  time.sleep(0.5)
+  sm.put(1)
+  sleep(0.2)
+  sm.put(0)
+  sleep(0.2)
