@@ -1,5 +1,27 @@
 # PICO as motor controller
 
+# Design PICO
+- The PICO C or Python side of the PICO system
+- Read data from PI
+- Strip off direction bit
+- MAYBE adjust based on known PIO timing
+- Send data to PIO, one for each motor
+- Handle different rates for each PIO-Motor
+  - This is caused by different pulse delays sent to each motor for turning.
+  - Initially this is not needed since each motor runs the same speed.
+- Prevent overflow of PIO FIFO's.
+
+# Design PIO
+- The PIO assemble, Python or assembler created side of the PICO system
+- PIO reads data as fast as it can, read on every pulse
+  - If no new data uses old data again
+    pull(noblock) # If empty osr is copied from x
+	# mov is copy so src is not modified as part of transfer
+    mov(x,osr)    # Copy osr to X to prepare for future noblock pulls
+    mov(y,osr)    # This way we either use newest data or last data
+    # we need this for high speed pulses that should occur faster than
+	# the 250Hz rate data is sent to the PIO, 250Hz.
+
 # Tests in progress
 Steps that work
 Install MicroPytho, once is enough
