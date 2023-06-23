@@ -3,40 +3,40 @@ from machine import Pin
 from time import sleep
 
 # See PICO-Poll for comm. with PI
-@asm_pio(set_init=PIO.OUT_LOW)
+@asm_pio(set_init=PIO.OUT_HIGH)
 def pulse_control():
     label("mainloop")
     pull(noblock)
     mov(x,osr)
     mov(y,osr)
-    set(pins, 1)    [31]    # Turn LED on
-    label("delayloophigh")
-    jmp(y_dec, "delayloophigh")
-    set(pins, 0)    [31]    # Turn LED off
+    set(pins, 1) [3] # Turn LED on for 4 1mhz clocks cycles or 4 us delay
+    # label("delayloophigh")
+    # jmp(y_dec, "delayloophigh")
+    set(pins, 0)  # Turn LED off
     # pull()
     # mov(x,osr)
     # mov(y,osr)
     mov(y,osr)
     label("delaylooplow")
     jmp(y_dec, "delaylooplow")
-    jmp("mainloop") [31]    # Jump back to the beginning
+    jmp("mainloop") # Jump back to the beginning
 
-sm = StateMachine(1, pulse_control, freq=2000, set_base=Pin(25))  # Instantiate SM1, 2000 Hz, LED on pin 3
+sm = StateMachine(1, pulse_control, freq=1000000, set_base=Pin(16))  # Instantiate SM1, 2000 Hz, LED on pin 3
 sm.active(1)                                                 # Start State Machine 1
 
 while True:
+  sm.put(10)
+  print("10 sleep 5")
+  sleep(5)
+  sm.put(20)
+  print("20 sleep 5")
+  sleep(15)
   sm.put(100)
-  print("100")
-  sleep(2)
-  sm.put(2001)
-  print("2001")
-  sleep(1)
-  sm.put(1001)
-  print("1001")
-  sleep(1)
-  sm.put(2001)
-  print("101")
-  sleep(10)
+  print("100 sleep 5")
+  sleep(5)
+  sm.put(1000)
+  print("1000 sleep 5")
+  sleep(5)
 
 import select
 import sys
