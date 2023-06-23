@@ -55,6 +55,10 @@ _---______-
  ^        ^ This is the total pulse time or period and the pulse rate is the
             inverse of this.
 
+If PICO set for 1,000,000 then I need 4 delays per pulse which is
+4us. Which is greater than the required 1.9us.
+
+
 # Sending the delay from PI to PICO
 PROS:
 - Simpler for PICO to handle
