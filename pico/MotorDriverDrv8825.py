@@ -18,6 +18,8 @@ def pulse_control():
     # mov(y,osr)
     mov(y,osr)
     label("delaylooplow")
+    pull(noblock)    # Keep getting the latest value or x if no new values
+    mov(x,osr)       # Remember mov() is right to left
     jmp(y_dec, "delaylooplow")
     jmp("mainloop") # Jump back to the beginning
 
@@ -25,17 +27,17 @@ sm = StateMachine(1, pulse_control, freq=1000000, set_base=Pin(16))  # Instantia
 sm.active(1)                                                 # Start State Machine 1
 
 while True:
-  sm.put(10)
-  print("10 sleep 5")
-  sleep(5)
+  sm.put(1)
+  print("1 sleep 10 for time testing")
+  sleep(15)
   sm.put(20)
   print("20 sleep 5")
   sleep(15)
   sm.put(100)
   print("100 sleep 5")
   sleep(5)
-  sm.put(1000)
-  print("1000 sleep 5")
+  sm.put(20000)
+  print("20000 sleep 5")
   sleep(5)
 
 import select

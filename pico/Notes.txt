@@ -33,9 +33,9 @@
 
    I would prefer being closer to:
    1 degree or less per second minimum speed
-   1/4 revolution or 800 PPS maximum
+   1/4 revolution or 1600 PPS maximum
 
-   fast = delay of 0.00125 seconds = 800 PPS or 1/4 revolutions per second 
+   fast = delay of 0.000625 seconds = 1600 PPS or 1/4 revolutions per second 
    slow = delay of 0.056 seconds = 17.7 pulses per second = 1 degree per second
 
    That means for minimum speed I need a delay of 17.7 pps or 0.056
