@@ -24,36 +24,48 @@ def pps_to_delay(val):
   return(int(((1/val)*1000000)/3) - 4)
 
 while True:
+  pps = 6400
+  delaytime = pps_to_delay(pps)
+  sm.put(delaytime)
+  print(delaytime, "us looking for", pps, "Hz")
+  sleep(10)
+  
   pps = 1600
   delaytime = pps_to_delay(pps)
   sm.put(delaytime)
-  print(delaytime, "sleep 5 for time testing, looking for", pps, "Hz")
-  sleep(15)
+  print(delaytime, "us looking for", pps, "Hz")
+  sleep(10)
   
+  pps = 800
+  delaytime = pps_to_delay(pps)
+  sm.put(delaytime)
+  print(delaytime, "us looking for", pps, "Hz")
+  sleep(10)
+
+  pps = 400
+  delaytime = pps_to_delay(pps)
+  sm.put(delaytime)
+  print(delaytime, "us looking for", pps, "Hz")
+  sleep(10)
+
+  pps = 200
+  delaytime = pps_to_delay(pps)
+  sm.put(delaytime)
+  print(delaytime, "us looking for", pps, "Hz")
+  sleep(10)
+
   pps = 18
   delaytime = pps_to_delay(pps)
   sm.put(delaytime)
-  print(delaytime, "sleep 100 for time testing, looking for", pps, "Hz")
-  sleep(100)
-
-  sm.put(20)
-  print("20 sleep 5")
-  sleep(15)
-  
-  sm.put(100)
-  print("100 sleep 5")
-  sleep(5)
-  
-  sm.put(20000)
-  print("20000 sleep 5")
-  sleep(5)
+  print(delaytime, "us looking for", pps, "Hz")
+  sleep(10)
 
 import select
 import sys
 import machine
 import utime
 
-# # Set up the poll object
+# # Set u4p the poll object
 # poll_obj = select.poll()
 # poll_obj.register(sys.stdin, select.POLLIN)
 
