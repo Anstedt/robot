@@ -18,47 +18,60 @@ def pulse_control():
     jmp("mainloop") # Jump back to the beginning
 
 sm = StateMachine(1, pulse_control, freq=1000000, set_base=Pin(16))  # Instantiate SM1, 2000 Hz, LED on pin 3
+sm1 = StateMachine(2, pulse_control, freq=1000000, set_base=Pin(17))  # Instantiate SM1, 2000 Hz, LED on pin 3
 sm.active(1)                                                 # Start State Machine 1
+sm1.active(2)                                                 # Start State Machine 1
 
 def pps_to_delay(val):
   return(int(((1/val)*1000000)/3) - 4)
 
 while True:
+  pps = 18
+  delaytime = pps_to_delay(pps)
+  print(delaytime, "us cycle time, looking for", pps, "Hz")
+  sm.put(int(delaytime/100))
+  sm.put(int(delaytime/10000))
+  sm.put(int(delaytime/18))
+  sm.put(delaytime)  
+  sm1.put(delaytime)  
+  print(delaytime, "us cycle time, looking for", pps, "Hz")
+  sleep(10)
+
   pps = 6400
   delaytime = pps_to_delay(pps)
   sm.put(delaytime)
-  print(delaytime, "us looking for", pps, "Hz")
+  sm1.put(delaytime)  
+  print(delaytime, "us cycle time, looking for", pps, "Hz")
   sleep(10)
   
   pps = 1600
   delaytime = pps_to_delay(pps)
   sm.put(delaytime)
-  print(delaytime, "us looking for", pps, "Hz")
+  sm1.put(delaytime)  
+  print(delaytime, "us cycle time, looking for", pps, "Hz")
   sleep(10)
   
   pps = 800
   delaytime = pps_to_delay(pps)
   sm.put(delaytime)
-  print(delaytime, "us looking for", pps, "Hz")
+  sm1.put(delaytime)  
+  print(delaytime, "us cycle time, looking for", pps, "Hz")
   sleep(10)
 
   pps = 400
   delaytime = pps_to_delay(pps)
   sm.put(delaytime)
-  print(delaytime, "us looking for", pps, "Hz")
+  sm1.put(delaytime)  
+  print(delaytime, "us cycle time, looking for", pps, "Hz")
   sleep(10)
 
   pps = 200
   delaytime = pps_to_delay(pps)
   sm.put(delaytime)
-  print(delaytime, "us looking for", pps, "Hz")
+  sm1.put(delaytime)  
+  print(delaytime, "us cycle time, looking for", pps, "Hz")
   sleep(10)
 
-  pps = 18
-  delaytime = pps_to_delay(pps)
-  sm.put(delaytime)
-  print(delaytime, "us looking for", pps, "Hz")
-  sleep(10)
 
 import select
 import sys

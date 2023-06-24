@@ -30,101 +30,28 @@
   issues. We may need to go slower so we can get the total PPS range
   we need.
 
-# Handling Speed Range 1
+# Handling Speed Range
 - Always use the latest data in the buffer or use the x value if no
   new data.
 
-- Looks like timing count for off time is wrong. From what I can tell
-  y_dec says if y is true, meaning even if 1 to start we get 1 delay
-  loop. This if fine but needs to be taken into account in timing. As
-  expected sending a delay of 0 gives one pulse which is low for 8
-  cycles just as expected.
+- Start state machines right after each other to minimize time
+  shift. Not really important in this application but could be in
+  other more time sensitive applications.
 
+- y_dec takes one loop when y is one. Makes sense after to think about it.
+  - y_dec indicates y-- decrements after the jmp check
 
-- Total on time is just p1: line.
+- Total on time is controlled by line, set(pins, 1) [3]
   - 4us for 1000000 PIO clock
-- Total off time is p2: back around to p1:
-  - as is this is at minimum about 10 clock cycles. I need to test
-    the actual steps by checking the time.
-  - Old code took 8us cycles for down time. This make sense. Labels
-    take no time but jumps do.
-    
-def pulse_control():
-  label("mainloop")
-    pull(noblock)
-    mov(x,osr)
-    mov(y,osr)
-    set(pins, 1) [3] # Turn LED on for 4 1mhz clocks cycles or 4 us delay
-    set(pins, 0)  # Turn LED off
-    mov(y,osr)
-  label("delaylooplow")
-    jmp(y_dec, "delaylooplow")
-    jmp("mainloop") # Jump back to the beginning
+  
+- Total off time is dealy loops plus full path back to on time line.
+  - See pps_to_delay() on handling this
 	
-  - New code should take: 9 since we have an extra pull() in the timing loop.
+- NOTE: mov(x/y, osr) does not clear osr
 
-  - NOTE: The low time timing loop is 3 cycles
-
-  label("mainloop")  # Maybe use default loop scheme instead
-    pull(noblock)
-    mov(x,osr)       # Remember mov() is right to left
-    set(pins, 1) [3] # Turn pin on for 4 1mhz clocks cycles or 4 us delay
-    set(pins, 0)  # Turn pin off
-    mov(y,osr) # Now get y for delay count
-  label("delaylooplow")
-    pull(noblock)    # Keep getting the latest value or x if no new values
-    mov(x,osr)       # Remember mov() is right to left
-    jmp(y_dec, "delaylooplow") # Count down the dealy
-    jmp("mainloop") # Jump back to the beginning
-	
-	
-- NOTE: mov(x/y, osr) does not seem to clear osr
-
-label("mainloop")  # Maybe use default loop scheme instead
-  pull(noblock)
-  mov(x,osr)       # Remember mov() is right to left
-
-  - Notice this is the total time the pin is on 1 for set() 3 for [3]
-p1:  set(pins, 1) [3] # Turn pin on for 4 1mhz clocks cycles or 4 us delay
-
-p2:  set(pins, 0)  # Turn pin off
-
-  - The mov(x,osr) call preserves x so a pull on an empty buffer
-    returns the same value over and over, needed for fast delays. This
-    works because pull with no data uses the current x value instead
-
-  mov(y,osr) # Now get y for delay count
-
-  label("delaylooplow")
-  pull(noblock)    # Keep getting the latest value or x if no new values
-  mov(x,osr)       # Remember mov() is right to left
-  jmp(y_dec, "delaylooplow") # Count down the dealy
-  jmp("mainloop") # Jump back to the beginning
-
-# Handling Speed Range 1
-label("mainloop")  # Maybe use default loop scheme instead
-  pull(noblock)
-
-  - The mov(x,osr) call preserves x so a pull on an empty buffer
-    returns the same value over and over, needed for fast delays. This
-    works because pull with no data uses the current x value instead
-
-  mov(x,osr)       # Remember mov() is right to left
-  mov(y,osr)
-
-  - Notice this is the total time the pin is on 1 for set 3 for [3]
-  set(pins, 1) [3] # Turn pin on for 4 1mhz clocks cycles or 4 us delay
-
-  set(pins, 0)  # Turn pin off
-  label("delaylooplow")
-  pull(noblock)
-  mov(x,osr)       # Remember mov() is right to left
-  jmp(y_dec, "delaylooplow")
-  jmp("mainloop") # Jump back to the beginning
-
-
-
-
+- The mov(x,osr) call preserves x so a pull on an empty buffer returns
+  the same value over and over, needed for fast delays. This works
+  because pull with no data uses the current x value instead
 
 # Design PICO
 - The PICO C or Python side of the PICO system
