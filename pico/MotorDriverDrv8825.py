@@ -8,15 +8,9 @@ def pulse_control():
     label("mainloop")
     pull(noblock)
     mov(x,osr)
-    mov(y,osr)
-    set(pins, 1) [3] # Turn LED on for 4 1mhz clocks cycles or 4 us delay
-    # label("delayloophigh")
-    # jmp(y_dec, "delayloophigh")
-    set(pins, 0)  # Turn LED off
-    # pull()
-    # mov(x,osr)
-    # mov(y,osr)
-    mov(y,osr)
+    set(pins, 1) [3] # Turn pin on for 4 1mhz clocks cycles or 4 us delay
+    set(pins, 0)     # Turn pin off
+    mov(y,osr)       # Now get the low delay time
     label("delaylooplow")
     pull(noblock)    # Keep getting the latest value or x if no new values
     mov(x,osr)       # Remember mov() is right to left
@@ -26,16 +20,30 @@ def pulse_control():
 sm = StateMachine(1, pulse_control, freq=1000000, set_base=Pin(16))  # Instantiate SM1, 2000 Hz, LED on pin 3
 sm.active(1)                                                 # Start State Machine 1
 
+def pps_to_delay(val):
+  return(int(((1/val)*1000000)/3) - 4)
+
 while True:
-  sm.put(1)
-  print("1 sleep 10 for time testing")
+  pps = 1600
+  delaytime = pps_to_delay(pps)
+  sm.put(delaytime)
+  print(delaytime, "sleep 5 for time testing, looking for", pps, "Hz")
   sleep(15)
+  
+  pps = 18
+  delaytime = pps_to_delay(pps)
+  sm.put(delaytime)
+  print(delaytime, "sleep 100 for time testing, looking for", pps, "Hz")
+  sleep(100)
+
   sm.put(20)
   print("20 sleep 5")
   sleep(15)
+  
   sm.put(100)
   print("100 sleep 5")
   sleep(5)
+  
   sm.put(20000)
   print("20000 sleep 5")
   sleep(5)

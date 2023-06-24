@@ -13,6 +13,19 @@
 	- NOTE: Even though this is a delay of 6.4 pulses per 250 hz. This
       does not effect the design since high rates are faster than the
       250Hz calls.
+  - Maximum down time 620, Better to just use down X 3 + up 
+    - 1600 PPS = 1/1600 seconds / pulse = 625us
+	- delay time = 625/3 - 4
+    - Delay time for 1600 pps is up+down=625us. Down should be 625-4=621-1=620
+    - 204 delay is 16.03 khz
+
+    - Delay loop is 3 cycles for each delay unit. So 204 delay in loop
+      is really 612. Really 615 since it loops till after zero then
+      loops back to mainloop which is another 4 for a total of 616,
+      not quiet 625 but at least close enough. Really a little close
+      than that since the total time includes the set() [] time which
+      is another 4. So we are at 620 total pulse time.
+	
 - Minimum positive pulse is 1.7 us. Previously used 4us with no
   issues. We may need to go slower so we can get the total PPS range
   we need.
@@ -20,6 +33,13 @@
 # Handling Speed Range 1
 - Always use the latest data in the buffer or use the x value if no
   new data.
+
+- Looks like timing count for off time is wrong. From what I can tell
+  y_dec says if y is true, meaning even if 1 to start we get 1 delay
+  loop. This if fine but needs to be taken into account in timing. As
+  expected sending a delay of 0 gives one pulse which is low for 8
+  cycles just as expected.
+
 
 - Total on time is just p1: line.
   - 4us for 1000000 PIO clock
