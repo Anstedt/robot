@@ -1,5 +1,9 @@
 ## PICO as motor controller
 
+# Design Bug
+- Current design does not handle speeds of 0.
+  - Maybe loop in sm until we get something other than 0
+
 ## Requirements
 # PPS Range
   - Minimum 1 degree per second or a delay of 0.05625 seconds

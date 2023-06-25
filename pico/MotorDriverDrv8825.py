@@ -39,7 +39,7 @@ def convert_to_pps(i):
 
 # aFFFF is sma and b is smb, rename machines later
 emulate_lut = [ "aFFFFbFFFF",
-                "a8001b8001", # Stop
+                "a8001b8001", # Stop, HJA hack to handle design does not handle 0 speed yet
                 "aFFF0bFFF0", # Speed up
                 "a00FFb00FF", # Slow down
                 "aFFFFbF00F", # Got different speeds
