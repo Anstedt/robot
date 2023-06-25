@@ -25,126 +25,79 @@ smb.active(2)                                                 # Start State Mach
 def pps_to_delay(val):
   return(int(((1/val)*1000000)/3) - 4)
 
-while True:
-  pps = 18
-  delaytime = pps_to_delay(pps)
-  print(delaytime, "us cycle time, looking for", pps, "Hz")
-  sma.put(delaytime)  
-  smb.put(delaytime)  
-  print(delaytime, "us cycle time, looking for", pps, "Hz")
-  sleep(10)
+def get_dir(i): # integer
+  # Upper bit is direction
+  return(0x8000 & i)
 
-  pps = 6400
-  delaytime = pps_to_delay(pps)
-  sma.put(delaytime)
-  smb.put(delaytime)  
-  print(delaytime, "us cycle time, looking for", pps, "Hz")
-  sleep(10)
-  
-  pps = 1600
-  delaytime = pps_to_delay(pps)
-  sma.put(delaytime)
-  smb.put(delaytime)  
-  print(delaytime, "us cycle time, looking for", pps, "Hz")
-  sleep(10)
-  
-  pps = 800
-  delaytime = pps_to_delay(pps)
-  sma.put(delaytime)
-  smb.put(delaytime)  
-  print(delaytime, "us cycle time, looking for", pps, "Hz")
-  sleep(10)
+def convert_to_int(s):
+  return(int(s, 16))
 
-  pps = 400
-  delaytime = pps_to_delay(pps)
-  sma.put(delaytime)
-  smb.put(delaytime)  
-  print(delaytime, "us cycle time, looking for", pps, "Hz")
-  sleep(10)
-
-  pps = 200
-  delaytime = pps_to_delay(pps)
-  sma.put(delaytime)
-  smb.put(delaytime)  
-  print(delaytime, "us cycle time, looking for", pps, "Hz")
-  sleep(10)
-
-
-while True:
-  emulate(sma, smb)
-
-import select
-import sys
-import machine
-import utime
+def convert_to_pps(i):
+  # HJA: We can range check here since a range of 18 to 6400 is plenty
+  # All lower bits are speed in pps
+  return(0x7fff & i)
 
 # aFFFF is sma and b is smb, rename machines later
 emulate_lut = [ "aFFFFbFFFF",
-                "a8000b8000", # Stop
+                "a8001b8001", # Stop
                 "aFFF0bFFF0", # Speed up
                 "a00FFb00FF", # Slow down
                 "aFFFFbF00F", # Got different speeds
                 "a7FFFb7FFF"] # Change direction
 
 def split_lut(luts):
-  {
-    sma_lut = ""
-    smb_lut = ""
-    lut_buf = ""
+  sma_lut = ""
+  smb_lut = ""
+  lut_buf = ""
 
-    if (len(luts) < 10):
+  if (len(luts) < 10):
     return(sma_lut, smb_lut)
 
-    a = luts.index("a") # Find ms a string start
-    sma_lut = a[i+1:i+4]
+  i = luts.index("a") # Find ms a string start
+  sma_lut = luts[i+1:i+5]
 
-    a = luts.index("b") # Find ms a string start
-    smb_lut = a[i+1:i+4]
+  i = luts.index("b") # Find ms a string start
+  smb_lut = luts[i+1:i+5]
 
-    return(sma_lut, smb_lut)
-}
+  return(sma_lut, smb_lut)
 
-def get_dir(i): # integer
-  {
-    # Upper bit is direction
-    return(0x8000 & i)
-  }
+def emulate(msa, msb, lut_cnt):
+  (sma_s, smb_s) = split_lut(emulate_lut[lut_cnt])
 
-def convert_to_int(s):
-  {
-    return(int(s, 16))
-  }
+  sma_i = convert_to_int(sma_s)
+  # set_motor_a_dir(get_dir(sma_i))
 
-def convert_to_pps(i):
-  {
-    # HJA: We can range check here since a range of 18 to 6400 is plenty
-    # All lower bits are speed in pps
-    return(0x7fff & i)
-  }
+  smb_i = convert_to_int(smb_s)
+  # set_motor_b_dir(get_dir(smb_i))
 
-lut_cnt = 0
-def emulate(msa, msb):
-  {
-    if (++lut_cnt > len(emulate_lut)):
-    lut_cnt = 0
+  print(lut_cnt, sma_s, " sma_i =", sma_i, " pps =", convert_to_pps(sma_i))
+  print(lut_cnt, smb_s, " smb_i =", smb_i, " pps =", convert_to_pps(sma_i))
 
-    (sma_s, smb_s) = split_lut(emulate_lut[lut_cnt])
+  del_a = pps_to_delay(convert_to_pps(sma_i))
+  del_b = pps_to_delay(convert_to_pps(smb_i))
 
-    sma_i = convert_to_int(sma_s)
-    set_motor_a_dir(get_dir(sma_i))
+  print(sma_s, "del_a =", del_a, " sma_i =", sma_i)
+  sma.put(del_a)
 
-    smb_i = convert_to_int(smb_s)
-    set_motor_b_dir(get_dir(smb_i))
+  #print(smb_s, "del_b =", del_b, " smb_i =", smb_i)
+  #smb.put(del_b)
 
-    del_a = pps_to_delay(convert_to_pps(sma_i))
-    del_b = pps_to_delay(convert_to_pps(smb_i))
+  sleep(5)
 
-    sma.put(del_a)
-    smb.put(del_b)
+def main():
+  lut_cnt = -1
 
-    sleep(5)
-  }
+  while True:
+    lut_cnt = lut_cnt + 1
+    if (lut_cnt >= len(emulate_lut)):
+      print("lut_cnt to big")
+      lut_cnt = 0
+    print(lut_cnt, len(emulate_lut))
+    emulate(sma, smb, lut_cnt)
 
+if __name__ == '__main__':
+    main()
+    
 # # Set u4p the poll object
 # poll_obj = select.poll()
 # poll_obj.register(sys.stdin, select.POLLIN)
