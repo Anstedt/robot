@@ -5,17 +5,18 @@ from time import sleep
 # See PICO-Poll for comm. with PI
 @asm_pio(set_init=PIO.OUT_HIGH)
 def pulse_control():
-    label("mainloop")
+    label("main")
     pull(noblock)
     mov(x,osr)
-    set(pins, 1) [3] # Turn pin on for 4 1mhz clocks cycles or 4 us delay
-    set(pins, 0)     # Turn pin off
-    mov(y,osr)       # Now get the low delay time
-    label("delaylooplow")
-    pull(noblock)    # Keep getting the latest value or x if no new values
-    mov(x,osr)       # Remember mov() is right to left
-    jmp(y_dec, "delaylooplow")
-    jmp("mainloop") # Jump back to the beginning
+    jmp(not_x, "main")	# If x is 0 stop pulsing till we get a non-zero value
+    set(pins, 1) [3] 		# Turn pin on for 4 1mhz clocks cycles or 4 us delay
+    set(pins, 0)     		# Turn pin off
+    mov(y,osr)       		# Now get the low delay time
+    label("delay")
+    pull(noblock)    		# Keep getting the latest value or x if no new values
+    mov(x,osr)       		# Remember mov() is right to left
+    jmp(y_dec, "delay")
+    jmp("main") 		    # Jump back to the beginning
 
 sma = StateMachine(1, pulse_control, freq=1000000, set_base=Pin(16))  # Instantiate SM1, 2000 Hz, LED on pin 3
 smb = StateMachine(2, pulse_control, freq=1000000, set_base=Pin(17))  # Instantiate SM1, 2000 Hz, LED on pin 3
@@ -23,6 +24,8 @@ sma.active(1)                                                 # Start State Mach
 smb.active(2)                                                 # Start State Machine 1
 
 def pps_to_delay(val):
+  if (val <= 0):
+    return(0)
   return(int(((1/val)*1000000)/3) - 4)
 
 def get_dir(i): # integer
@@ -38,12 +41,12 @@ def convert_to_pps(i):
   return(0x7fff & i)
 
 # aFFFF is sma and b is smb, rename machines later
-emulate_lut = [ "aFFFFbFFFF",
-                "a8001b8001", # Stop, HJA hack to handle design does not handle 0 speed yet
-                "aFFF0bFFF0", # Speed up
-                "a00FFb00FF", # Slow down
-                "aFFFFbF00F", # Got different speeds
-                "a7FFFb7FFF"] # Change direction
+emulate_lut = [ "x801Ay801A",
+                "x801Ay801A", # Stop, HJA hack to handle design does not handle 0 speed yet
+                "x801Ay801A", # Speed up
+                "x801Ay801A", # Slow down
+                "x801Ay801A", # Got different speeds
+                "x801Ay801A"] # Change direction
 
 def split_lut(luts):
   sma_lut = ""
@@ -51,12 +54,13 @@ def split_lut(luts):
   lut_buf = ""
 
   if (len(luts) < 10):
+    print("Error command ", luts, " is less than 10")
     return(sma_lut, smb_lut)
 
-  i = luts.index("a") # Find ms a string start
+  i = luts.index("x") # Find ms a string start
   sma_lut = luts[i+1:i+5]
 
-  i = luts.index("b") # Find ms a string start
+  i = luts.index("y") # Find ms a string start
   smb_lut = luts[i+1:i+5]
 
   return(sma_lut, smb_lut)
@@ -79,10 +83,10 @@ def emulate(msa, msb, lut_cnt):
   print(sma_s, "del_a =", del_a, " sma_i =", sma_i)
   sma.put(del_a)
 
-  #print(smb_s, "del_b =", del_b, " smb_i =", smb_i)
-  #smb.put(del_b)
+  print(smb_s, "del_b =", del_b, " smb_i =", smb_i)
+  smb.put(del_b)
 
-  sleep(5)
+  sleep(10)
 
 def main():
   lut_cnt = -1
@@ -97,7 +101,7 @@ def main():
 
 if __name__ == '__main__':
     main()
-    
+
 # # Set u4p the poll object
 # poll_obj = select.poll()
 # poll_obj.register(sys.stdin, select.POLLIN)

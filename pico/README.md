@@ -3,6 +3,8 @@
 # Design Bug
 - Current design does not handle speeds of 0.
   - Maybe loop in sm until we get something other than 0
+  - Fixed, more cleanup and testing needed
+    - Does this fix effect timing???
 
 ## Requirements
 # PPS Range
