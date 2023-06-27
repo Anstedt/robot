@@ -18,6 +18,10 @@ def pulse_control():
     jmp(y_dec, "delay")
     jmp("main")         # Jump back to the beginning
 
+# MotorDriver encapsulates the motor interface. It loads and starts the PIO on
+# instantiation.It parses the comm string and controls the appropriate PIO
+# interfaces as well as the GPIO direction control, which is not implemented
+# yet.
 class MotorDriver:
   def __init__(self):
     self.sma = sma = StateMachine(1, pulse_control, freq=1000000, set_base=Pin(16))  # Instantiate SM1, 2000 Hz, LED on pin 3
@@ -59,11 +63,37 @@ class MotorDriver:
 
     return(sma_lut, smb_lut)
 
+  def set_motor_dir(self, m, dir):
+    print("Not Implemented dir =", dir)
+
+  # Parse input string to the 2 motors
+  def parse_com(self, s):
+    (sma_s, smb_s) = self.split_lut(s)
+
+    sma_i = self.convert_to_int(sma_s)
+    self.set_motor_dir(self.sma, self.get_dir(sma_i))
+
+    smb_i = self.convert_to_int(smb_s)
+    self.set_motor_dir(self.smb, self.get_dir(smb_i))
+
+    print(sma_s, " sma_i =", sma_i, " pps =", self.convert_to_pps(sma_i))
+    print(smb_s, " smb_i =", smb_i, " pps =", self.convert_to_pps(sma_i))
+
+    del_a = self.pps_to_delay(self.convert_to_pps(sma_i))
+    del_b = self.pps_to_delay(self.convert_to_pps(smb_i))
+
+    print(sma_s, "del_a =", del_a, " sma_i =", sma_i)
+    self.sma.put(del_a)
+
+    print(smb_s, "del_b =", del_b, " smb_i =", smb_i)
+    self.smb.put(del_b)
+
 # Test class
 print("Create motor")
 motor = MotorDriver()
-motor.sma.put(200)
-motor.smb.put(200)
+# motor.sma.put(200)
+# motor.smb.put(200)
+motor.parse_com("x83E8y83E8")
 
 sleep(10)
 # # Set u4p the poll object
