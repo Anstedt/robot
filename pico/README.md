@@ -1,5 +1,16 @@
 ## PICO as motor controller
 
+# PICO Notes:
+- You can have a multi-file application by copying the libraries/calls
+  files to the PICO before running the top-level application.
+  - See Hello.py already copied to the PICO
+  - Then run HelloApp.py from the robot/pico/examples directly. If you
+    had done this even with the Hello.py file in the examples
+    directory it would not work. Looks like Thonny normally copies
+    your HelloApp.py to the PICO before running it, which makes
+    sense. But that means that it is not using files from your local
+    directory on the host.
+
 # Design Bug
 - Current design does not handle speeds of 0.
   - Maybe loop in sm until we get something other than 0
