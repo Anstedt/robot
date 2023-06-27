@@ -88,14 +88,36 @@ class MotorDriver:
     print(smb_s, "del_b =", del_b, " smb_i =", smb_i)
     self.smb.put(del_b)
 
-# Test class
-print("Create motor")
-motor = MotorDriver()
-# motor.sma.put(200)
-# motor.smb.put(200)
-motor.parse_com("x83E8y83E8")
+#
+# Test System
+#
+# xFFFF is sma and y is smb, upper but for each motor is direction
+emulate_lut = [ "x8012y8012", # 18
+                "x8064y8064", # 100 Stop, HJA hack to handle design does not handle 0 speed yet
+                "x80C8y80C8", # 200 Speed up
+                "x8190y8190", # 400 Slow down
+                "x83E8y83E8", # 1000 Got different speeds
+                "x87D0y87D0", # 2000
+                "x8000y8000"] # Stop
 
-sleep(10)
+def main():
+  lut_cnt = -1
+  print("Create motor")
+  motor = MotorDriver()
+
+  while True:
+    lut_cnt = lut_cnt + 1
+    if (lut_cnt >= len(emulate_lut)):
+      print("lut_cnt to big")
+      lut_cnt = 0
+    # Send current message from lut to motor
+    motor.parse_com(emulate_lut[lut_cnt])
+    sleep(10)
+    
+if __name__ == '__main__':
+  main()
+    
+# Test class
 # # Set u4p the poll object
 # poll_obj = select.poll()
 # poll_obj.register(sys.stdin, select.POLLIN)
