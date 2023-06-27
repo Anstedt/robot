@@ -1,6 +1,6 @@
 from rp2 import PIO, StateMachine, asm_pio
 from machine import Pin
-from time import sleep
+from time import sleep, sleep_ms, sleep_us, ticks_us
 
 # See PICO-Poll for comm. with PI
 @asm_pio(set_init=PIO.OUT_HIGH)
@@ -34,9 +34,13 @@ class MotorDriver:
       return(0)
     return(int(((1/val)*1000000)/3) - 4)
 
+  # For now we will assume 1 is forward, 2 is reverse.
+  # Remeber we need to handle that each motor is opposite the other
   def get_dir(self, i): # integer
-    # Upper bit is direction
-    return(0x8000 & i)
+    if (0x8000 & i):
+      return(1)
+    else:
+      return(0)
 
   def convert_to_int(self, s):
     return(int(s, 16))
@@ -64,7 +68,9 @@ class MotorDriver:
     return(sma_lut, smb_lut)
 
   def set_motor_dir(self, m, dir):
-    print("Not Implemented dir =", dir)
+    # When implemented we will need to check which motor we are and reverse direction for one versus the other
+    # print("Not Implemented dir =", dir)
+    return()
 
   # Parse input string to the 2 motors
   def parse_com(self, s):
@@ -76,43 +82,55 @@ class MotorDriver:
     smb_i = self.convert_to_int(smb_s)
     self.set_motor_dir(self.smb, self.get_dir(smb_i))
 
-    print(sma_s, " sma_i =", sma_i, " pps =", self.convert_to_pps(sma_i))
-    print(smb_s, " smb_i =", smb_i, " pps =", self.convert_to_pps(sma_i))
+    # print(sma_s, " sma_i =", sma_i, " pps =", self.convert_to_pps(sma_i))
+    # print(smb_s, " smb_i =", smb_i, " pps =", self.convert_to_pps(sma_i))
 
     del_a = self.pps_to_delay(self.convert_to_pps(sma_i))
     del_b = self.pps_to_delay(self.convert_to_pps(smb_i))
 
-    print(sma_s, "del_a =", del_a, " sma_i =", sma_i)
+    #print(sma_s, "del_a =", del_a, " sma_i =", sma_i)
+    if (self.sma.tx_fifo() != 0):
+        print("sma buffer =", self.sma.tx_fifo())
     self.sma.put(del_a)
-
-    print(smb_s, "del_b =", del_b, " smb_i =", smb_i)
+          
+    #print(smb_s, "del_b =", del_b, " smb_i =", smb_i)
+    if (self.smb.tx_fifo() != 0):
+        print("smb buffer =", self.smb.tx_fifo())
     self.smb.put(del_b)
 
 #
 # Test System
 #
 # xFFFF is sma and y is smb, upper but for each motor is direction
-emulate_lut = [ "x8012y8012", # 18
-                "x8064y8064", # 100 Stop, HJA hack to handle design does not handle 0 speed yet
-                "x80C8y80C8", # 200 Speed up
+emulate_lut = [ "x8120y8120", # 18
+                "x8640y8640", # 100 Stop, HJA hack to handle design does not handle 0 speed yet
+                "x8C80y8C80", # 200 Speed up
                 "x8190y8190", # 400 Slow down
                 "x83E8y83E8", # 1000 Got different speeds
                 "x87D0y87D0", # 2000
-                "x8000y8000"] # Stop
+                "x8F00y8F00"] # Stop
 
 def main():
   lut_cnt = -1
+  ticks4ms = 0
   print("Create motor")
   motor = MotorDriver()
-
+  ticks = ticks_us()
+  
   while True:
     lut_cnt = lut_cnt + 1
     if (lut_cnt >= len(emulate_lut)):
-      print("lut_cnt to big")
+      # print("lut_cnt to big")
       lut_cnt = 0
     # Send current message from lut to motor
     motor.parse_com(emulate_lut[lut_cnt])
-    sleep(10)
+    sleep_us(3000) # Tune sleep by experminetation for 250hz
+    ticks4ms += 1
+    if (ticks4ms >= 250):
+      time_diff = (ticks_us() - ticks) / 1000000
+      ticks = ticks_us()
+      print("ticks4ms = ", ticks4ms, " time seconds =" , time_diff)
+      ticks4ms = 0
     
 if __name__ == '__main__':
   main()
