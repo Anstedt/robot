@@ -7,16 +7,16 @@ from time import sleep
 def pulse_control():
     label("main")
     pull(noblock)
-    mov(x,osr)
-    jmp(not_x, "main")	# If x is 0 stop pulsing till we get a non-zero value
-    set(pins, 1) [3] 		# Turn pin on for 4 1mhz clocks cycles or 4 us delay
-    set(pins, 0)     		# Turn pin off
-    mov(y,osr)       		# Now get the low delay time
+    mov(x,osr)          # save x so a pull without data returns x
+    jmp(not_x, "main")  # If x is 0 stop pulsing till we get a non-zero value
+    set(pins, 1) [3]    # Turn pin on for 4 1mhz clocks cycles or 4 us delay
+    set(pins, 0)        # Turn pin off
+    mov(y,osr)          # Now get the low delay time
     label("delay")
-    pull(noblock)    		# Keep getting the latest value or x if no new values
-    mov(x,osr)       		# Remember mov() is right to left
+    pull(noblock)       # Keep getting the latest value or x if no new values
+    mov(x,osr)          # Remember mov() is right to left
     jmp(y_dec, "delay")
-    jmp("main") 		    # Jump back to the beginning
+    jmp("main")         # Jump back to the beginning
 
 sma = StateMachine(1, pulse_control, freq=1000000, set_base=Pin(16))  # Instantiate SM1, 2000 Hz, LED on pin 3
 smb = StateMachine(2, pulse_control, freq=1000000, set_base=Pin(17))  # Instantiate SM1, 2000 Hz, LED on pin 3
@@ -41,12 +41,13 @@ def convert_to_pps(i):
   return(0x7fff & i)
 
 # aFFFF is sma and b is smb, rename machines later
-emulate_lut = [ "x801Ay801A",
-                "x801Ay801A", # Stop, HJA hack to handle design does not handle 0 speed yet
-                "x801Ay801A", # Speed up
-                "x801Ay801A", # Slow down
-                "x801Ay801A", # Got different speeds
-                "x801Ay801A"] # Change direction
+emulate_lut = [ "x8012y8012", # 18
+                "x8064y8064", # 100 Stop, HJA hack to handle design does not handle 0 speed yet
+                "x80C8y80C8", # 200 Speed up
+                "x8190y8190", # 400 Slow down
+                "x83E8y83E8", # 1000 Got different speeds
+                "x87D0y87D0", # 2000
+                "x8000y8000"] # Stop
 
 def split_lut(luts):
   sma_lut = ""
