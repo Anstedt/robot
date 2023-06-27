@@ -24,19 +24,20 @@ smb = StateMachine(2, pulse_control, freq=1000000, set_base=Pin(17))  # Instanti
 sma.active(1)                                                 # Start State Machine 1
 smb.active(2)                                                 # Start State Machine 1
 
-emul_pi = EmulatePI()
+emul_pi = EmulatePI(sma, smb)
 
 def main():
   lut_cnt = -1
   lut_len = emul_pi.lut_len() # Does not change while running
   
+  print("Enter loop")
   while True:
     lut_cnt = lut_cnt + 1
     if (lut_cnt >= lut_len):
       print("lut_cnt to big")
       lut_cnt = 0
-    print(lut_cnt, len(emulate_lut))
-    emul_pi.emulate(sma, smb, lut_cnt)
+    print(lut_cnt, lut_len)
+    emul_pi.emulate(lut_cnt)
 
     sleep(5)
     

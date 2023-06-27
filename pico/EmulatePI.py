@@ -1,7 +1,17 @@
-class EmulatePI:
-  def __init__(self, msa, msb):
-    self.lut_cnt = 0
+class EmulatePI():
+  def __init__(self, sma, smb):
+    self.sma = sma
+    self.smb = smb
 
+    # aFFFF is sma and b is smb, rename machines later
+    self.emulate_lut = [ "x8012y8012", # 18
+                         "x8064y8064", # 100 Stop, HJA hack to handle design does not handle 0 speed yet
+                         "x80C8y80C8", # 200 Speed up
+                         "x8190y8190", # 400 Slow down
+                         "x83E8y83E8", # 1000 Got different speeds
+                         "x87D0y87D0", # 2000
+                         "x8000y8000"] # Stop
+    
   def pps_to_delay(self, val):
     if (val <= 0):
       return(0)
@@ -19,18 +29,9 @@ class EmulatePI:
     # All lower bits are speed in pps
     return(0x7fff & i)
 
-  # aFFFF is sma and b is smb, rename machines later
-  emulate_lut = [ "x8012y8012", # 18
-                  "x8064y8064", # 100 Stop, HJA hack to handle design does not handle 0 speed yet
-                  "x80C8y80C8", # 200 Speed up
-                  "x8190y8190", # 400 Slow down
-                  "x83E8y83E8", # 1000 Got different speeds
-                  "x87D0y87D0", # 2000
-                  "x8000y8000"] # Stop
-
-  def get_lut_len(self):
-    print("lut_len= ", len(emulate_lut))
-    return(len(emulate_lut))
+  def lut_len(self):
+    print("lut_len= ", len(self.emulate_lut))
+    return(len(self.emulate_lut))
   
   def split_lut(self, luts):
     sma_lut = ""
@@ -49,23 +50,23 @@ class EmulatePI:
 
     return(sma_lut, smb_lut)
 
-  def emulate(self, msa, msb, lut_cnt):
-    (sma_s, smb_s) = split_lut(emulate_lut[lut_cnt])
+  def emulate(self, lut_cnt):
+    (sma_s, smb_s) = self.split_lut(self.emulate_lut[lut_cnt])
 
-    sma_i = convert_to_int(sma_s)
+    sma_i = self.convert_to_int(sma_s)
     # set_motor_a_dir(get_dir(sma_i))
 
-    smb_i = convert_to_int(smb_s)
+    smb_i = self.convert_to_int(smb_s)
     # set_motor_b_dir(get_dir(smb_i))
 
-    print(lut_cnt, sma_s, " sma_i =", sma_i, " pps =", convert_to_pps(sma_i))
-    print(lut_cnt, smb_s, " smb_i =", smb_i, " pps =", convert_to_pps(sma_i))
+    print(lut_cnt, sma_s, " sma_i =", sma_i, " pps =", self.convert_to_pps(sma_i))
+    print(lut_cnt, smb_s, " smb_i =", smb_i, " pps =", self.convert_to_pps(sma_i))
 
-    del_a = pps_to_delay(convert_to_pps(sma_i))
-    del_b = pps_to_delay(convert_to_pps(smb_i))
+    del_a = self.pps_to_delay(self.convert_to_pps(sma_i))
+    del_b = self.pps_to_delay(self.convert_to_pps(smb_i))
 
     print(sma_s, "del_a =", del_a, " sma_i =", sma_i)
-    sma.put(del_a)
+    self.sma.put(del_a)
 
     print(smb_s, "del_b =", del_b, " smb_i =", smb_i)
-    smb.put(del_b)
+    self.smb.put(del_b)
