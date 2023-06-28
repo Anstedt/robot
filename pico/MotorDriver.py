@@ -2,6 +2,9 @@ from rp2 import PIO, StateMachine, asm_pio
 from machine import Pin
 from time import sleep, sleep_ms, sleep_us, ticks_us
 
+import select
+import sys
+
 # See PICO-Poll for comm. with PI
 @asm_pio(set_init=PIO.OUT_HIGH)
 def pulse_control():
@@ -82,8 +85,8 @@ class MotorDriver:
     smb_i = self.convert_to_int(smb_s)
     self.set_motor_dir(self.smb, self.get_dir(smb_i))
 
-    # print(sma_s, " sma_i =", sma_i, " pps =", self.convert_to_pps(sma_i))
-    # print(smb_s, " smb_i =", smb_i, " pps =", self.convert_to_pps(sma_i))
+    print(sma_s, " sma_i =", sma_i, " pps =", self.convert_to_pps(sma_i))
+    print(smb_s, " smb_i =", smb_i, " pps =", self.convert_to_pps(smb_i))
 
     del_a = self.pps_to_delay(self.convert_to_pps(sma_i))
     del_b = self.pps_to_delay(self.convert_to_pps(smb_i))
@@ -92,7 +95,7 @@ class MotorDriver:
     if (self.sma.tx_fifo() != 0):
         print("sma buffer =", self.sma.tx_fifo())
     self.sma.put(del_a)
-          
+
     #print(smb_s, "del_b =", del_b, " smb_i =", smb_i)
     if (self.smb.tx_fifo() != 0):
         print("smb buffer =", self.smb.tx_fifo())
@@ -100,6 +103,10 @@ class MotorDriver:
 
 #
 # Test System
+#
+
+#
+# Test System 1 sends test commands to the MotorDriver and times the sequencing
 #
 # xFFFF is sma and y is smb, upper but for each motor is direction
 emulate_lut = [ "x8120y8120", # 18
@@ -110,13 +117,13 @@ emulate_lut = [ "x8120y8120", # 18
                 "x87D0y87D0", # 2000
                 "x8F00y8F00"] # Stop
 
-def main():
+def main_1():
   lut_cnt = -1
   ticks4ms = 0
   print("Create motor")
   motor = MotorDriver()
   ticks = ticks_us()
-  
+
   while True:
     lut_cnt = lut_cnt + 1
     if (lut_cnt >= len(emulate_lut)):
@@ -131,10 +138,41 @@ def main():
       ticks = ticks_us()
       print("ticks4ms = ", ticks4ms, " time seconds =" , time_diff)
       ticks4ms = 0
-    
+
+#
+# Test System 2 reads data from the USB port, raspberry pi, and sends it to the MotorDriver
+# Thonny cannot be used since it controls the USB connection
+#
+def main():
+  # Create a motor
+  motor = MotorDriver()
+
+  # Set up the poll object
+  poll_obj = select.poll()
+  poll_obj.register(sys.stdin, select.POLLIN)
+
+  print("Start poll loop")
+  # Loop indefinitely
+  while True:
+    # Wait for input on stdin
+    poll_results = poll_obj.poll(1) # the '1' is how long it will wait for message before looping again (in microseconds)
+    if poll_results:
+      # Read the data from stdin (read data coming from PC)
+      data = sys.stdin.readline().strip()
+
+      # Send current message from lut to motor
+      motor.parse_com(data)
+
+      # Write the data to the input file (print sends data back over USB to the PC)
+      # print(data, len(data))
+    else:
+      # do something if no message received (like feed a watchdog timer)
+      continue
+
+
 if __name__ == '__main__':
   main()
-    
+
 # Test class
 # # Set u4p the poll object
 # poll_obj = select.poll()
