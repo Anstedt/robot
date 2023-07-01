@@ -45,7 +45,7 @@ FUNCTION: Gyro::~Gyro()
 Gyro::~Gyro()
 {
   delete p_mpu6050;
-  
+
   SLOG << "~GYRO NOT RUNNING gpioTerminate" << std::endl;
   // gpioTerminate(); // Now that the MPU6050 is gone we can close pigpio
 
@@ -127,13 +127,13 @@ int Gyro::Run(void)
     {
       m_callback(m_gyro_Y_data_raw, m_gyro_X_data_raw, m_angle_gyro, m_angle_acc);
     }
-    
+
     RateControlDelay(); // Control Loop Rate
-    
+
     // CallBack now has all data
     // SLOG << "Angle Gyro=" << m_angle_gyro << "\tAngle Accelerometer=" << m_angle_acc << "\tGyro X=" << m_gyro_X_data_raw << "\tGyro Y=" << m_gyro_Y_data_raw << std::endl;
   }
-  
+
   SLOG << "Gyro:Run() DONE in a separate thread : " << (gpioTick() - elapsed) << "us" << std::endl;
 
   return(ThreadReturn());
@@ -141,7 +141,7 @@ int Gyro::Run(void)
 
 /*------------------------------------------------------------------------------
 FUNCTION:  int Gyro::RateControlDelay()
-PURPOSE:   Control the thread rate using an average 
+PURPOSE:   Control the thread rate using an average
 
 ARGUMENTS: None
 RETURNS:   None
@@ -150,7 +150,9 @@ unsigned int Gyro::RateControlDelay()
 {
   uint32_t app_time = 0;
   uint32_t tick = 0;
-  
+
+  struct timespec ts = { 0, ((4 % 1000) * 1000 * 1000) };
+
   // How much time did we use since we got here last, this is only the
   // application time. No we set m_timer so it does not include the sleep
 
@@ -161,13 +163,14 @@ unsigned int Gyro::RateControlDelay()
   int x = m_timer - tick; // The time it took to get back here
   app_time = abs(x);
 
-  // Average the app time, we assume WaitTimer works well
+  // Average the app time, we assume nanosleep works well
   // Testing of nanosleep on average was off by 62us
   m_avgtime = (m_avgtime - ((m_avgtime)/50)) + (app_time/50);
-  
+
   // Subtract the average time from the thread period we want
   // This gets our rate to be close to our needed period
-  m_waittimer.Sleep(PRIMARY_THREAD_PERIOD - m_avgtime);
+  ts.tv_nsec =  ((PRIMARY_THREAD_PERIOD - m_avgtime) * 1000);
+  nanosleep(&ts, NULL);
 
   // Capture the average period
   tick = gpioTick();
@@ -183,8 +186,17 @@ unsigned int Gyro::RateControlDelay()
     m_heartbeat = 0;
     g_heartbeat_driver = 0;
   }
-  
+
+  // if (app_time < 2000)
+  //   printf("m_avgtime=%u <2000 app_time=%u rate=%d\n", m_avgtime, app_time, rate);
+  // else if  (app_time < 3000)
+  //   printf("m_avgtime=%u <3000 app_time=%u rate=%d ##\n", m_avgtime, app_time, rate);
+  // else if  (app_time < 4000)
+  //   printf("m_avgtime=%u <4000 app_time=%u rate=%d ####\n", m_avgtime, app_time, rate);
+  // else
+  //   printf("m_avgtime=%u >4000 app_time=%u rate=%d ########\n", m_avgtime, app_time, rate);
+
   m_timer = gpioTick();
-      
+
   return(0);
 }

@@ -11,9 +11,6 @@ PURPOSE:  Hardware based configs for the robot
 #ifndef CONFIG_H
 #define CONFIG_H
 
-#include "StandardTypes.h"
-#include "rpi4-stepper.h"
-
 #include<cmath>
 
 // Converts degrees to radians.
