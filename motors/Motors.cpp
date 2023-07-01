@@ -21,6 +21,11 @@ sudo ./Motors
 /* CLASSES ********************************************************************/
 /* FUNCTIONS ******************************************************************/
 // HJAPID m_pid(&m_input_degrees, &m_output_speed, &m_setpoint, PID_Kp, PID_Ki, PID_Kd, DIRECT)
+/*------------------------------------------------------------------------------
+FUNCTION:  Motors::Motors()
+
+PURPOSE:   Uses PICO as motor controller
+------------------------------------------------------------------------------*/
 Motors::Motors()
 {
   char tty[] = "/dev/ttyACM0";
@@ -60,6 +65,13 @@ Motors::Motors()
   gpioTerminate();
 }
 
+/*------------------------------------------------------------------------------
+FUNCTION:  bool Motors::AddGyroData(int y, int x, float angle_gyro, float angle_acc)
+PURPOSE:   Receives Gyro data, processed data, then sends new command to PICO
+
+ARGUMENTS: None
+RETURNS:   None
+------------------------------------------------------------------------------*/
 bool Motors::AddGyroData(int y, int x, float angle_gyro, float angle_acc)
 {
   unsigned int speed; // The pulses per second for the motors, using angle AND mode
@@ -75,6 +87,13 @@ bool Motors::AddGyroData(int y, int x, float angle_gyro, float angle_acc)
   return(true);
 }
 
+/*------------------------------------------------------------------------------
+FUNCTION:  bool Motors::SendCmd(int speed, int distance)
+PURPOSE:   HJA Needs to send commands to PICO
+
+ARGUMENTS: 
+RETURNS:   
+------------------------------------------------------------------------------*/
 bool Motors::SendCmd(int speed, int distance)
 {
   int dir = 0;
@@ -90,11 +109,19 @@ bool Motors::SendCmd(int speed, int distance)
   return(true);
 }
 
+/*------------------------------------------------------------------------------
+FUNCTION:  unsigned int Motors::AngleToSpeed(float angle, int* distance)
+PURPOSE:   HJA Using PID control to adjust motor speed and distance. Maybe
+           should be speed and direction and set direction -1/0/1 where 0 also
+           changes speed to 0.
 
-u32 Motors::AngleToSpeed(float angle, s32* distance)
+ARGUMENTS: None
+RETURNS:   None
+------------------------------------------------------------------------------*/
+unsigned int Motors::AngleToSpeed(float angle, int* distance)
 {
   bool dist_reverse = false;
-  u32 speed = 0;
+  unsigned int speed = 0;
   
   m_input_degrees = angle; // This has a range of +/-180
   m_setpoint = 0; // HJA really never changes but we make sure it is set here
@@ -123,6 +150,31 @@ u32 Motors::AngleToSpeed(float angle, s32* distance)
   return(speed);
 }
 
+/*------------------------------------------------------------------------------
+FUNCTION:  bool Motors::Move(int direction, unsigned int speed)
+PURPOSE:   HJA not used yet
+
+ARGUMENTS: None
+RETURNS:   None
+------------------------------------------------------------------------------*/
+bool Motors::Move(int direction, unsigned int speed)
+{
+  return(true);
+}
+
+/*------------------------------------------------------------------------------
+FUNCTION:  bool Motors::Turn(int degrees)
+PURPOSE:   HJA not used yet
+
+ARGUMENTS: None
+RETURNS:   None
+------------------------------------------------------------------------------*/
+bool Motors::Turn(int degrees)
+{
+  return(true);
+}
+
+// HJA for testing
 int main()
 {
   Motors* p_motors = new Motors();

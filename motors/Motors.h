@@ -31,7 +31,6 @@ public:
   // Mutators: non-const operations
   bool SendCmd(int speed, int distance);
   bool AddGyroData(int pitch, int yaw, float angle_acc, float angle_gyro);
-  bool SetMotorsMode(int mode);
   bool Move(int direction, unsigned int speed);
   bool Turn(int degrees); // Cause robot to rotate, +/- degrees specifies  direction of rotation
   // Accessors: const operations
