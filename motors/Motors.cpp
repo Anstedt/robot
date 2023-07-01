@@ -2,11 +2,11 @@
 PACKAGE: Robot
 FILE:    Motors.cpp
 
-PURPOSE: Interface to PICO for motor control 
+PURPOSE: Interface to PICO for motor control
 *******************************************************************************/
 
 /* NOTES ***********************************************************************
-clear ; g++ Motors.cpp -o Motors -l pigpio -I ../sys -I ../ -I .
+clear ; g++ Motors.cpp -o MotorsTest -l pigpio -I ../sys -I ../ -I . -DMOTORS_TEST
 sudo ./Motors
 *******************************************************************************/
 
@@ -29,10 +29,10 @@ PURPOSE:   Uses PICO as motor controller
 Motors::Motors()
 {
   char tty[] = "/dev/ttyACM0";
-  
+
   printf("Hello World\n");
 
-  
+
   if (gpioInitialise() < 0)
   {
     printf("gpio init failed\n");
@@ -50,13 +50,13 @@ Motors::Motors()
       printf("wr=%d\n", wr);
 
     sleep(1);
-    
+
     char buf[100];
     memset(&buf, '\0', sizeof(buf));
     int rr = serRead(serial, buf, sizeof(buf));
     if (rr >=0)
       printf("rr=\%d\n%s", rr, buf);
-          
+
     serClose(serial);
   }
   else
@@ -76,12 +76,12 @@ bool Motors::AddGyroData(int y, int x, float angle_gyro, float angle_acc)
 {
   unsigned int speed; // The pulses per second for the motors, using angle AND mode
   int distance; // Distance based on speed, mode, as well as 250Hz thread rate
-   
+
   // HJA SLOG << "Angle Gyro=" << angle_gyro << "\tAngle Accel=" << angle_acc << "\tGyro Y=" << y << "\tGyro X=" << x << std::endl;
-  
+
   // Find the speed we need, then the distance
   speed = AngleToSpeed(angle_gyro, &distance);
-  
+
   SendCmd(speed, distance); // Send the speed and distance, really direction, to PICO
 
   return(true);
@@ -91,8 +91,8 @@ bool Motors::AddGyroData(int y, int x, float angle_gyro, float angle_acc)
 FUNCTION:  bool Motors::SendCmd(int speed, int distance)
 PURPOSE:   HJA Needs to send commands to PICO
 
-ARGUMENTS: 
-RETURNS:   
+ARGUMENTS:
+RETURNS:
 ------------------------------------------------------------------------------*/
 bool Motors::SendCmd(int speed, int distance)
 {
@@ -104,7 +104,7 @@ bool Motors::SendCmd(int speed, int distance)
     dir = 1;
   else
     dir = 0;
-  
+
   // Now build strings for PICO
   return(true);
 }
@@ -122,10 +122,10 @@ unsigned int Motors::AngleToSpeed(float angle, int* distance)
 {
   bool dist_reverse = false;
   unsigned int speed = 0;
-  
+
   m_input_degrees = angle; // This has a range of +/-180
   m_setpoint = 0; // HJA really never changes but we make sure it is set here
-    
+
   // After everything is setup in the constructor we are ready to go
   // HJAPID m_pid.Compute();
 
@@ -139,14 +139,14 @@ unsigned int Motors::AngleToSpeed(float angle, int* distance)
   }
 
   speed = m_output_speed;
-  
+
   // Make sure the driver has enough distance even if we are 2 periods late
   *distance = (speed / PRIMARY_THREAD_RATE) * 2;
 
   // negate distance if speed was negative, note at this point speed is positive
   if (dist_reverse)
     *distance *= -1;
-  
+
   return(speed);
 }
 
@@ -175,11 +175,13 @@ bool Motors::Turn(int degrees)
 }
 
 // HJA for testing
+#ifdef MOTORS_TEST
 int main()
 {
   Motors* p_motors = new Motors();
 
   delete p_motors;
 }
+#endif
 
 /* METHODS ********************************************************************/

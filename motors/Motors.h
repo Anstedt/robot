@@ -6,7 +6,7 @@ PURPOSE: Interface to PICO for motor control
 *******************************************************************************/
 
 /* NOTES ***********************************************************************
-clear ; g++ Motors.cpp -o Motors -l pigpio -I ../sys -I ../ -I .
+clear ; g++ Motors.cpp -o MotorsTest -l pigpio -I ../sys -I ../ -I . -DMOTORS_TEST
 sudo ./Motors
 *******************************************************************************/
 
