@@ -15,6 +15,8 @@ sudo ./Motors
 
 /* INCLUDE ********************************************************************/
 #include "PID_v1.h"
+#include <string>
+#include <iomanip>
 
 /* CLASSES ********************************************************************/
 /*------------------------------------------------------------------------------
@@ -29,9 +31,9 @@ public:
   // Constructors
   Motors();
   // Mutators: non-const operations
-  bool SendCmd(int speed, int distance);
+  bool SendCmd(unsigned int speed, int distance);
   bool AddGyroData(int pitch, int yaw, float angle_acc, float angle_gyro);
-  bool Move(int direction, unsigned int speed);
+  bool Move(unsigned int speed, unsigned int dir);
   bool Turn(int degrees); // Cause robot to rotate, +/- degrees specifies  direction of rotation
   // Accessors: const operations
   unsigned int AngleToSpeed(float angle, int* distance);
@@ -42,6 +44,7 @@ private:
   // Local Classes
   // Constructors
   // Mutators: non-const operations
+  bool ConvertCmdToHex(unsigned int speed, unsigned int dir);
   // Accessors: const operations
   // Static and friend functions
   // Memory management
@@ -72,13 +75,36 @@ private:
   // HJAPID PID m_pid;
 
   double m_input_degrees, m_output_speed, m_setpoint;
-  
-  int m_motor1_dir = 0;
-  int m_motor2_dir = 0;
+
+  unsigned int m_motor1_dir = 0;
+  unsigned int m_motor1_dir_adj = 0; // HJA future for Move and Turn commands
   int m_motor1_speed = 0;
+  int m_motor1_speed_adj = 0;  // HJA future for Move and Turn commands
+  unsigned int m_motor2_dir = 0;
+  unsigned int m_motor2_dir_adj = 0;
   int m_motor2_speed = 0;  
+  int m_motor2_speed_adj = 0;  
   // Static (shared) class variables
 };
 
+template< typename T >
+std::string int_to_hex( T i )
+{
+  std::stringstream stream;
+  stream << std::setfill ('0') << std::setw(sizeof(T)*1) << std::uppercase
+         << std::hex << i;
+  return stream.str();
+} 
+
+// Original
+// template< typename T >
+// std::string int_to_hex( T i )
+// {
+//   std::stringstream stream;
+//   stream << "0x" 
+//          << std::setfill ('0') << std::setw(sizeof(T)*2) 
+//          << std::hex << i;
+//   return stream.str();
+// }
 
 #endif /* MOTORS_H */
