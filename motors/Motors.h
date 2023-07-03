@@ -2,7 +2,7 @@
 PACKAGE: Robot
 FILE:    Motors.h
 
-PURPOSE: Interface to PICO for motor control 
+PURPOSE: Interface to PICO for motor control
 *******************************************************************************/
 
 /* NOTES ***********************************************************************
@@ -69,12 +69,14 @@ private:
   // there fast enough.
 
   // Kd is the derivative. It helps with overshoot.
-  
+
   // Direction: Either DIRECT or REVERSE. determines which direction the output will move when faced with a given error. DIRECT is most common.
   // PID(input, output, set_point, Kp, Ki, Kd, DIRECT);
   // HJAPID PID m_pid;
 
   double m_input_degrees, m_output_speed, m_setpoint;
+
+  int m_serial = -1;
 
   unsigned int m_motor1_dir = 0;
   unsigned int m_motor1_dir_adj = 0; // HJA future for Move and Turn commands
@@ -82,27 +84,33 @@ private:
   int m_motor1_speed_adj = 0;  // HJA future for Move and Turn commands
   unsigned int m_motor2_dir = 0;
   unsigned int m_motor2_dir_adj = 0;
-  int m_motor2_speed = 0;  
-  int m_motor2_speed_adj = 0;  
+  int m_motor2_speed = 0;
+  int m_motor2_speed_adj = 0;
   // Static (shared) class variables
 };
 
 template< typename T >
-std::string int_to_hex( T i )
+std::string int_to_hex(T mx,  T my)
 {
   std::stringstream stream;
-  stream << std::setfill ('0') << std::setw(sizeof(T)*1) << std::uppercase
-         << std::hex << i;
+  stream << "x"
+         << std::setfill ('0') << std::setw(sizeof(T)*1) << std::uppercase
+         << std::hex << mx
+         << "y"
+         << std::setfill ('0') << std::setw(sizeof(T)*1) << std::uppercase
+         << std::hex << my
+         << "\n";
+
   return stream.str();
-} 
+}
 
 // Original
 // template< typename T >
 // std::string int_to_hex( T i )
 // {
 //   std::stringstream stream;
-//   stream << "0x" 
-//          << std::setfill ('0') << std::setw(sizeof(T)*2) 
+//   stream << "0x"
+//          << std::setfill ('0') << std::setw(sizeof(T)*2)
 //          << std::hex << i;
 //   return stream.str();
 // }

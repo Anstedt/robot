@@ -32,8 +32,7 @@ PURPOSE:   Uses PICO as motor controller
 Motors::Motors()
 {
   char tty[] = "/dev/ttyACM0";
-  int serial = -1;
-  
+
   printf("Hello World\n");
 
   if (gpioInitialise() < 0)
@@ -41,22 +40,24 @@ Motors::Motors()
     printf("gpio init failed\n");
   }
 
-  serial = serOpen(tty, 115200, 0);
+  m_serial = serOpen(tty, 115200, 0);
 
-  if (serial >= 0)
+  if (m_serial >= 0)
   {
-    printf("serial=%s\n", serial);
+    printf("m_serial=%s\n", m_serial);
 
-    char mystr[] = "x00FFy0F00\n";
-    int wr = serWrite(serial, mystr, 11);
+    std::string mystr = "x00FFy0F00\n";
+    // char mystr[] = "x00FFy0F00\n";
+    int wr = serWrite(m_serial, (char *)mystr.c_str(), 11);
     if (wr != 0)
       printf("wr=%d\n", wr);
 
     sleep(1);
 
     char buf[100];
+    
     memset(&buf, '\0', sizeof(buf));
-    int rr = serRead(serial, buf, sizeof(buf));
+    int rr = serRead(m_serial, buf, sizeof(buf));
     if (rr >=0)
       printf("rr=\%d\n%s", rr, buf);
 
@@ -64,11 +65,11 @@ Motors::Motors()
     SendCmd(60, -10); // speed, distance
     SendCmd(200, 10); // speed, distance
     SendCmd(7000, 10); // speed, distance
-    
-    serClose(serial);
+
+    serClose(m_serial);
   }
   else
-    printf("ERROR: serial=%s", serial);
+    printf("ERROR: m_serial=%s", m_serial);
 
   gpioTerminate();
 }
@@ -105,27 +106,25 @@ RETURNS:
 bool Motors::SendCmd(unsigned int speed, int distance)
 {
   int dir = 0;
-  
+
   // Distance controls direction and speed if 0
   if (distance == 0)
     speed = 0;
   else if (distance > 0)
-    dir = 1;
+    dir = 1; // Forward
   else
     dir = 0;
 
-  std::cout << "dir=" << dir << std::endl;
-  
-  // This controls both motors, true robot dir handled by PICO
+  // This controls both motors, directions adjusted by PICO
   ConvertCmdToHex(speed, dir);
-  
+
   // Now build strings for PICO
   return(true);
 }
 
 /*------------------------------------------------------------------------------
 FUNCTION:  bool Motors::ConvertCmdToHex(unsigned int speed, unsigned int dir)
-PURPOSE:   
+PURPOSE:
 
 ARm_motor1_speedGUMENTS: None
 RETURNS:   None
@@ -135,38 +134,29 @@ bool Motors::ConvertCmdToHex(unsigned int speed, unsigned int dir)
   unsigned int set_dir_bit;
 
   // Default motors to the same speed
+  // HJA Future Adjust speed based on Move and Turn commands
   m_motor1_speed = speed;
   m_motor2_speed = speed;
 
+  // HJA Future Adjust direction based on Move and Turn commands
   if (dir > 0)
     set_dir_bit = 32768;
   else
     set_dir_bit = 0;
 
-  std::cout << "dir=" << dir << " bit=" << set_dir_bit << std::endl;
-  
-  std::string m1s = "x" + int_to_hex(speed + set_dir_bit);
-  std::string m2s = "y" + int_to_hex(speed + set_dir_bit);
-
-  std::cout << m1s << " " << m2s << std::endl;
-
-  std::string motors = m1s + m2s + "\n";
-  
-  char* c_string = new char[motors.size() + 1];
-  memcpy(c_string, motors.c_str(), motors.size() + 1);
-  
-  // mds = motors.c_str();
-  
-  std::cout << "  motors=" << motors; // No need since "/n" appended above << std::endl;
-  std::cout << "c_string=" << c_string; // No need since "/n" appended above << std::endl;
-  // HJA Future Adjust speed based on Move and Turn commands
-
   // Default motors to the same direction
-  // If 1 add 8000h or 
-  m_motor1_dir = dir;
-  m_motor2_dir = dir;
+  m_motor1_dir = set_dir_bit;
+  m_motor2_dir = set_dir_bit;
 
-  // HJA Future Adjust direction based on Move and Turn commands
+  std::string motors = int_to_hex(m_motor1_speed + m_motor1_dir, m_motor2_speed + m_motor1_dir);
+
+  // HJA cast testing int wr = serWrite(m_serial, (char *)motors.c_str(), 11);
+  // HJA HJA No need for copy to c_string since (char *)motors.c_str() works fine
+  // char* c_string = new char[motors.size() + 1];
+  // memcpy(c_string, motors.c_str(), motors.size() + 1);
+
+  std::cout << "  motors=" << motors;   // No need since "/n" appended above
+  // std::cout << "c_string=" << c_string; // No need since "/n" appended above
 
   return(true);
 }
