@@ -27,8 +27,8 @@ def pulse_control():
 # yet.
 class MotorDriver:
   def __init__(self):
-    self.sma = sma = StateMachine(1, pulse_control, freq=1000000, set_base=Pin(16))  # Instantiate SM1, 2000 Hz, LED on pin 3
-    self.smb = StateMachine(2, pulse_control, freq=1000000, set_base=Pin(17))  # Instantiate SM1, 2000 Hz, LED on pin 3
+    self.sma = StateMachine(1, pulse_control, freq=1000000, set_base=Pin(16))  # Instantiate SM1, GPIO16
+    self.smb = StateMachine(2, pulse_control, freq=1000000, set_base=Pin(18))  # Instantiate SM2, GPIO18
     self.sma.active(1)                                                 # Start State Machine 1
     self.smb.active(2)                                                 # Start State Machine 1
 
