@@ -31,7 +31,7 @@ public:
   // Constructors
   Motors();
   // Mutators: non-const operations
-  bool SendCmd(unsigned int speed, int distance);
+  bool SendCmd(unsigned int m1_speed, int m1_distance, unsigned int m2_speed, int m2_distance);
   bool AddGyroData(int pitch, int yaw, float angle_acc, float angle_gyro);
   bool Move(unsigned int speed, unsigned int dir);
   bool Turn(int degrees); // Cause robot to rotate, +/- degrees specifies  direction of rotation
@@ -39,12 +39,11 @@ public:
   unsigned int AngleToSpeed(float angle, int* distance);
   // Static and friend functions
   // Memory management: copy constructor, destructor, operator=
-  ~Motors() {};
+  ~Motors();
 private:
   // Local Classes
   // Constructors
   // Mutators: non-const operations
-  bool ConvertCmdToHex(unsigned int speed, unsigned int dir);
   // Accessors: const operations
   // Static and friend functions
   // Memory management
@@ -89,6 +88,7 @@ private:
   // Static (shared) class variables
 };
 
+// Takes motor speeds and directions and creates string ready for PICO
 template< typename T >
 std::string int_to_hex(T mx,  T my)
 {

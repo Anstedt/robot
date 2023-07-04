@@ -6,7 +6,7 @@ PURPOSE: Interface to PICO for motor control
 *******************************************************************************/
 
 /* NOTES ***********************************************************************
-clear ; g++ Motors.cpp -o MotorsTest -l pigpio -I ../sys -I fmt/include -I ../ -I . -DMOTORS_TEST
+clear ; g++ Motors.cpp -o MotorsTest -l pigpio -I ../sys -I ../ -I . -DMOTORS_TEST
 sudo ./Motors
 *******************************************************************************/
 
@@ -22,7 +22,6 @@ sudo ./Motors
 /* CLASSES ********************************************************************/
 /* FUNCTIONS ******************************************************************/
 // HJAPID m_pid(&m_input_degrees, &m_output_speed, &m_setpoint, PID_Kp, PID_Ki, PID_Kd, DIRECT)
-
 
 /*------------------------------------------------------------------------------
 FUNCTION:  Motors::Motors()
@@ -43,33 +42,21 @@ Motors::Motors()
   m_serial = serOpen(tty, 115200, 0);
 
   if (m_serial >= 0)
-  {
     printf("m_serial=%s\n", m_serial);
-
-    std::string mystr = "x00FFy0F00\n";
-    // char mystr[] = "x00FFy0F00\n";
-    int wr = serWrite(m_serial, (char *)mystr.c_str(), 11);
-    if (wr != 0)
-      printf("wr=%d\n", wr);
-
-    sleep(1);
-
-    char buf[100];
-    
-    memset(&buf, '\0', sizeof(buf));
-    int rr = serRead(m_serial, buf, sizeof(buf));
-    if (rr >=0)
-      printf("rr=\%d\n%s", rr, buf);
-
-    // HJA Hex test
-    SendCmd(60, -10); // speed, distance
-    SendCmd(200, 10); // speed, distance
-    SendCmd(7000, 10); // speed, distance
-
-    serClose(m_serial);
-  }
   else
     printf("ERROR: m_serial=%s", m_serial);
+}
+
+/*------------------------------------------------------------------------------
+FUNCTION:  Motors::~Motors()
+PURPOSE:   
+------------------------------------------------------------------------------*/
+Motors::~Motors()
+{
+  if (m_serial >= 0)
+  {
+    serClose(m_serial);
+  }
 
   gpioTerminate();
 }
@@ -91,7 +78,7 @@ bool Motors::AddGyroData(int y, int x, float angle_gyro, float angle_acc)
   // Find the speed we need, then the distance
   speed = AngleToSpeed(angle_gyro, &distance);
 
-  SendCmd(speed, distance); // Send the speed and distance, really direction, to PICO
+  SendCmd(speed, distance, speed, distance); // Send the speed and distance, really direction, to PICO
 
   return(true);
 }
@@ -103,51 +90,37 @@ PURPOSE:   HJA Needs to send commands to PICO
 ARGUMENTS:
 RETURNS:
 ------------------------------------------------------------------------------*/
-bool Motors::SendCmd(unsigned int speed, int distance)
+bool Motors::SendCmd(unsigned int m1_speed, int m1_distance, unsigned int m2_speed, int m2_distance)
 {
-  int dir = 0;
-
-  // Distance controls direction and speed if 0
-  if (distance == 0)
-    speed = 0;
-  else if (distance > 0)
-    dir = 1; // Forward
-  else
-    dir = 0;
-
-  // This controls both motors, directions adjusted by PICO
-  ConvertCmdToHex(speed, dir);
-
-  // Now build strings for PICO
-  return(true);
-}
-
-/*------------------------------------------------------------------------------
-FUNCTION:  bool Motors::ConvertCmdToHex(unsigned int speed, unsigned int dir)
-PURPOSE:
-
-ARm_motor1_speedGUMENTS: None
-RETURNS:   None
-------------------------------------------------------------------------------*/
-bool Motors::ConvertCmdToHex(unsigned int speed, unsigned int dir)
-{
-  unsigned int set_dir_bit;
-
   // Default motors to the same speed
   // HJA Future Adjust speed based on Move and Turn commands
-  m_motor1_speed = speed;
-  m_motor2_speed = speed;
+  m_motor1_speed = m1_speed;
+  m_motor2_speed = m2_speed;
 
-  // HJA Future Adjust direction based on Move and Turn commands
-  if (dir > 0)
-    set_dir_bit = 32768;
+  // Direction will be 1, 32768 in our case, to indicate forward direction
+  // We consider the right side motor on the robot to be the primary motor so
+  // We consider distance to indicate forward for + values
+  // But the robot wheels need to rotate in opposite directions to go forward,
+  // so we modify the left wheels direction to handle this
+  
+  // Distance controls direction and speed if 0
+  if (m1_distance == 0)
+    m_motor1_speed = 0;
+  else if (m1_distance > 0)
+    m_motor1_dir = 32768;  // Forward for motor 1
   else
-    set_dir_bit = 0;
+    m_motor1_dir = 0;
 
-  // Default motors to the same direction
-  m_motor1_dir = set_dir_bit;
-  m_motor2_dir = set_dir_bit;
-
+  // HJA maybe we should keep m_motorX_dir in high level mode but ONLY send
+  // corrected values to PICO
+  // Distance controls direction and speed if 0
+  if (m2_distance == 0)
+    m_motor2_speed = 0;
+  else if (m2_distance > 0)
+    m_motor2_dir = 0;  // Forward for motor 2
+  else
+    m_motor2_dir = 32768;
+  
   std::string motors = int_to_hex(m_motor1_speed + m_motor1_dir, m_motor2_speed + m_motor1_dir);
 
   // HJA cast testing int wr = serWrite(m_serial, (char *)motors.c_str(), 11);
@@ -157,6 +130,29 @@ bool Motors::ConvertCmdToHex(unsigned int speed, unsigned int dir)
 
   std::cout << "  motors=" << motors;   // No need since "/n" appended above
   // std::cout << "c_string=" << c_string; // No need since "/n" appended above
+
+  if (m_serial >= 0)
+  {
+    int wr = serWrite(m_serial, (char *)motors.c_str(), 11);
+
+    if (wr != 0)
+      printf("wr=%d\n", wr);
+
+    sleep(1); // Give PICO time to responde
+
+    char buf[100];
+    
+    memset(&buf, '\0', sizeof(buf));
+    int rr = serRead(m_serial, buf, sizeof(buf));
+    if (rr >=0)
+      printf("rr=\%d\n%s", rr, buf);
+  }
+  else
+  {
+    std::cout << "No Serial Connection" << std::endl;
+    
+    return(false);
+  }
 
   return(true);
 }
@@ -231,6 +227,13 @@ bool Motors::Turn(int degrees)
 int main()
 {
   Motors* p_motors = new Motors();
+
+  p_motors->SendCmd(600, -10, 6000, -10); // speed, distance
+  sleep(5);
+  p_motors->SendCmd(1200, 10, 800, 10); // speed, distance
+  sleep(5);
+  p_motors->SendCmd(7000, -1, 18, 1); // speed, distance
+  sleep(5);
 
   delete p_motors;
 }
