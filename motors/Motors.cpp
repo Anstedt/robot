@@ -236,12 +236,19 @@ int main()
   sleep(5);
 
   p_motors->SendCmd(1000, -1, 2000, 1); // speed, distance
+  sleep(1);
   p_motors->SendCmd(100,   1, 200,   1); // speed, distance
+  sleep(1);
   p_motors->SendCmd(1000, -1, 2000, 1); // speed, distance
+  sleep(1);
   p_motors->SendCmd(100,   1, 200,   1); // speed, distance
+  sleep(1);
   p_motors->SendCmd(1000, -1, 2000, 1); // speed, distance
+  sleep(1);
   p_motors->SendCmd(100,   1, 200,   1); // speed, distance
+  sleep(1);
   p_motors->SendCmd(1000, -1, 2000, 1); // speed, distance
+  sleep(1);
   p_motors->SendCmd(100,   1, 200,   1); // speed, distance
   
   delete p_motors;
