@@ -235,6 +235,15 @@ int main()
   p_motors->SendCmd(7000, -1, 18, 1); // speed, distance
   sleep(5);
 
+  p_motors->SendCmd(1000, -1, 2000, 1); // speed, distance
+  p_motors->SendCmd(100,   1, 200,   1); // speed, distance
+  p_motors->SendCmd(1000, -1, 2000, 1); // speed, distance
+  p_motors->SendCmd(100,   1, 200,   1); // speed, distance
+  p_motors->SendCmd(1000, -1, 2000, 1); // speed, distance
+  p_motors->SendCmd(100,   1, 200,   1); // speed, distance
+  p_motors->SendCmd(1000, -1, 2000, 1); // speed, distance
+  p_motors->SendCmd(100,   1, 200,   1); // speed, distance
+  
   delete p_motors;
 }
 #endif

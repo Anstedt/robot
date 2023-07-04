@@ -32,6 +32,9 @@ class MotorDriver:
     self.sma.active(1)                                                 # Start State Machine 1
     self.smb.active(2)                                                 # Start State Machine 1
 
+    self.ma_dir = Pin(17, Pin.OUT)
+    self.mb_dir = Pin(19, Pin.OUT)
+    
   def pps_to_delay(self, val):
     if (val <= 0):
       return(0)
@@ -45,8 +48,10 @@ class MotorDriver:
     else:
       return(0)
 
-  def convert_to_int(self, s):
-    return(int(s, 16))
+  def set_motor_dir(self, m, dir):
+    # When implemented we will need to check which motor we are and reverse direction for one versus the other
+    # print("Not Implemented dir =", dir)
+    return()
 
   def convert_to_pps(self, i):
     # HJA: We can range check here since a range of 18 to 6400 is plenty
@@ -70,20 +75,27 @@ class MotorDriver:
 
     return(sma_lut, smb_lut)
 
-  def set_motor_dir(self, m, dir):
-    # When implemented we will need to check which motor we are and reverse direction for one versus the other
-    # print("Not Implemented dir =", dir)
-    return()
-
+  #
   # Parse input string to the 2 motors
+  #
   def parse_com(self, s):
     (sma_s, smb_s) = self.split_lut(s)
 
-    sma_i = self.convert_to_int(sma_s)
-    self.set_motor_dir(self.sma, self.get_dir(sma_i))
+    sma_i = int(sma_s,16)
+    if (self.get_dir(sma_i) == 1):
+      self.ma_dir.on()
+    else:
+      self.ma_dir.off()
+      
+    # self.set_motor_dir(self.sma, self.get_dir(sma_i))
 
-    smb_i = self.convert_to_int(smb_s)
-    self.set_motor_dir(self.smb, self.get_dir(smb_i))
+    smb_i = int(smb_s,16)
+    if (self.get_dir(smb_i) == 1):
+      self.mb_dir.on()
+    else:
+      self.mb_dir.off()
+      
+    # self.set_motor_dir(self.smb, self.get_dir(smb_i))
 
     print(sma_s, " sma_i =", sma_i, " pps =", self.convert_to_pps(sma_i))
     print(smb_s, " smb_i =", smb_i, " pps =", self.convert_to_pps(smb_i))
