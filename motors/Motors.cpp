@@ -42,9 +42,9 @@ Motors::Motors()
   m_serial = serOpen(tty, 115200, 0);
 
   if (m_serial >= 0)
-    printf("m_serial=%s\n", m_serial);
+    printf("m_serial=%d\n", m_serial);
   else
-    printf("ERROR: m_serial=%s", m_serial);
+    printf("ERROR: m_serial=%d", m_serial);
 }
 
 /*------------------------------------------------------------------------------
