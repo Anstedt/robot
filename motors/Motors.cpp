@@ -32,7 +32,7 @@ Motors::Motors()
 {
   char tty[] = "/dev/ttyACM0";
 
-  printf("Hello World\n");
+  printf("Motors()\n");
 
   if (gpioInitialise() < 0)
   {
@@ -53,6 +53,8 @@ PURPOSE:
 ------------------------------------------------------------------------------*/
 Motors::~Motors()
 {
+  printf("~Motors()\n");
+
   if (m_serial >= 0)
   {
     serClose(m_serial);
@@ -128,24 +130,25 @@ bool Motors::SendCmd(unsigned int m1_speed, int m1_distance, unsigned int m2_spe
   // char* c_string = new char[motors.size() + 1];
   // memcpy(c_string, motors.c_str(), motors.size() + 1);
 
-  std::cout << "  motors=" << motors;   // No need since "/n" appended above
+  // HJA SPEED std::cout << "  motors=" << motors;   // No need since "/n" appended above
   // std::cout << "c_string=" << c_string; // No need since "/n" appended above
 
   if (m_serial >= 0)
   {
     int wr = serWrite(m_serial, (char *)motors.c_str(), 11);
 
-    if (wr != 0)
-      printf("wr=%d\n", wr);
+    // HJA SPEED if (wr != 0)
+      // HJA SPEED printf("wr=%d\n", wr);
 
-    sleep(1); // Give PICO time to responde
+    // 4000us = 4ms for a rate of 250
+    gpioDelay(4000); // Give PICO time to respond
 
     char buf[100];
     
     memset(&buf, '\0', sizeof(buf));
     int rr = serRead(m_serial, buf, sizeof(buf));
     if (rr >=0)
-      printf("rr=\%d\n%s", rr, buf);
+      printf("%s\n", buf);
   }
   else
   {
@@ -228,6 +231,18 @@ int main()
 {
   Motors* p_motors = new Motors();
 
+  unsigned int ticks = gpioTick();
+  
+  for (int i=1000; i>=0; i = i - 100)
+  {
+    printf("i=%d\n", i);
+    p_motors->SendCmd(i, 1, i*4, 1); // speed, distance
+    sleep(5);
+  }
+
+  printf("TICKs=%d\n", (gpioTick()-ticks)/1000);
+  
+#if 0
   p_motors->SendCmd(600, -10, 6000, -10); // speed, distance
   sleep(5);
   p_motors->SendCmd(1200, 10, 800, 10); // speed, distance
@@ -250,6 +265,7 @@ int main()
   p_motors->SendCmd(1000, -1, 2000, 1); // speed, distance
   sleep(1);
   p_motors->SendCmd(100,   1, 200,   1); // speed, distance
+#endif
   
   delete p_motors;
 }
