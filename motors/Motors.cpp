@@ -42,9 +42,9 @@ Motors::Motors()
   m_serial = serOpen(tty, 115200, 0);
 
   if (m_serial >= 0)
-    printf("m_serial=%s\n", m_serial);
+    printf("m_serial=%d\n", m_serial);
   else
-    printf("ERROR: m_serial=%s", m_serial);
+    printf("ERROR: m_serial=%d", m_serial);
 }
 
 /*------------------------------------------------------------------------------
@@ -233,9 +233,11 @@ int main()
 
   unsigned int ticks = gpioTick();
   
-  for (int i=0; i<1000; i++)
+  for (int i=1000; i>=0; i = i - 100)
   {
-    p_motors->SendCmd(600+i, -10, 6000+i, -10); // speed, distance
+    printf("i=%d\n", i);
+    p_motors->SendCmd(i, 1, i*4, 1); // speed, distance
+    sleep(5);
   }
 
   printf("TICKs=%d\n", (gpioTick()-ticks)/1000);
