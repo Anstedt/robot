@@ -122,8 +122,11 @@ bool Motors::SendCmd(unsigned int m1_speed, int m1_distance, unsigned int m2_spe
     m_motor2_dir = 0;  // Forward for motor 2
   else
     m_motor2_dir = 32768;
-  
-  std::string motors = int_to_hex(m_motor1_speed + m_motor1_dir, m_motor2_speed + m_motor1_dir);
+
+  // std::cout << "d1=" << m1_distance << " m1s=" << m_motor1_speed << " m1dir=" << m_motor1_dir << std::endl;
+  // std::cout << "d2=" << m2_distance << " m2s=" << m_motor2_speed << " m2dir=" << m_motor2_dir << std::endl;
+      
+  std::string motors = int_to_hex(m_motor1_speed + m_motor1_dir, m_motor2_speed + m_motor2_dir);
 
   // HJA cast testing int wr = serWrite(m_serial, (char *)motors.c_str(), 11);
   // HJA HJA No need for copy to c_string since (char *)motors.c_str() works fine
@@ -233,7 +236,7 @@ int main()
 
   unsigned int ticks = gpioTick();
   
-  for (int i=1000; i>=0; i = i - 100)
+  for (int i=8000; i>=0; i = i - 1000)
   {
     printf("i=%d\n", i);
     p_motors->SendCmd(i, 1, i*4, 1); // speed, distance
