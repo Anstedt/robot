@@ -1,75 +1,49 @@
 # Robot
 
-# Building the Driver (fast method)
-```
-sudo apt update
-sudo apt install raspberrypi-kernel-headers flex bison
-cd /opt/git
-git clone --recursive https://github.com/rickbronson/RPI-Stepper-Motor-Linux-Kernel-Driver2.git
-git clone --depth=1 https://github.com/raspberrypi/linux
-cd linux
-make bcm2711_defconfig # This configures dtb's for building
-```
+# PICO software install
+  - Install MicroPython, see: https://micropython.org/download/rp2-pico/
+    - I am using v1.20.0
+  - Install Thonny, you need this to install the motor control code. Works fine on Windows and RP.
+  - Using Thonny install PICO motor control code: robot/pico/MotorDriver.py
+    - First use Thonny to load the MotorDriver.py code
+	- You can try to run it but all you get is some output since it runs in a test mode by default
+	- To install it on your PICO, after you have loaded into Thonny
+	  - Using Thonny in regular mode where you have the menus.
+	    - File->Save as
+		- You will get a pop up where you select the "Raspberry PI Pico
+		- Then save as main.py, you can just click main.py from the list or type it into the File name: location.
+		- Then shutdown Thonny since it uses the USB serial connection we need
+		- Power cycle the PICO and it is running the MotorDriver.py
+		- You can test this out by compiling the Motors code in robot/motors
+		- Run this command in the motors directory, cd motors first:
+		  g++ Motors.cpp -o MotorsTest -l pigpio -I ../sys -I ../ -I . -DMOTORS_TEST
+	    - Then in the motors directory run:
+		  sudo ./Motors
+		  The test code running is at the end of Motors.cpp
+		  With only the PICO connected to the PI via USB you will see some PICO
+		  test output on the terminal. This output may change since it is only for debug.
+		  
+# PICO Motor Control
+- Switched to PICO motor control for finer motor control without loading the CPU.
+  - Test code seems to show PICO control works perfectly so far.
 
-- Paste the following on the command line
-```
-cat >> arch/arm/boot/dts/bcm270x.dtsi <<'EOF'
-&pwm {
-      dmas = <&dma 5>;
-      dma-names = "rx-tx";
-      status = "okay";
-};
-EOF
-```
+# PI Zero W
+- PI Zero design works fine other than PI Zero W is very slow for development.
+  - CPU load testing needs to be done yet.
+  - Worst case is we switch to PI Zero W2, very fast but hard to get
 
-```
-make -j4 dtbs
-sudo cp arch/arm/boot/dts/*.dtb /boot/
-sudo reboot
-- After reboot
-cd /opt/git/RPI-Stepper-Motor-Linux-Kernel-Driver2/src
-make
-sudo rmmod pwm-bcm2835
-sudo rmmod pwm-stepper-bcm2835
-sudo insmod ./pwm-stepper-bcm2835.ko
-```
-
-# PID
+# PID Turned off for now for PICO development
 PID is running and checked in on branch pid-dev. It reacts very slowly but
 does work in both directions.  Seems like the range of my output +/- 10000 vs
 the input range +/-180 may be part of this issues.
 
 # Driver Control
-Increasing distance causes the driver to take longer on the write calls but also
-uses more CPU time. distance=100 %CPU=8 distance=500 %CPU=20
 
 # Ranges
-Speed(Pulses per second)(Assume mode 32)
-Notes indicate = 3124, which is about 30 RPM
-But this is for constant speed, we need maximum when we are a long way off.
-Max = 25000 based on my testing, see email, = 235 RPM
-So lets try a maximum of 10000, 94 RPM
-
-## Maximum motor pulses per second == 10000
-### 94 RPM ~= 1 MPH assuming wheels are 1 ft in diameter
-
-### Using user space app driver for testing
-- Swap out real driver by renaming
-  - motor/MotorDriver.h -> motor/MotorDriver.h.REAL
-  - motor/MotorDriver.cpp -> motor/MotorDriver.cpp.REAL
-  - motor/Motor.h -> motor/Motor.h.REAL
-  - motor/Motor.cpp -> motor/Motor.cpp.REAL
-- Swap in app by renaming
-  - motor/MotorDriverApp.h -> motor/MotorDriverApp.h
-  - motor/MotorDriverApp.cpp -> motor/MotorDriver.cpp
-  - motor/MotorApp.h -> motor/Motor.h
-  - motor/MotorApp.cpp -> motor/Motor.cpp
-- Rebuild Robot with App driver
-- The App mimics the kernel driver interface but is a user space application
 
 ### Implement PID based off of Arduino Code
-- Add code to mys system and get it to build
-- Move from angle based control to speed and distance control
+- PID is currently turned off since updating to PICO motor
+- driver. Need to turn on and adjust constance.
 
 ### Implement mechanism to control robot motion; turning and traveling
 
@@ -81,8 +55,8 @@ The front is where the holes are in the upper body. The angles are in reference 
 -90: is 90 degrees backwards from the front
 
 ### Config
-- Config.h has Motor and Legs IO and HW configurations.
-
+- Config.h has Motor and Legs IO and HW configurations
+- Based on PICO design there should be much less Motor constance
 ### NOTES
 
 ### System Logging

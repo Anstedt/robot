@@ -243,32 +243,7 @@ int main()
     sleep(5);
   }
 
-  printf("TICKs=%d\n", (gpioTick()-ticks)/1000);
-  
-#if 0
-  p_motors->SendCmd(600, -10, 6000, -10); // speed, distance
-  sleep(5);
-  p_motors->SendCmd(1200, 10, 800, 10); // speed, distance
-  sleep(5);
-  p_motors->SendCmd(7000, -1, 18, 1); // speed, distance
-  sleep(5);
-
-  p_motors->SendCmd(1000, -1, 2000, 1); // speed, distance
-  sleep(1);
-  p_motors->SendCmd(100,   1, 200,   1); // speed, distance
-  sleep(1);
-  p_motors->SendCmd(1000, -1, 2000, 1); // speed, distance
-  sleep(1);
-  p_motors->SendCmd(100,   1, 200,   1); // speed, distance
-  sleep(1);
-  p_motors->SendCmd(1000, -1, 2000, 1); // speed, distance
-  sleep(1);
-  p_motors->SendCmd(100,   1, 200,   1); // speed, distance
-  sleep(1);
-  p_motors->SendCmd(1000, -1, 2000, 1); // speed, distance
-  sleep(1);
-  p_motors->SendCmd(100,   1, 200,   1); // speed, distance
-#endif
+  printf("TICKs=%d\n", (gpioTick()-ticks)/1000);  
   
   delete p_motors;
 }
