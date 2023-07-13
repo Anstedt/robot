@@ -109,7 +109,7 @@ The front is where the holes are in the upper body. The angles are in reference 
 ![Robot](Robot.png)
 
 ## Electrical Harware Design
-![Robot-HW](Robot-HW.png)
+![Robot-HW](Robot-HW-V2-PICO.png)
 
 ## Migrating to c++
 - Notice how C++ exceptions are turned off, see CMakeLists.txt
