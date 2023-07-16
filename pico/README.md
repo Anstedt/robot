@@ -30,7 +30,7 @@
 	- NOTE: Even though this is a delay of 6.4 pulses per 250 hz. This
       does not effect the design since high rates are faster than the
       250Hz calls.
-  - Maximum down time 620, Better to just use down X 3 + up 
+  - Maximum down time 620, Better to just use down X 3 + up
     - 1600 PPS = 1/1600 seconds / pulse = 625us
 	- delay time = 625/3 - 4
     - Delay time for 1600 pps is up+down=625us. Down should be 625-4=621-1=620
@@ -42,7 +42,7 @@
       not quiet 625 but at least close enough. Really a little close
       than that since the total time includes the set() [] time which
       is another 4. So we are at 620 total pulse time.
-	
+
 - Minimum positive pulse is 1.7 us. Previously used 4us with no
   issues. We may need to go slower so we can get the total PPS range
   we need.
@@ -60,10 +60,10 @@
 
 - Total on time is controlled by line, set(pins, 1) [3]
   - 4us for 1000000 PIO clock
-  
-- Total off time is dealy loops plus full path back to on time line.
+
+- Total off time is delay loops plus full path back to on time line.
   - See pps_to_delay() on handling this
-	
+
 - NOTE: mov(x/y, osr) does not clear osr
 
 - The mov(x,osr) call preserves x so a pull on an empty buffer returns
@@ -121,7 +121,7 @@ _---______-
   |   |
   |   `- delay from PI
   `- Constant required maximum pulse 1.9 us or higher, used 4us in the past
-  
+
  ^        ^ This is the total pulse time or period and the pulse rate is the
             inverse of this.
 
@@ -144,4 +144,32 @@ CONS:
   for another 650ns after that.In our case command will only be sent
   to PICO at 250Hz so worst case is a pulse may occur one time before
   direction changes.
+
+# PPS to State machine delay timing
+  Time us:
+  0  label("main")
+  1  pull(noblock)
+  1  mov(x,osr)          # save x so a pull without data returns x
+  1  jmp(not_x, "main")  # If x is 0 stop pulsing till we get a non-zero value
+  4  set(pins, 1) [3]    # Turn pin on for 4 1mhz clocks cycles or 4 us delay
+  1  set(pins, 0)        # Turn pin off
+  1  mov(y,osr)          # Now get the low delay time
+  0  label("delay")
+  1  pull(noblock)       # Keep getting the latest value or x if no new values
+  1  mov(x,osr)          # Remember mov() is right to left
+  1  jmp(y_dec, "delay")
+  1  jmp("main")         # Jump back to the beginning
   
+  - Example we want 32x200 pps, 1 revolution per second
+
+  - For 32x200, 6400, the return is 48. This value is based off the timing of
+  - the state machine cycles in code sm code above.
+
+  - A rough calculation of the actual PPS we get is from looking at the state
+  - machine code above running at 1000000 hz is:
+  
+  - So pull(noblock) to jmp(y_dec, "delay") == 12
+    Then loop for 48 cycles label("delay") to jmp(y_dec, "delay") 48*3 == 144
+    Total one pulse delay is 12 + 144 = 156 = 0.0064102256...
+    or converted from us to seconds = 6410 pulses per second
+    very close to the requested 6400 pulses we wanted
