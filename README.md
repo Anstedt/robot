@@ -33,9 +33,9 @@
   - Worst case is we switch to PI Zero W2, very fast but hard to get
 
 # PID Turned off for now for PICO development
-PID is running and checked in on branch pid-dev. It reacts very slowly but
-does work in both directions.  Seems like the range of my output +/- 10000 vs
-the input range +/-180 may be part of this issues.
+- PID is running and checked in on branch pid-dev. It reacts very slowly but
+  does work in both directions.  Seems like the range of my output +/- 10000 vs
+  the input range +/-180 may be part of this issues.
 
 # Driver Control
 
