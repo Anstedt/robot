@@ -34,7 +34,9 @@ class MotorDriver:
 
     self.ma_dir = Pin(17, Pin.OUT)
     self.mb_dir = Pin(19, Pin.OUT)
-    
+
+  # Knowing the sm loop timing we calculate a delay to give us the pps we want
+  # See the state machine for its primary timing as well as delay loop timing
   def pps_to_delay(self, val):
     if (val <= 0):
       return(0)
@@ -86,7 +88,7 @@ class MotorDriver:
       self.ma_dir.on()
     else:
       self.ma_dir.off()
-      
+
     # self.set_motor_dir(self.sma, self.get_dir(sma_i))
 
     smb_i = int(smb_s,16)
@@ -94,7 +96,7 @@ class MotorDriver:
       self.mb_dir.on()
     else:
       self.mb_dir.off()
-      
+
     # self.set_motor_dir(self.smb, self.get_dir(smb_i))
 
     print(sma_s, " sma_i =", sma_i, " pps =", self.convert_to_pps(sma_i))
