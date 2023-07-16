@@ -11,7 +11,40 @@
     sense. But that means that it is not using files from your local
     directory on the host.
 
-# Design Bug
+# Design State Machines
+## Code
+1 def pulse_control():
+2     label("main")1
+3     pull(noblock)
+4     mov(x,osr)          # save x so a pull without data returns x
+5     jmp(not_x, "main")  # If x is 0 stop pulsing till we get a non-zero value
+6     set(pins, 1) [3]    # Turn pin on for 4 1mhz clocks cycles or 4 us delay
+7     set(pins, 0)        # Turn pin off
+8     mov(y,osr)          # Now get the low delay time
+9     label("delay")
+10    pull(noblock)       # Keep getting the latest value or x if no new values
+11    mov(x,osr)          # Remember mov() is right to left
+12    jmp(y_dec, "delay")
+13    jmp("main")         # Jump back to the beginning
+	
+   - Delay calculation needs to not only take into account the delay
+     loop above but the total loop as well.
+   - To handle periods of less than 250 Hz, line 3 just reuses the 'x'
+     register we saved in line 4 over from the previous loop or from
+     line 10 for a long loop.
+   - To handle speed of zero, line 5 loops until a non-zero value is
+     pulled
+   - To handle delay times longer than the 250 Hz period time 2 items
+     are done
+     - Spin in the delay loop until the delay is done even if that is
+       longer than the 250 Hz period time
+     - Use lines 10 and 11 to continuously pull the latest value and
+       save it in the 'x' register
+     - When the long delay loop completes and jumps via line 13 to
+       line 2 and continues, line 3 pulls the latest new value or if
+       no new values use the 'x' register saved in the previous
+       step. See pull() documentation for how that works.
+
 - Current design does not handle speeds of 0.
   - Maybe loop in sm until we get something other than 0
   - Fixed, more cleanup and testing needed
