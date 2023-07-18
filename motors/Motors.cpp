@@ -6,8 +6,9 @@ PURPOSE: Interface to PICO for motor control
 *******************************************************************************/
 
 /* NOTES ***********************************************************************
-clear ; g++ Motors.cpp -o MotorsTest -l pigpio -I ../sys -I ../ -I . -DMOTORS_TEST
-sudo ./Motors
+Build and run stand alone tests, a full build is needed first for the threads library
+clear ; g++ Motors.cpp -o MotorsTest -I ../sys -I ../ -I . -DMOTORS_TEST -l pigpio -L ../sys -l threads
+sudo ./MotorsTest
 *******************************************************************************/
 
 /* INCLUDE ********************************************************************/
@@ -28,7 +29,8 @@ FUNCTION:  Motors::Motors()
 
 PURPOSE:   Uses PICO as motor controller
 ------------------------------------------------------------------------------*/
-Motors::Motors()
+Motors::Motors():
+  m_pid(&m_input_degrees, &m_output_speed, &m_setpoint, PID_Kp, PID_Ki, PID_Kd, DIRECT)
 {
   char tty[] = "/dev/ttyACM0";
 
@@ -57,6 +59,8 @@ Motors::~Motors()
 
   if (m_serial >= 0)
   {
+    // HJA send a stop, 0, command to the PICO and maybe sleep a bit to give it
+    // time to get it.
     serClose(m_serial);
   }
 
@@ -144,6 +148,7 @@ bool Motors::SendCmd(unsigned int m1_speed, int m1_distance, unsigned int m2_spe
       // HJA SPEED printf("wr=%d\n", wr);
 
     // 4000us = 4ms for a rate of 250
+    // HJA should be more like 2000, to handle the variability of the 250Hz rate
     gpioDelay(4000); // Give PICO time to respond
 
     char buf[100];
@@ -181,7 +186,7 @@ unsigned int Motors::AngleToSpeed(float angle, int* distance)
   m_setpoint = 0; // HJA really never changes but we make sure it is set here
 
   // After everything is setup in the constructor we are ready to go
-  // HJAPID m_pid.Compute();
+  m_pid.Compute();
 
   // In our system speed is always positive, since distance handles direction
   if (m_output_speed < 0)
@@ -194,6 +199,8 @@ unsigned int Motors::AngleToSpeed(float angle, int* distance)
 
   speed = m_output_speed;
 
+  // HJA seems like this code is for the old driver
+  
   // Make sure the driver has enough distance even if we are 2 periods late
   *distance = (speed / PRIMARY_THREAD_RATE) * 2;
 

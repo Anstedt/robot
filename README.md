@@ -1,5 +1,19 @@
 # Robot
 
+# ToDO
+- Fix all printing in Motors.cpp to be logging as needed
+- Search for ALL HJA's and fix them
+- Update Config.h and associated code for PICO driver. Test for max
+  and min motor pps, Config.h says MOTORS_MAX_PULSES_PER_SEC = 10000,
+  seems I can go higher than that.  Min pps is 1 since the speed units
+  are in Hz.
+- Handle min/max motor speed
+- Config.h has values for old driver for driver rates.
+- Rebuild robot
+- Start testing with robot
+- Build physical arms for better testing
+- Start adjusting PID values
+
 # PICO software install
   - Install MicroPython, see: https://micropython.org/download/rp2-pico/
     - I am using v1.20.0
