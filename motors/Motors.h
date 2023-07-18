@@ -6,8 +6,9 @@ PURPOSE: Interface to PICO for motor control
 *******************************************************************************/
 
 /* NOTES ***********************************************************************
-clear ; g++ Motors.cpp -o MotorsTest -l pigpio -I ../sys -I ../ -I . -DMOTORS_TEST
-sudo ./Motors
+Build and run stand alone tests, a full build is needed first for the threads library
+clear ; g++ Motors.cpp -o MotorsTest -I ../sys -I ../ -I . -DMOTORS_TEST -l pigpio -L ../sys -l threads
+sudo ./MotorsTest
 *******************************************************************************/
 
 #ifndef MOTORS_H
@@ -71,7 +72,7 @@ private:
 
   // Direction: Either DIRECT or REVERSE. determines which direction the output will move when faced with a given error. DIRECT is most common.
   // PID(input, output, set_point, Kp, Ki, Kd, DIRECT);
-  // HJAPID PID m_pid;
+  PID m_pid;
 
   double m_input_degrees, m_output_speed, m_setpoint;
 
