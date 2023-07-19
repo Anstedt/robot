@@ -131,7 +131,7 @@ int Gyro::Run(void)
     RateControlDelay(); // Control Loop Rate
 
     // CallBack now has all data
-    // SLOG << "Angle Gyro=" << m_angle_gyro << "\tAngle Accelerometer=" << m_angle_acc << "\tGyro X=" << m_gyro_X_data_raw << "\tGyro Y=" << m_gyro_Y_data_raw << std::endl;
+    // SLOG << "Angle Gyro=" << m_angle_gyro << " Angle Accelerometer=" << m_angle_acc << " Gyro X=" << m_gyro_X_data_raw << " Gyro Y=" << m_gyro_Y_data_raw << std::endl;
   }
 
   SLOG << "Gyro:Run() DONE in a separate thread : " << (gpioTick() - elapsed) << "us" << std::endl;
