@@ -20,6 +20,8 @@ sudo ./MotorsTest
 #include "Config.h"
 #include <iostream>
 
+#include "Slog.h"
+
 /* CLASSES ********************************************************************/
 /* FUNCTIONS ******************************************************************/
 // HJAPID m_pid(&m_input_degrees, &m_output_speed, &m_setpoint, PID_Kp, PID_Ki, PID_Kd, DIRECT)
@@ -35,6 +37,10 @@ Motors::Motors():
   char tty[] = "/dev/ttyACM0";
 
   printf("Motors()\n");
+
+  m_pid.SetSampleTime(PRIMARY_THREAD_RATE);
+  m_pid.SetOutputLimits(-MOTORS_MAX_PULSES_PER_SEC, MOTORS_MAX_PULSES_PER_SEC);
+  m_pid.SetMode(AUTOMATIC);
 
   if (gpioInitialise() < 0)
   {
@@ -61,10 +67,15 @@ Motors::~Motors()
   {
     // HJA send a stop, 0, command to the PICO and maybe sleep a bit to give it
     // time to get it.
+    SendCmd(0, 0, 0, 0);
+    gpioDelay(4000); // Give PICO 4ms to stop
     serClose(m_serial);
   }
 
+// System does gpioTerminate() so don't do it twice
+#ifdef MOTORS_TEST
   gpioTerminate();
+#endif
 }
 
 /*------------------------------------------------------------------------------
@@ -79,10 +90,17 @@ bool Motors::AddGyroData(int y, int x, float angle_gyro, float angle_acc)
   unsigned int speed; // The pulses per second for the motors, using angle AND mode
   int distance; // Distance based on speed, mode, as well as 250Hz thread rate
 
-  // HJA SLOG << "Angle Gyro=" << angle_gyro << "\tAngle Accel=" << angle_acc << "\tGyro Y=" << y << "\tGyro X=" << x << std::endl;
+  // SLOG << "Angle Gyro=" << angle_gyro << " Angle Accel=" << angle_acc << " Gyro Y=" << y << " Gyro X=" << x << std::endl;
 
   // Find the speed we need, then the distance
   speed = AngleToSpeed(angle_gyro, &distance);
+  
+  // Print our heartbeat every 10 seconds, 2500/250
+  if (m_heartbeat++ > (PRIMARY_THREAD_RATE*HEARTBEAT))
+  {
+    SLOG << "Angle Gyro=" << angle_gyro << " speed=" << speed << " distance=" << distance << std::endl;
+    m_heartbeat = 0;
+  }
 
   SendCmd(speed, distance, speed, distance); // Send the speed and distance, really direction, to PICO
 
@@ -155,8 +173,17 @@ bool Motors::SendCmd(unsigned int m1_speed, int m1_distance, unsigned int m2_spe
     
     memset(&buf, '\0', sizeof(buf));
     int rr = serRead(m_serial, buf, sizeof(buf));
-    if (rr >=0)
-      printf("%s\n", buf);
+
+    if (m_heartbeat_serial++ > (PRIMARY_THREAD_RATE*HEARTBEAT))
+    {
+      if (rr >=0)
+      {
+        printf("%s\n", buf);
+        // SLOG << buf << std::endl;
+      }
+      
+      m_heartbeat_serial = 0;
+    }
   }
   else
   {
@@ -202,7 +229,7 @@ unsigned int Motors::AngleToSpeed(float angle, int* distance)
   // HJA seems like this code is for the old driver
   
   // Make sure the driver has enough distance even if we are 2 periods late
-  *distance = (speed / PRIMARY_THREAD_RATE) * 2;
+  // *distance = (speed / PRIMARY_THREAD_RATE) * 2;
 
   // negate distance if speed was negative, note at this point speed is positive
   if (dist_reverse)

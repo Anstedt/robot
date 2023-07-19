@@ -86,6 +86,8 @@ private:
   unsigned int m_motor2_dir_adj = 0;
   int m_motor2_speed = 0;
   int m_motor2_speed_adj = 0;
+  int m_heartbeat = 0;
+  int m_heartbeat_serial = 0;
   // Static (shared) class variables
 };
 
