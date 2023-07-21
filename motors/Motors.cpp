@@ -121,9 +121,9 @@ bool Motors::SendCmd(unsigned int m1_speed, int m1_distance, unsigned int m2_spe
   if (m1_distance == 0)
     m_motor1_speed = 0;
   else if (m1_distance > 0)
-    m_motor1_dir = 32768;  // Forward for motor 1
+    m_motor1_dir = 0;  // Forward for motor 1
   else
-    m_motor1_dir = 0;
+    m_motor1_dir = 32768;
 
   // HJA maybe we should keep m_motorX_dir in high level mode but ONLY send
   // corrected values to PICO
@@ -131,9 +131,9 @@ bool Motors::SendCmd(unsigned int m1_speed, int m1_distance, unsigned int m2_spe
   if (m2_distance == 0)
     m_motor2_speed = 0;
   else if (m2_distance > 0)
-    m_motor2_dir = 0;  // Forward for motor 2
+    m_motor2_dir = 32768;  // Forward for motor 2
   else
-    m_motor2_dir = 32768;
+    m_motor2_dir = 0;
 
   // std::cout << "d1=" << m1_distance << " m1s=" << m_motor1_speed << " m1dir=" << m_motor1_dir << std::endl;
   // std::cout << "d2=" << m2_distance << " m2s=" << m_motor2_speed << " m2dir=" << m_motor2_dir << std::endl;
