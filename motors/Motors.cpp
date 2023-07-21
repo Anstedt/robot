@@ -24,8 +24,6 @@ sudo ./MotorsTest
 
 /* CLASSES ********************************************************************/
 /* FUNCTIONS ******************************************************************/
-// HJAPID m_pid(&m_input_degrees, &m_output_speed, &m_setpoint, PID_Kp, PID_Ki, PID_Kd, DIRECT)
-
 /*------------------------------------------------------------------------------
 FUNCTION:  Motors::Motors()
 
@@ -60,8 +58,7 @@ Motors::~Motors()
 
   if (m_serial >= 0)
   {
-    // HJA send a stop, 0, command to the PICO and maybe sleep a bit to give it
-    // time to get it.
+    // Send a stop, 0, command to the PICO, sleep to give it time to get it.
     SendCmd(0, 0, 0, 0);
     gpioDelay(4000); // Give PICO 4ms to stop
     serClose(m_serial);
@@ -99,7 +96,7 @@ bool Motors::AddGyroData(int y, int x, float angle_gyro, float angle_acc)
 
 /*------------------------------------------------------------------------------
 FUNCTION:  bool Motors::SendCmd(unsigned int speed, int distance)
-PURPOSE:   HJA Needs to send commands to PICO
+PURPOSE:   
 
 ARGUMENTS:
 RETURNS:
@@ -140,24 +137,12 @@ bool Motors::SendCmd(unsigned int m1_speed, int m1_distance, unsigned int m2_spe
       
   std::string motors = int_to_hex(m_motor1_speed + m_motor1_dir, m_motor2_speed + m_motor2_dir);
 
-  // HJA cast testing int wr = serWrite(m_serial, (char *)motors.c_str(), 11);
-  // HJA HJA No need for copy to c_string since (char *)motors.c_str() works fine
-  // char* c_string = new char[motors.size() + 1];
-  // memcpy(c_string, motors.c_str(), motors.size() + 1);
-
-  // HJA SPEED std::cout << "  motors=" << motors;   // No need since "/n" appended above
-  // std::cout << "c_string=" << c_string; // No need since "/n" appended above
-
   if (m_serial >= 0)
   {
     int wr = serWrite(m_serial, (char *)motors.c_str(), 11);
 
-    // HJA SPEED if (wr != 0)
-      // HJA SPEED printf("wr=%d\n", wr);
-
-    // 4000us = 4ms for a rate of 250
-    // HJA should be more like 2000, to handle the variability of the 250Hz rate
-    gpioDelay(4000); // Give PICO time to respond
+    // 2000us = 2ms so we are faster than 250 Hz
+    gpioDelay(2000); // Give PICO time to respond
 
     char buf[100];
     
@@ -189,9 +174,7 @@ bool Motors::SendCmd(unsigned int m1_speed, int m1_distance, unsigned int m2_spe
 
 /*------------------------------------------------------------------------------
 FUNCTION:  unsigned int Motors::AngleToSpeed(float angle, int* distance)
-PURPOSE:   HJA Using PID control to adjust motor speed and distance. Maybe
-           should be speed and direction and set direction -1/0/1 where 0 also
-           changes speed to 0.
+PURPOSE:   
 
 ARGUMENTS: None
 RETURNS:   None
@@ -202,7 +185,7 @@ unsigned int Motors::AngleToSpeed(float angle, int* distance)
   unsigned int speed = 0;
 
   m_input_degrees = angle; // This has a range of +/-180
-  m_setpoint = 0; // HJA really never changes but we make sure it is set here
+  m_setpoint = 0; // never changes but we make sure it is set here
 
   // After everything is setup in the constructor we are ready to go
   m_pid.Compute();
@@ -218,11 +201,6 @@ unsigned int Motors::AngleToSpeed(float angle, int* distance)
 
   speed = m_output_speed;
 
-  // HJA seems like this code is for the old driver
-  
-  // Make sure the driver has enough distance even if we are 2 periods late
-  // *distance = (speed / PRIMARY_THREAD_RATE) * 2;
-
   // negate distance if speed was negative, note at this point speed is positive
   if (dist_reverse)
     *distance *= -1;
@@ -232,7 +210,7 @@ unsigned int Motors::AngleToSpeed(float angle, int* distance)
 
 /*------------------------------------------------------------------------------
 FUNCTION:  bool Motors::Move(int direction, unsigned int speed)
-PURPOSE:   HJA not used yet
+PURPOSE:   
 
 ARGUMENTS: None
 RETURNS:   None
@@ -244,7 +222,7 @@ bool Motors::Move(unsigned int speed, unsigned int dir)
 
 /*------------------------------------------------------------------------------
 FUNCTION:  bool Motors::Turn(int degrees)
-PURPOSE:   HJA not used yet
+PURPOSE:   
 
 ARGUMENTS: None
 RETURNS:   None
@@ -254,7 +232,7 @@ bool Motors::Turn(int degrees)
   return(true);
 }
 
-// HJA for testing
+// Motor Tests
 #ifdef MOTORS_TEST
 int main()
 {
