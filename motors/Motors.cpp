@@ -42,11 +42,6 @@ Motors::Motors():
   m_pid.SetOutputLimits(-MOTORS_MAX_PULSES_PER_SEC, MOTORS_MAX_PULSES_PER_SEC);
   m_pid.SetMode(AUTOMATIC);
 
-  if (gpioInitialise() < 0)
-  {
-    printf("gpio init failed\n");
-  }
-
   m_serial = serOpen(tty, 115200, 0);
 
   if (m_serial >= 0)
@@ -71,11 +66,6 @@ Motors::~Motors()
     gpioDelay(4000); // Give PICO 4ms to stop
     serClose(m_serial);
   }
-
-// System does gpioTerminate() so don't do it twice
-#ifdef MOTORS_TEST
-  gpioTerminate();
-#endif
 }
 
 /*------------------------------------------------------------------------------
@@ -174,7 +164,9 @@ bool Motors::SendCmd(unsigned int m1_speed, int m1_distance, unsigned int m2_spe
     memset(&buf, '\0', sizeof(buf));
     int rr = serRead(m_serial, buf, sizeof(buf));
 
+#ifndef MOTORS_TEST
     if (m_heartbeat_serial++ > (PRIMARY_THREAD_RATE*HEARTBEAT))
+#endif
     {
       if (rr >=0)
       {
@@ -266,6 +258,11 @@ bool Motors::Turn(int degrees)
 #ifdef MOTORS_TEST
 int main()
 {
+  if (gpioInitialise() < 0)
+  {
+    printf("gpio init failed\n");
+  }
+
   Motors* p_motors = new Motors();
 
   unsigned int ticks = gpioTick();
@@ -280,6 +277,8 @@ int main()
   printf("TICKs=%d\n", (gpioTick()-ticks)/1000);  
   
   delete p_motors;
+
+  gpioTerminate();
 }
 #endif
 
