@@ -29,10 +29,7 @@ Balancer::Balancer()
   }
   
   // Start Motors
-  m_motors = new Motors(MOTOR1_GPIO_STEP, MOTOR1_GPIO_DIR,
-                        MOTOR2_GPIO_STEP, MOTOR2_GPIO_DIR,
-                        MOTOR1_GPIO_MODE_0, MOTOR1_GPIO_MODE_1, MOTOR1_GPIO_MODE_2,
-                        &m_driver_mutex);
+  m_motors = new Motors();
 
   m_gyro = new Gyro();
 

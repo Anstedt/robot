@@ -11,3 +11,6 @@ robot
 mpu
 *.bkp
 *.dtmp
+MotorsTest
+__pycache__
+*.autosave
