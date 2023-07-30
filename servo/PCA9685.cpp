@@ -28,6 +28,8 @@ PCA9685::PCA9685()
   // RP uses bus 1
   device_fd = i2cOpen(1, PCA9685::Device_Address, 0);
 
+  SLOG << "device_fd=" << device_fd << std::endl;
+  
   set_all_pwm(0, 0);
 
   WriteByte(PCA9685::MODE2, PCA9685::OUTDRV);
