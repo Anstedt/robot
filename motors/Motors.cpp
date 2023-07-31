@@ -86,10 +86,11 @@ bool Motors::AddGyroData(int y, int x, float angle_gyro, float angle_acc)
   if (m_heartbeat++ > (PRIMARY_THREAD_RATE*HEARTBEAT))
   {
     SLOG << "Angle Gyro=" << angle_gyro << " speed=" << speed << " distance=" << distance << std::endl;
+    std::cout << "Motor turned off search for HJAMOTOROFF" << std::endl;
     m_heartbeat = 0;
   }
 
-  SendCmd(speed, distance, speed, distance); // Send the speed and distance, really direction, to PICO
+  // HJAMOTOROFF SendCmd(speed, distance, speed, distance); // Send the speed and distance, really direction, to PICO
 
   return(true);
 }

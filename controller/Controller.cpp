@@ -16,7 +16,7 @@ PURPOSE: Creates and controls the Balancer/Motor and the Legs
 /*------------------------------------------------------------------------------
 FUNCTION: Controller::Controller()
 ------------------------------------------------------------------------------*/
-Controller::Controller()
+Controller::Controller(double knee, int offset)
 {
   SLOG << "Controller::Controller()" << std::endl;
 
@@ -30,7 +30,7 @@ Controller::Controller()
   sleep(2); // Let other threads start 
   
   // This should be in Balancer so it can adjust offset but is fine here for now
-  m_legs->Balance(-40, 0); // Knee bent back and wheel offset from robot center
+  m_legs->Balance(knee, offset); // Knee bent back and wheel offset from robot center
 }
 
 /*------------------------------------------------------------------------------
