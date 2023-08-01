@@ -30,7 +30,7 @@ class Motors
 public:
   // Local Classes
   // Constructors
-  Motors();
+  Motors(double kp, double ki, double kd);
   // Mutators: non-const operations
   bool SendCmd(unsigned int m1_speed, int m1_distance, unsigned int m2_speed, int m2_distance);
   bool AddGyroData(int pitch, int yaw, float angle_acc, float angle_gyro);

@@ -23,7 +23,7 @@ class Balancer
 public:
   // Local Classes
   // Constructors
-  Balancer();
+  Balancer(double kp, double ki, double kd);
   // Mutators: non-const operations
   // Accessors: const operations
   // Static and friend functions

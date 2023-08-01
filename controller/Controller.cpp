@@ -16,11 +16,11 @@ PURPOSE: Creates and controls the Balancer/Motor and the Legs
 /*------------------------------------------------------------------------------
 FUNCTION: Controller::Controller()
 ------------------------------------------------------------------------------*/
-Controller::Controller(double knee, int offset)
+Controller::Controller(double knee, int offset, double kp, double ki, double kd)
 {
   SLOG << "Controller::Controller()" << std::endl;
 
-  m_balancer = new Balancer();
+  m_balancer = new Balancer(kp, ki, kd);
   m_legs = new Legs();
 
   // This should be in Balancer so it can adjust offset but is fine here for now

@@ -17,8 +17,8 @@ sudo ./MotorsTest
 #include <unistd.h>
 #include <cstring>
 #include <pigpio.h>
-#include "Config.h"
 #include <iostream>
+#include "Config.h"
 
 #include "Slog.h"
 
@@ -29,8 +29,8 @@ FUNCTION:  Motors::Motors()
 
 PURPOSE:   Uses PICO as motor controller
 ------------------------------------------------------------------------------*/
-Motors::Motors():
-  m_pid(&m_input_degrees, &m_output_speed, &m_setpoint, PID_Kp, PID_Ki, PID_Kd, DIRECT)
+Motors::Motors(double kp, double ki, double kd):
+  m_pid(&m_input_degrees, &m_output_speed, &m_setpoint, kp, ki, kd, DIRECT)
 {
   char tty[] = "/dev/ttyACM0";
 
@@ -45,7 +45,7 @@ Motors::Motors():
   if (m_serial >= 0)
     printf("m_serial=%d\n", m_serial);
   else
-    printf("ERROR: m_serial=%d", m_serial);
+    printf("ERROR: m_serial=%d\n", m_serial);
 }
 
 /*------------------------------------------------------------------------------

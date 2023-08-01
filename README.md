@@ -1,5 +1,8 @@
 # Robot
 
+# Command line options add:
+see ./robot -h
+
 # ToDO
 - Fix all printing in Motors.cpp to be logging as needed
 - Search for ALL HJA's and fix them

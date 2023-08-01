@@ -21,21 +21,63 @@ int main(int argc, char *argv[])
   double knee_angle = KNEE_ANGLE;
   int leg_offset = LEG_OFFSET;
 
+  double pid_kp = PID_Kp;
+  double pid_ki = PID_Ki;
+  double pid_kd = PID_Kd;
+
   SLOG << "" << std::endl;
   SLOG << "++++++++++++++++++++++++++++++++++++++++ Hello Robbie ++++++++++++++++++++++++++++++++++++++++" << std::endl;
 
-  // Handle passed Controller parameters for legs
-  if (argc == 3)
+  for(;;)
   {
-    // std::cout << "argv[0]=" << argv[0] << " argv[1]=" << argv[1]<< " argv[2]=" << argv[2] << std::endl;
-    knee_angle = atof(argv[1]);
-    leg_offset = atoi(argv[2]);
-    SLOG << "knee_angle=" << knee_angle << " leg_offset=" << leg_offset << std::endl;
+    switch(getopt(argc, argv, "a:o:p:i:d:h")) // note the colon (:) to indicate that 'b' has a parameter and is not a switch
+    {
+      case 'a': // Knee angle
+        printf("switch 'a' specified with the value %s\n", optarg);
+        knee_angle = atof(optarg);
+        continue;
+
+      case 'o': // Leg offset
+        printf("switch 'o' specified with the value %s\n", optarg);
+        leg_offset = atoi(optarg);
+        continue;
+
+      case 'p':
+        printf("switch 'p' specified with the value %s\n", optarg);
+        pid_kp = atof(optarg);
+        continue;
+
+      case 'i':
+        printf("parameter 'i' specified with the value %s\n", optarg);
+        pid_ki = atof(optarg);
+        continue;
+
+      case 'd':
+        printf("parameter 'd' specified with the value %s\n", optarg);
+        pid_kd = atof(optarg);
+        continue;
+
+      case '?':
+      case 'h':
+      default :
+        printf("Usage\n");
+        printf("robot -a 90.0 -o -30 -p 833 -i 5 -d 30 -h -H\n");
+        printf("-a leg knee angle -o leg wheel offset from center of robot\n");
+        printf("-p proportional -i integral -d derivative\n");
+        printf("-h help\n");
+        break;
+
+      case -1:
+        break;
+    }
+
+    break;
   }
-  else if (argc != 1 && argc != 3)
-  {
-    SLOG << "ERROR: parameters leg angles and offset required, argc must be 1 or 3 argc=" << argc << std::endl;
-  }
+
+  std::cout << "knee_angle=" << knee_angle << " leg_offset=" << leg_offset << std::endl;
+  std::cout << "pid_kp=" << pid_kp << std::endl;;
+  std::cout << "pid_ki=" << pid_ki << std::endl;;
+  std::cout << "pid_kd=" << pid_kd << std::endl;;
 
   // Signals turn off control-c, etc
 	sigemptyset(&sigs_to_catch);
@@ -55,7 +97,7 @@ int main(int argc, char *argv[])
   // Do this here so we initialize PCA9685
   PCA9685::Instance();
 
-  Controller* p_controller = new Controller(knee_angle, leg_offset);
+  Controller* p_controller = new Controller(knee_angle, leg_offset, pid_kp, pid_ki, pid_kd);
 
   // Now we can wait for a signal to stop us
   cout << "Waiting for signal" << std::endl;
