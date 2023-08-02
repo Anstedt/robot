@@ -72,7 +72,7 @@ const int SHIN_LENGTH   = 75;
 const int THIGH_LENGTH  = 95;
 
 // Leg default angle and offset
-const double KNEE_ANGLE = -40;
-const int LEG_OFFSET = 0;
+const double KNEE_ANGLE = 90;
+const int LEG_OFFSET = -30;
 
 #endif /* CONFIG_H */
