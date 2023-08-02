@@ -20,7 +20,7 @@ class Controller
 public:
   // Local Classes
   // Constructors
-  Controller(double, int);
+  Controller(double, int, double, double, double);
   bool TestIt();
   // Mutators: non-const operations
   // Accessors: const operations

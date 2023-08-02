@@ -4,8 +4,6 @@ PACKAGE: Robot
 PURPOSE: Creates Gyro and Motors and connecting them up for balancing
 *******************************************************************************/
 /* INCLUDE ********************************************************************/
-#include "Config.h"
-
 #include "Balancer.h"
 #include <functional>
 
@@ -20,7 +18,7 @@ using namespace std;
 /*------------------------------------------------------------------------------
 FUNCTION:      Balancer::Balancer()
 ------------------------------------------------------------------------------*/
-Balancer::Balancer()
+Balancer::Balancer(double kp, double ki, double kd)
 {
   // Create a shared mutex for the motor driver
   if (pthread_mutex_init(&m_driver_mutex, NULL) != 0)
@@ -29,7 +27,7 @@ Balancer::Balancer()
   }
   
   // Start Motors
-  m_motors = new Motors();
+  m_motors = new Motors(kp, ki, kd);
 
   m_gyro = new Gyro();
 
