@@ -34,7 +34,7 @@ Motors::Motors(double kp, double ki, double kd):
 {
   char tty[] = "/dev/ttyACM0";
 
-  printf("Motors()\n");
+  SLOG << "Motors()" << std::endl;
 
   m_pid.SetSampleTime(PRIMARY_THREAD_RATE);
   m_pid.SetOutputLimits(-MOTORS_MAX_PULSES_PER_SEC, MOTORS_MAX_PULSES_PER_SEC);
@@ -54,7 +54,7 @@ PURPOSE:
 ------------------------------------------------------------------------------*/
 Motors::~Motors()
 {
-  printf("~Motors()\n");
+  SLOG << "~Motors()" << std::endl;
 
   if (m_serial >= 0)
   {
@@ -86,11 +86,11 @@ bool Motors::AddGyroData(int y, int x, float angle_gyro, float angle_acc)
   if (m_heartbeat++ > (PRIMARY_THREAD_RATE*HEARTBEAT))
   {
     SLOG << "Angle Gyro=" << angle_gyro << " speed=" << speed << " distance=" << distance << std::endl;
-    std::cout << "Motor turned off search for HJAMOTOROFF" << std::endl;
+    // std::cout << "Motor turned off search for HJAMOTOROFF" << std::endl;
     m_heartbeat = 0;
   }
 
-  // HJAMOTOROFF SendCmd(speed, distance, speed, distance); // Send the speed and distance, really direction, to PICO
+  SendCmd(speed, distance, speed, distance); // Send the speed and distance, really direction, to PICO
 
   return(true);
 }
@@ -154,11 +154,15 @@ bool Motors::SendCmd(unsigned int m1_speed, int m1_distance, unsigned int m2_spe
     if (m_heartbeat_serial++ > (PRIMARY_THREAD_RATE*HEARTBEAT))
 #endif
     {
+      // std::cout << "d1=" << m1_distance << " m1s=" << m_motor1_speed << " m1dir=" << m_motor1_dir << std::endl;
+      // std::cout << "d2=" << m2_distance << " m2s=" << m_motor2_speed << " m2dir=" << m_motor2_dir << std::endl;
+
       if (rr >=0)
       {
         printf("%s\n", buf);
         // SLOG << buf << std::endl;
       }
+
       
       m_heartbeat_serial = 0;
     }
@@ -185,6 +189,7 @@ unsigned int Motors::AngleToSpeed(float angle, int* distance)
   bool dist_reverse = false;
   unsigned int speed = 0;
 
+  // Should we set m_input_degrees to 0 if angle is very small HJA ???
   m_input_degrees = angle; // This has a range of +/-180
   m_setpoint = 0; // never changes but we make sure it is set here
 
@@ -202,6 +207,9 @@ unsigned int Motors::AngleToSpeed(float angle, int* distance)
 
   speed = m_output_speed;
 
+  // Notice speed is positive here and distance will be correct for direction below
+  *distance = (speed / PRIMARY_THREAD_RATE);
+  
   // negate distance if speed was negative, note at this point speed is positive
   if (dist_reverse)
     *distance *= -1;
