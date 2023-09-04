@@ -1,0 +1,58 @@
+<mxfile host="Electron" modified="2023-09-04T22:08:38.854Z" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) draw.io/21.6.8 Chrome/114.0.5735.289 Electron/25.5.0 Safari/537.36" etag="KGtoO0lO52t7kF0Gj7hS" version="21.6.8" type="device">
+  <diagram name="Page-1" id="e0y9AfWpPtlmsfKVSm_N">
+    <mxGraphModel dx="1434" dy="884" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="O3enYq-y9W5TxXo-tOcn-7" value="Sensor data processes based off of manually adjust sensor offsets" style="shape=document;whiteSpace=wrap;html=1;boundedLbl=1;" vertex="1" parent="1">
+          <mxGeometry x="240" y="160" width="120" height="100" as="geometry" />
+        </mxCell>
+        <mxCell id="O3enYq-y9W5TxXo-tOcn-1" value="Gyro" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="40" y="40" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="O3enYq-y9W5TxXo-tOcn-2" value="Pre-Processing" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="40" y="160" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="O3enYq-y9W5TxXo-tOcn-3" value="PID" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="40" y="400" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="O3enYq-y9W5TxXo-tOcn-4" value="Zero Analysis" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="40" y="280" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="O3enYq-y9W5TxXo-tOcn-5" value="Motor Driver" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="40" y="520" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="O3enYq-y9W5TxXo-tOcn-6" value="Raw Data From Gyro and Accelerometer" style="shape=document;whiteSpace=wrap;html=1;boundedLbl=1;" vertex="1" parent="1">
+          <mxGeometry x="240" y="40" width="120" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="O3enYq-y9W5TxXo-tOcn-8" value="Dynamic sensor zero offsets calculated based on robot motion&lt;br&gt;&lt;br&gt;While robot position oscillates between 2 points assume real zero offset is half way between those 2 points, Then Adjust the data being sent to the PID by those values." style="shape=document;whiteSpace=wrap;html=1;boundedLbl=1;" vertex="1" parent="1">
+          <mxGeometry x="241" y="279" width="349" height="140" as="geometry" />
+        </mxCell>
+        <mxCell id="O3enYq-y9W5TxXo-tOcn-9" value="" style="shape=flexArrow;endArrow=classic;html=1;rounded=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="O3enYq-y9W5TxXo-tOcn-1" target="O3enYq-y9W5TxXo-tOcn-2">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="590" y="520" as="sourcePoint" />
+            <mxPoint x="640" y="470" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="O3enYq-y9W5TxXo-tOcn-10" value="" style="shape=flexArrow;endArrow=classic;html=1;rounded=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;exitX=0.5;exitY=1;exitDx=0;exitDy=0;" edge="1" parent="1" source="O3enYq-y9W5TxXo-tOcn-2" target="O3enYq-y9W5TxXo-tOcn-4">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="270" y="550" as="sourcePoint" />
+            <mxPoint x="320" y="500" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="O3enYq-y9W5TxXo-tOcn-11" value="" style="shape=flexArrow;endArrow=classic;html=1;rounded=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="O3enYq-y9W5TxXo-tOcn-4" target="O3enYq-y9W5TxXo-tOcn-3">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="590" y="520" as="sourcePoint" />
+            <mxPoint x="640" y="470" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="O3enYq-y9W5TxXo-tOcn-12" value="" style="shape=flexArrow;endArrow=classic;html=1;rounded=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="O3enYq-y9W5TxXo-tOcn-3" target="O3enYq-y9W5TxXo-tOcn-5">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="590" y="520" as="sourcePoint" />
+            <mxPoint x="640" y="470" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
