@@ -133,6 +133,7 @@ float Balancer::DynamicAngleCalc(float angle)
     // We oscillating and we have angles in range
     if (m_osc_pos && m_osc_neg && m_max != RANGE_MAX && m_min != RANGE_MIN)
     {
+      // SLOG << "m_max =" << m_max << " m_min =" << m_min << std::endl;
       // Make sure max is maximum and min is minimum
       if (m_max < m_min)
       {
@@ -152,7 +153,8 @@ float Balancer::DynamicAngleCalc(float angle)
       {
         // Find the midpoint
         m_mid = (m_max + m_mid)/2;
-        
+        // SLOG << "m_mid = " << m_mid << " m_max =" << m_max << " m_min =" << m_min << std::endl;
+
         // Since we have a mid start over
         m_range = 0; // Restart range check
         m_max = RANGE_MAX;
