@@ -34,17 +34,27 @@ private:
   // Local Classes
   // Constructors
   // Mutators: non-const operations
+  float DynamicAngleCalc(float angle);
   // Accessors: const operations
   // static void* CallBackRun(void* This, int pitch, int yaw, float angle_acc, float angle_gyro);
   // HJA void CallBack(int pitch, int yaw, float angle_acc, float angle_gyro);
   void CallBack(int, int, float, float);
   // Static and friend functions
+  const float RANGE_MAX = 8;
+  const float RANGE_MIN = -8;
+  const unsigned int RANGE_SUM = 25;
   // Memory management
   Balancer(const Balancer&);
   Balancer& operator=(const Balancer& rhs);
   // Data fields
   Gyro* m_gyro;
   Motors* m_motors;
+  float m_max;
+  float m_min;
+  float m_mid;
+  unsigned int m_range;
+  bool m_gotmid;
+  
   // Static (shared) class variables
 };
 /* GLOBALS ********************************************************************/
