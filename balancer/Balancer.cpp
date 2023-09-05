@@ -31,7 +31,6 @@ Balancer::Balancer(double kp, double ki, double kd)
   m_min = RANGE_MIN;
   m_range = 0;
   m_mid = 0;
-  m_gotmid = false;
   
   // Start Motors
   m_motors = new Motors(kp, ki, kd);
@@ -91,7 +90,31 @@ PURPOSE:   Watch for angle oscillations to determine the true 0 for the angle
 4. Calculate midpoint of max and min angles
 5. Compare to saved midpoint, default is 0.
 6. If significantly different then store new midpoint
-7. Return stored midpoint
+7. Offset angle by the stored midpoint
+
+HJA: PROBLEM
+
+  Calculation would be better if we could also use direction changes
+  as a clue as to when the robot is oscillating.
+
+  This design is based off the idea that if the robot is oscillating
+  we can find the midpoint of the oscillation to dynamically find the
+  real offset.
+
+  The issue is if the robot is traveling in ONE direction, this code
+  will assume it is oscillating as long as the angle values are not
+  exactly the same.
+
+  As an example with the robot sitting on a workbench with the wheels
+  disabled a midpoint will be selected that matches the actual angle
+  of the robot and then adjust the current angle to be zero since it
+  is not changing.
+
+  But we can watch for motor direction changes based on the calculated
+  angle since that directly controls the motor direction
+
+  Then we can run the calculation section for a new mid.
+
 
 ARGUMENTS: None
 RETURNS:   None
@@ -107,8 +130,8 @@ float Balancer::DynamicAngleCalc(float angle)
     else if (m_min == RANGE_MIN)
       m_min = angle;
 
-    // Have we found 2 angles
-    if (m_max != RANGE_MAX && m_min != RANGE_MIN)
+    // We oscillating and we have angles in range
+    if (m_osc_pos && m_osc_neg && m_max != RANGE_MAX && m_min != RANGE_MIN)
     {
       // Make sure max is maximum and min is minimum
       if (m_max < m_min)
@@ -129,18 +152,36 @@ float Balancer::DynamicAngleCalc(float angle)
       {
         // Find the midpoint
         m_mid = (m_max + m_mid)/2;
-        m_gotmid = true;
-
+        
         // Since we have a mid start over
         m_range = 0; // Restart range check
         m_max = RANGE_MAX;
         m_min = RANGE_MIN;
+        m_osc_pos = false;
+        m_osc_neg = false;
       }
     }   
   }
+  
+  // m_mid is the offset from the hard coded offset. Since m_mid
+  // defaults to 0 nothing changes until it is set to a new value
+  float angle_calc = angle - m_mid;
 
-  // If we have got a mid then return it, until then just return the angle.
-  return(m_gotmid ? m_mid : angle);
+  if (angle_cal > 0)
+  {
+    m_osc_pos = true;
+  }
+  else if (angle_cal < 0)
+  {
+    m_osc_neg = true;
+  }
+  else // If angle_calc is 0 the robot stops so we are not oscillating
+  {
+    m_osc_pos = false;
+    m_osc_neg = false;
+  }
+  
+  return(angle_calc);
 }
 
 /*------------------------------------------------------------------------------

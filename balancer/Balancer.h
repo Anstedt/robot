@@ -53,7 +53,8 @@ private:
   float m_min;
   float m_mid;
   unsigned int m_range;
-  bool m_gotmid;
+  bool m_osc_pos;
+  bool m_osc_neg;
   
   // Static (shared) class variables
 };
