@@ -243,24 +243,53 @@ bool Motors::Turn(int degrees)
 
 // Motor Tests
 #ifdef MOTORS_TEST
-int main()
+int main(int argc, char *argv[])
 {
+  int speed = 0;
+  int distance = 1; // default a direction
+  
+  for(;;)
+  {
+    switch(getopt(argc, argv, "d:s:h")) // note the colon (:) to indicate that 'b' has a parameter and is not a switch
+    {
+      case 'd': // Motor direction
+        printf("switch 'd/direction' specified with the value %s\n", optarg);
+        distance = atoi(optarg);
+        continue;
+
+      case 's': // Motor speed
+        printf("switch 's/speed' specified with the value %s\n", optarg);
+        speed = atoi(optarg);
+        continue;
+
+      case -1:
+        break;
+    }
+    break;
+  }
+  
+
   if (gpioInitialise() < 0)
   {
     printf("gpio init failed\n");
   }
 
-  Motors* p_motors = new Motors();
+  Motors* p_motors = new Motors(0, 0, 0); // Only used with PID control
 
   unsigned int ticks = gpioTick();
+
+  // distance controls direction
+  p_motors->SendCmd(speed, distance, speed, distance);
   
+  /*
   for (int i=8000; i>=0; i = i - 1000)
   {
     printf("i=%d\n", i);
     p_motors->SendCmd(i, 1, i*4, 1); // speed, distance
     sleep(5);
   }
-
+  */
+  
   printf("TICKs=%d\n", (gpioTick()-ticks)/1000);  
   
   delete p_motors;
