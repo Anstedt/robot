@@ -110,6 +110,7 @@ float Balancer::DynamicAngleCalc(float angle)
     // Have we found 2 angles
     if (m_max != RANGE_MAX && m_min != RANGE_MIN)
     {
+      // SLOG << "m_max =" << m_max << " m_min =" << m_min << std::endl;
       // Make sure max is maximum and min is minimum
       if (m_max < m_min)
       {
@@ -131,6 +132,8 @@ float Balancer::DynamicAngleCalc(float angle)
         m_mid = (m_max + m_mid)/2;
         m_gotmid = true;
 
+        // SLOG << "m_mid = " << m_mid << " m_max =" << m_max << " m_min =" << m_min << std::endl;
+
         // Since we have a mid start over
         m_range = 0; // Restart range check
         m_max = RANGE_MAX;
@@ -138,7 +141,13 @@ float Balancer::DynamicAngleCalc(float angle)
       }
     }   
   }
-
+  else
+  {
+    // If angle is out of range we no longer use our mid
+    // OR we use it as an offset of the angle instead
+    m_gotmid = false;
+  }
+  
   // If we have got a mid then return it, until then just return the angle.
   return(m_gotmid ? m_mid : angle);
 }
