@@ -32,6 +32,9 @@ Balancer::Balancer(double kp, double ki, double kd)
   m_range = 0;
   m_mid = 0;
 
+  m_osc_pos = false;
+  m_osc_neg = false;
+
   // Start Motors
   m_motors = new Motors(kp, ki, kd);
 
@@ -127,7 +130,9 @@ float Balancer::DynamicAngleCalc(float angle)
     // If oscillating find angles in range
     if (m_osc_pos && m_osc_neg)
     {
-      SLOG << "We are in oscillation" << std::endl;
+      // only log when we enter searching
+      if (m_min == RANGE_MIN && m_max == RANGE_MAX)
+        SLOG << "We are in oscillation, searching for min and max" << std::endl;
       // Find some angles
       if (m_max == RANGE_MAX)
         m_max = angle;
@@ -135,8 +140,8 @@ float Balancer::DynamicAngleCalc(float angle)
         m_min = angle;
     }
     
-    // Now we have angles
-    if(m_max != RANGE_MAX && m_min != RANGE_MIN)
+    // If we have new angles
+    if(m_min != RANGE_MIN && m_max != RANGE_MAX)
     {
       // SLOG << "m_max =" << m_max << " m_min =" << m_min << std::endl;
       // Make sure max is maximum and min is minimum
@@ -150,15 +155,15 @@ float Balancer::DynamicAngleCalc(float angle)
 
       // Consider checking max and min against angle for some number of steps,
       // picking the angle if it is outside our current range of mid and max.
-      if (angle > m_max) m_max = angle;
       if (angle < m_min) m_min = angle;
+      if (angle > m_max) m_max = angle;
 
-      // Track till we have a number of points
+      // Track till we have the required number of points
       if (m_range++ >= RANGE_SUM)
       {
         // Find the midpoint
-        m_mid = (m_max + m_mid)/2;
-        SLOG << "m_mid = " << m_mid << " m_max =" << m_max << " m_min =" << m_min << std::endl;
+        m_mid = (m_min + m_max)/2;
+        SLOG << "m_mid = " << m_mid << " m_min = " << m_min << " m_max = " << m_max << std::endl;
 
         // Since we have a mid start over
         m_range = 0; // Restart range check
@@ -176,10 +181,14 @@ float Balancer::DynamicAngleCalc(float angle)
 
   if (angle_calc > 0)
   {
+    if (!m_osc_pos)
+      SLOG << "POS: angle_calc=" << angle_calc << " angle=" << angle << " mid=" << m_mid << std::endl;
     m_osc_pos = true;
   }
   else if (angle_calc < 0)
   {
+    if (!m_osc_neg)
+      SLOG << "NEG: angle_calc=" << angle_calc << " angle=" << angle << " mid=" << m_mid << std::endl;
     m_osc_neg = true;
   }
   else // If angle_calc is 0 the robot stops so we are not oscillating
