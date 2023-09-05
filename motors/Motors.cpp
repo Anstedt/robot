@@ -247,10 +247,11 @@ int main(int argc, char *argv[])
 {
   int speed = 0;
   int distance = 1; // default a direction
+  int wait = 10;
   
   for(;;)
   {
-    switch(getopt(argc, argv, "d:s:h")) // note the colon (:) to indicate that 'b' has a parameter and is not a switch
+    switch(getopt(argc, argv, "d:s:w:h")) // note the colon (:) to indicate that 'b' has a parameter and is not a switch
     {
       case 'd': // Motor direction
         printf("switch 'd/direction' specified with the value %s\n", optarg);
@@ -260,6 +261,11 @@ int main(int argc, char *argv[])
       case 's': // Motor speed
         printf("switch 's/speed' specified with the value %s\n", optarg);
         speed = atoi(optarg);
+        continue;
+
+      case 'w': // Wait time for testing
+        printf("switch 'w/wait/sleep' specified with the value %s\n", optarg);
+        wait = atoi(optarg);
         continue;
 
       case -1:
@@ -275,7 +281,7 @@ int main(int argc, char *argv[])
   }
 
   Motors* p_motors = new Motors(0, 0, 0); // Only used with PID control
-
+  
   unsigned int ticks = gpioTick();
 
   // distance controls direction
@@ -289,6 +295,8 @@ int main(int argc, char *argv[])
     sleep(5);
   }
   */
+
+  sleep(wait);
   
   printf("TICKs=%d\n", (gpioTick()-ticks)/1000);  
   
