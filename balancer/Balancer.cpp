@@ -31,7 +31,7 @@ Balancer::Balancer(double kp, double ki, double kd)
   m_min = RANGE_MIN;
   m_range = 0;
   m_mid = 0;
-  
+
   // Start Motors
   m_motors = new Motors(kp, ki, kd);
 
@@ -124,14 +124,19 @@ float Balancer::DynamicAngleCalc(float angle)
   // Angle is in range for consideration
   if (angle < RANGE_MAX && angle > RANGE_MIN)
   {
-    // Find some angles
-    if (m_max == RANGE_MAX)
-      m_max = angle;
-    else if (m_min == RANGE_MIN)
-      m_min = angle;
-
-    // We oscillating and we have angles in range
-    if (m_osc_pos && m_osc_neg && m_max != RANGE_MAX && m_min != RANGE_MIN)
+    // If oscillating find angles in range
+    if (m_osc_pos && m_osc_neg)
+    {
+      SLOG << "We are in oscillation" << std::endl;
+      // Find some angles
+      if (m_max == RANGE_MAX)
+        m_max = angle;
+      else if (m_min == RANGE_MIN)
+        m_min = angle;
+    }
+    
+    // Now we have angles
+    if(m_max != RANGE_MAX && m_min != RANGE_MIN)
     {
       // SLOG << "m_max =" << m_max << " m_min =" << m_min << std::endl;
       // Make sure max is maximum and min is minimum
@@ -153,7 +158,7 @@ float Balancer::DynamicAngleCalc(float angle)
       {
         // Find the midpoint
         m_mid = (m_max + m_mid)/2;
-        // SLOG << "m_mid = " << m_mid << " m_max =" << m_max << " m_min =" << m_min << std::endl;
+        SLOG << "m_mid = " << m_mid << " m_max =" << m_max << " m_min =" << m_min << std::endl;
 
         // Since we have a mid start over
         m_range = 0; // Restart range check
@@ -162,18 +167,18 @@ float Balancer::DynamicAngleCalc(float angle)
         m_osc_pos = false;
         m_osc_neg = false;
       }
-    }   
+    }
   }
-  
+
   // m_mid is the offset from the hard coded offset. Since m_mid
   // defaults to 0 nothing changes until it is set to a new value
   float angle_calc = angle - m_mid;
 
-  if (angle_cal > 0)
+  if (angle_calc > 0)
   {
     m_osc_pos = true;
   }
-  else if (angle_cal < 0)
+  else if (angle_calc < 0)
   {
     m_osc_neg = true;
   }
@@ -182,7 +187,7 @@ float Balancer::DynamicAngleCalc(float angle)
     m_osc_pos = false;
     m_osc_neg = false;
   }
-  
+
   return(angle_calc);
 }
 
@@ -198,6 +203,6 @@ void Balancer::CallBack(int gyro_pitch, int gyro_yaw, float angle_gyro, float an
 
   // The gyro's angle is used to calculated the speed sent to the robot.
   // At this point we can calculate the dynamic offset of that angle
-  
+
   m_motors->AddGyroData(gyro_pitch, gyro_yaw, DynamicAngleCalc(angle_gyro), angle_acc);
 }
