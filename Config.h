@@ -35,7 +35,7 @@ const int MOTORS_MODE_DEFAULT  = 5; // 1/32 stepping
 const int MOTORS_RPM_DEFAULT   = 30;
 // Based on email notes saying I tried 25000 but 3124 average speed would be
 // enough. But we need higher speed when we are far from our rotation point
-const int MOTORS_MAX_PULSES_PER_SEC = 10000;
+const int MOTORS_MAX_PULSES_PER_SEC = 20000;
 
 // Use this to align max motor speed to max angle
 const double MOTOR_ANGLE_RATIO = (MOTORS_MAX_PULSES_PER_SEC/180);
