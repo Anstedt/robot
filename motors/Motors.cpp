@@ -106,6 +106,19 @@ bool Motors::SendCmd(unsigned int m1_speed, int m1_distance, unsigned int m2_spe
 {
   // Default motors to the same speed
   // HJA Future Adjust speed based on Move and Turn commands
+
+  if (m1_speed > MOTORS_MAX_PULSES_PER_SEC)
+  {
+     SLOG << "Motor 2 Speed cmd to high=" << m1_speed << " PPS set to Motor Max=" << MOTORS_MAX_PULSES_PER_SEC << std::endl;
+     m1_speed == MOTORS_MAX_PULSES_PER_SEC;
+  }
+  
+  if (m2_speed > MOTORS_MAX_PULSES_PER_SEC)
+  {
+    SLOG << "Motor 2 Speed cmd to high=" << m2_speed << " PPS set to Motor Max=" << MOTORS_MAX_PULSES_PER_SEC << std::endl;
+    m2_speed == MOTORS_MAX_PULSES_PER_SEC;
+  }
+  
   m_motor1_speed = m1_speed;
   m_motor2_speed = m2_speed;
 
