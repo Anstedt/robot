@@ -281,6 +281,11 @@ int main(int argc, char *argv[])
         wait = atoi(optarg);
         continue;
 
+      case 'h': // Wait time for testing
+        printf("sudo ./MotorsTest -d direction -s pulses/second -w wait/run seconds\n");
+        return(1);
+        continue;
+
       case -1:
         break;
     }
