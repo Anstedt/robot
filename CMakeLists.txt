@@ -1,4 +1,5 @@
 cmake_minimum_required(VERSION 3.18 FATAL_ERROR)
+cmake_policy(SET CMP0115 OLD)
 project(Robot)
 
 include_directories("${PROJECT_SOURCE_DIR}")

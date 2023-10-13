@@ -141,7 +141,7 @@ The front is where the holes are in the upper body. The angles are in reference 
   - $ sudo apt-get install ninja-build
   - $ sudo ln /usr/bin/ninja /usr/sbin/ninja
 - Build the robot using ninja
-  - cmake -G Ninja
+  - cmake -G Ninja .
   - ninja
 - Run the robot
   - $ robot
