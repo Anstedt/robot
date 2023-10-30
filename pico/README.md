@@ -1,5 +1,16 @@
 ## PICO as motor controller
 
+# Timing Update
+# After Update so OUTER_LOOP_DELAY = 12us
+TOTAL_DELAY = INNER_LOOP_DELAY + OUTER_LOOP_DELAY_us
+INNER_LOOP_DELAY = TOTAL_DELAY - OUTER_LOOP_DELAY_us
+TOTAL_DELAY = 1/pps
+TOTAL_DELAY_us = (1/pps)*1000000
+INNER_LOOP_DELAY_us = TOTAL_DELAY_us - OUTER_LOOP_DELAY_us
+INNER_LOOP_DELAY = INNER_LOOP_DELAY_cnt * 3
+INNER_LOOP_DELAY_cnt = (TOTAL_DELAY_us - OUTER_LOOP_DELAY_us) / 3
+INNER_LOOP_DELAY_cnt = ((1/pps)*1000000) - OUTER_LOOP_DELAY_us) / 3
+
 # PICO Notes:
 - You can have a multi-file application by copying the libraries/calls
   files to the PICO before running the top-level application.
