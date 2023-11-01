@@ -1,7 +1,7 @@
 ## PICO as motor controller
 
 # Timing Update
-# After Update so OUTER_LOOP_DELAY = 12us
+# After Update so OUTER_LOOP_DELAY = 9us
 TOTAL_DELAY = INNER_LOOP_DELAY + OUTER_LOOP_DELAY_us
 INNER_LOOP_DELAY = TOTAL_DELAY - OUTER_LOOP_DELAY_us
 TOTAL_DELAY = 1/pps
@@ -29,7 +29,7 @@ INNER_LOOP_DELAY_cnt = ((1/pps)*1000000) - OUTER_LOOP_DELAY_us) / 3
 3     pull(noblock)
 4     mov(x,osr)          # save x so a pull without data returns x
 5     jmp(not_x, "main")  # If x is 0 stop pulsing till we get a non-zero value
-6     set(pins, 1) [3]    # Turn pin on for 4 1mhz clocks cycles or 4 us delay
+6     set(pins, 1) [2]    # Turn pin on for 3 1mhz clocks cycles or 3 us delay
 7     set(pins, 0)        # Turn pin off
 8     mov(y,osr)          # Now get the low delay time
 9     label("delay")

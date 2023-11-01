@@ -12,7 +12,7 @@ def pulse_control():
     pull(noblock)
     mov(x,osr)          # save x so a pull without data returns x
     jmp(not_x, "main")  # If x is 0 stop pulsing till we get a non-zero value
-    set(pins, 1) [3]    # Turn pin on for 4 1mhz clocks cycles or 4 us delay
+    set(pins, 1) [2]    # Turn pin on for 3 1mhz clocks cycles or 3 us delay
     set(pins, 0)        # Turn pin off
     mov(y,osr)          # Now get the low delay time
     label("delay")
@@ -40,7 +40,8 @@ class MotorDriver:
   def pps_to_delay(self, val):
     if (val <= 0):
       return(0)
-    return(int(((1/val)*1000000)/3) - 4)
+    # 9 outer loop steps in ever loop
+    return(int((((1/val)*1000000)-9)/3))
 
   # For now we will assume 1 is forward, 2 is reverse.
   # Remeber we need to handle that each motor is opposite the other
