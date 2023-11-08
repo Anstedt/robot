@@ -17,6 +17,48 @@ see ./robot -h
 - Build physical arms for better testing
 - Start adjusting PID values
 
+# Improve Robot angle startup
+- Currently m_angle_acc is calculated but not used, instead
+  get_accel_Z_cal_angle() but this assumes the Robot is standing
+  straight up on startup, even then the raw value does not make sense
+  considering that m_angle_acc uses also uses the accel_Z
+  values. There is at least redundant code here.
+  - Investigate
+    - Basic concept that Robot needs to be standing straight up at
+      startup. Rather do any early calibration before legs and motors
+      are started. ONLY assume Robot is motionless.
+	- MPU6050::calibrate() at least should be coordinated with motor
+      and legs startup and verify code is correct via testing.
+      - Review MPU6060.cpp lines #90 and #91. What is the point of this code
+	  - #106 uses the assumed standing straight value which is a BAD
+	    assumption.  = #109 110 compares against max and min. That
+	    should be done when raw values are first used not after avg is
+	    calculated.
+	- Gyro.cpp::95 at best does redundant calculation found at
+      MPU6050::113. Yes one is average based the other raw but merge
+      into common function at least.
+  - Cleanup Design
+    - Control legs and motors till after calibration.
+	- Use Z accel to get current angle and do not use an assumed
+      offset from standing straight up
+	- Test concepts at lower level to make sure they work.
+	  - Test Robot at any angle
+	  - Make sure gyro values adjust properly after that
+  - Current Startup
+    - Controller
+	  - Balancer (RegisterForCallback, for data from Gyro)
+	    - Motors
+		- Gyro (Thread)
+		  - MPU6050
+	  - Legs
+  - New Startup (Not Started, Maybe start Gryo in Controller, then after Gyro startup completes start Balancer passing in Gyro)
+    - Controller
+	  - Balancer (RegisterForCallback, for data from Gyro)
+	    - Motors
+		- Gyro (Thread)
+		  - MPU6050
+	  - Legs
+  
 # PICO software install
   - Install MicroPython, see: https://micropython.org/download/rp2-pico/
     - I am using v1.20.0

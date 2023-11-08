@@ -92,7 +92,7 @@ void MPU6050::calibrate(void)
     
     // DEBUG SLOG << "gyro_yaw_calibration_value  =" << gyro_yaw_calibration_value << std::endl;
     // DEBUG SLOG << "gyro_pitch_calibration_value=" << gyro_pitch_calibration_value << std::endl;
-    //Wait for 3700 microseconds to simulate the main program loop time
+    // Wait for 4000 microseconds to simulate the main program loop time
 
     while(timer > gpioTick());
     timer += (uint32_t)4000;
