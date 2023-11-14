@@ -1,21 +1,18 @@
 # Robot
 
+# Calibration
+- In robot manually re-calibrate m_acc_calibration_value, uncomment
+  SLOG << "accel_raw_avg=" << accel_raw_avg << std::endl; then run
+  robot and set m_acc_calibration_value to the negation of accel_raw_avg.
+  - Search for "Manual Z accelerometer calibration" in MPU6050.cpp
+
 # Command line options add:
 see ./robot -h
 
-# ToDO
-- Fix all printing in Motors.cpp to be logging as needed
-- Search for ALL HJA's and fix them
-- Update Config.h and associated code for PICO driver. Test for max
-  and min motor pps, Config.h says MOTORS_MAX_PULSES_PER_SEC = 10000,
-  seems I can go higher than that.  Min pps is 1 since the speed units
-  are in Hz.
-- Handle min/max motor speed
-- Config.h has values for old driver for driver rates.
-- Rebuild robot
-- Start testing with robot
-- Build physical arms for better testing
-- Start adjusting PID values
+# Improve Robot angle responsiveness
+- Big angle changes do not get picked up for a long time. Seems like
+  angle changes of 90 or less seem to work fine so this may not be an
+  issue.
 
 # Improve Robot angle startup
 - Currently m_angle_acc is calculated but not used, instead
@@ -23,24 +20,22 @@ see ./robot -h
   straight up on startup, even then the raw value does not make sense
   considering that m_angle_acc uses also uses the accel_Z
   values. There is at least redundant code here.
-  - Investigate
+  WORKS if no motion since gyros should be 0 with NO motion.
+  WORKS for accel as well if there is NOT motion
+
+- CONSIDER IF THIS NEEDS TO BE FIXED:
+  - Review MPU6060.cpp lines #90 and #91. What is the point of this code
+  - #106 uses the assumed standing straight value which is a BAD
+	assumption.  = #109 110 compares against max and min. That should
+	be done when raw values are first used not after avg is
+	calculated.
+
+- Investigate
     - Basic concept that Robot needs to be standing straight up at
       startup. Rather do any early calibration before legs and motors
       are started. ONLY assume Robot is motionless.
-	- MPU6050::calibrate() at least should be coordinated with motor
-      and legs startup and verify code is correct via testing.
-      - Review MPU6060.cpp lines #90 and #91. What is the point of this code
-	  - #106 uses the assumed standing straight value which is a BAD
-	    assumption.  = #109 110 compares against max and min. That
-	    should be done when raw values are first used not after avg is
-	    calculated.
-	- Gyro.cpp::95 at best does redundant calculation found at
-      MPU6050::113. Yes one is average based the other raw but merge
-      into common function at least.
   - Cleanup Design
     - Control legs and motors till after calibration.
-	- Use Z accel to get current angle and do not use an assumed
-      offset from standing straight up
 	- Test concepts at lower level to make sure they work.
 	  - Test Robot at any angle
 	  - Make sure gyro values adjust properly after that
@@ -59,6 +54,20 @@ see ./robot -h
 		  - MPU6050
 	  - Legs
   
+# ToDO
+- Fix all printing in Motors.cpp to be logging as needed
+- Search for ALL HJA's and fix them
+- Update Config.h and associated code for PICO driver. Test for max
+  and min motor pps, Config.h says MOTORS_MAX_PULSES_PER_SEC = 10000,
+  seems I can go higher than that.  Min pps is 1 since the speed units
+  are in Hz.
+- Handle min/max motor speed
+- Config.h has values for old driver for driver rates.
+- Rebuild robot
+- Start testing with robot
+- Build physical arms for better testing
+- Start adjusting PID values
+
 # PICO software install
   - Install MicroPython, see: https://micropython.org/download/rp2-pico/
     - I am using v1.20.0

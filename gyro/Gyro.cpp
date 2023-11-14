@@ -89,18 +89,16 @@ int Gyro::Run(void)
 
   while (ThreadRunning())
   {
-    // The 57.296 is the conversions from radians to degrees. The - is so that
-    // leaning forward is positive. The 8200(8192) is from the data sheet for
-    // AFS_SEL 1.
-    m_angle_acc = asin((float)(p_mpu6050->get_accel_Z_cal())/8200.0) * -57.296; //Calculate the current angle according to the accelerometer
-
     // On startup use accelerometer since that is the best we have
     if(m_start == 0)
     {
       // m_angle_gyro = m_angle_acc; //Load the accelerometer angle in the angle_gyro variable
-      m_angle_gyro = p_mpu6050->get_accel_Z_cal_angle(); // Experimental
+
+      // This is the accel value based on the effects of gravity plus the manual
+      // calibration factor.
+      m_angle_gyro = p_mpu6050->get_accel_Z_cal_angle();
       m_start = 1; //Set the start variable to start the PID controller
-      SLOG << "EXPERIMENTAL m_angle_acc:get_accel_Z_cal=" << m_angle_acc << ":" << p_mpu6050->get_accel_Z_cal() << " VS MPU6050 Cal Z=" << p_mpu6050->get_accel_Z_cal_angle() << std::endl;
+      SLOG << "Starting with m_angle_gyro=" << m_angle_gyro << " based on the calibrated Z accel on startup" << std::endl;
     }
 
     // p_mpu6050->get_gyro_XY(m_gyro_X_data_raw, m_gyro_Y_data_raw);
@@ -121,6 +119,7 @@ int Gyro::Run(void)
 
     //Uncomment the following line to make the compensation active
     m_angle_gyro -= m_gyro_X_data_raw * 0.0000003;                  //Compensate the gyro offset when the robot is rotating
+    m_angle_acc = asin((float)(p_mpu6050->get_accel_Z_cal())/8200.0) * -57.296; //Calculate the current angle according to the accelerometer
     m_angle_gyro = m_angle_gyro * 0.9996 + m_angle_acc * 0.0004;      //Correct the drift of the gyro angle with the accelerometer angle
 
     if (m_callback)
@@ -182,9 +181,8 @@ unsigned int Gyro::RateControlDelay()
   // Print our heartbeat every 10 seconds, 2500/250
   if (m_heartbeat++ > (PRIMARY_THREAD_RATE*HEARTBEAT))
   {
-    SLOG << "Alive app_time=" << app_time << "us driver hits=" << g_heartbeat_driver << " m_timer=" << m_timer << " m_angle_gyro=" << m_angle_gyro << " m_avgtime=" << m_avgtime << "us m_avgperiod=" << m_avgperiod << "us"<< std::endl;
+    SLOG << "Alive app_time=" << app_time << " m_timer=" << m_timer << " m_angle_gyro=" << m_angle_gyro << " m_angle_acc=" << m_angle_acc << " m_avgtime=" << m_avgtime << "us m_avgperiod=" << m_avgperiod << "us"<< std::endl;
     m_heartbeat = 0;
-    g_heartbeat_driver = 0;
   }
 
   // if (app_time < 2000)

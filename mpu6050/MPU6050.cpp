@@ -25,7 +25,7 @@ MPU6050::MPU6050()
 
   // Acceleration data cal is just a constant based on sitting the robot
   // straight up and capturing the raw Z axis data
-  m_acc_calibration_value = -600; // 1000;
+  m_acc_calibration_value = 513; // 1000;
 
   // Should not need this but stops i2cClose from complaining on shutdown
   if (gpioInitialise() < 0)
@@ -102,6 +102,11 @@ void MPU6050::calibrate(void)
 
   accel_raw_avg /= 500;
 
+  // Manual Z accelerometer calibration
+  // When you need to manually calibrate Z turn on this log, and set
+  // m_acc_calibration_value to -accel_raw_avg.
+  // SLOG << "accel_raw_avg=" << accel_raw_avg << std::endl;
+
   // Now adjust using manual calibration value
   accel_raw_avg += m_acc_calibration_value;
   
@@ -110,6 +115,8 @@ void MPU6050::calibrate(void)
   if (accel_raw_avg < -8200) accel_raw_avg = -8200;
 
   // Now calculate the Z value
+  // The 57.296 is the conversions from radians to degrees. The - is so that
+  // leaning forward is positive. The 8200(8192) is from the data sheet for AFS_SEL 1.
   m_acc_Z_cal_ang = (asin((float)(accel_raw_avg) / 8200.0) * -57.296);
   
   SLOG << "Elapsed time = " << float(((gpioTick() - elapsed) / 500)) << "us" << std::endl;

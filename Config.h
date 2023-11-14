@@ -19,9 +19,6 @@ PURPOSE:  Hardware based configs for the robot
 // Converts radians to degrees.
 #define RadiansToDegrees(angleRadians) ((angleRadians) * 180.0 / M_PI)
 
-// Globals for testing
-extern int g_heartbeat_driver;
-
 // Thread Constants
 // The gyro thread drives data all the way to the motors
 const unsigned int PRIMARY_THREAD_PERIOD = 4000; // ms
