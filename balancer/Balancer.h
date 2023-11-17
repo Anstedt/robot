@@ -7,6 +7,7 @@ FILE:    Balancer.h
 
 /* INCLUDE ********************************************************************/
 #include "Gyro.h"
+#include "Legs.h"
 #include "Motors.h"
 
 #include <pthread.h>
@@ -23,11 +24,10 @@ class Balancer
 public:
   // Local Classes
   // Constructors
-  Balancer(double kp, double ki, double kd);
+  Balancer(double knee, int offset, double kp, double ki, double kd);
   // Mutators: non-const operations
   // Accessors: const operations
   // Static and friend functions
-  pthread_mutex_t m_driver_mutex;  /* Protects critical region */
   // Memory management: copy constructor, destructor, operator=
   ~Balancer();
 private:
@@ -49,6 +49,8 @@ private:
   // Data fields
   Gyro* m_gyro;
   Motors* m_motors;
+  bool m_motors_running;
+  Legs* m_legs;
   float m_max;
   float m_min;
   float m_mid;

@@ -34,6 +34,9 @@ Gyro::Gyro()
   else
   {
     p_mpu6050 = new MPU6050();
+    SLOG << "Gyro calibrating MPU6050 BEG" << std::endl;
+    p_mpu6050->calibrate();
+    SLOG << "Gyro calibrating MPU6050 END" << std::endl;
   }
 
   SLOG << "Gyro::Gyro()" <<std::endl;

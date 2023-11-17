@@ -18,14 +18,8 @@ using namespace std;
 /*------------------------------------------------------------------------------
 FUNCTION:      Balancer::Balancer()
 ------------------------------------------------------------------------------*/
-Balancer::Balancer(double kp, double ki, double kd)
+Balancer::Balancer(double knee, int offset, double kp, double ki, double kd)
 {
-  // Create a shared mutex for the motor driver
-  if (pthread_mutex_init(&m_driver_mutex, NULL) != 0)
-  {
-    SLOG << "ERROR: Balancer: pthread_mutex_init failed" << std::endl;
-  }
-
   // Default dynamic calculation values
   m_max = RANGE_MAX;
   m_min = RANGE_MIN;
@@ -35,11 +29,26 @@ Balancer::Balancer(double kp, double ki, double kd)
   m_osc_pos = false;
   m_osc_neg = false;
 
-  // Start Motors
-  m_motors = new Motors(kp, ki, kd);
+  // Motors no running yet.
+  m_motors_running = false; // So callback is turned off
 
+  // Start Gyro and calibrate in constructor
   m_gyro = new Gyro();
 
+  // Now get the legs going
+  m_legs = new Legs();
+
+  // This should be in Balancer so it can adjust offset but is fine here for now
+  // knee angle, wheel offset
+  m_legs->Balance(-90, -30); // Knee bent back and wheel offset from robot  center
+
+  // This should be in Balancer so it can adjust offset but is fine here for now
+  m_legs->Balance(knee, offset); // Knee bent back and wheel offset from robot center
+
+  // Start Motors
+  m_motors = new Motors(kp, ki, kd);
+  m_motors_running = true;
+    
   // Registers Balancer::CallBack(), including passed parameters, with the Gyro
   using namespace std::placeholders; // for `_1, _2, _3, _4`
 
@@ -64,21 +73,23 @@ Balancer::~Balancer()
     sleep(1);
   }
 
+  // Remove Motors
+  SLOG << "Balancer delete Motors" << std::endl;
+  m_motors_running = false; // So callback is turned off
+  delete m_motors;
+
+  // Remove Legs
+  SLOG << "Balancer delete Legs" << std::endl;
+  delete m_legs;  
+
   SLOG << "Balancer Gyro->JoinThread" << std::endl;
   m_gyro->JoinThread();
 
   SLOG << "Balancer delete Gyro" << std::endl;
   delete m_gyro;
 
-  // Remove Motors
-  SLOG << "Balancer Motors" << std::endl;
-  delete m_motors;
-
   SLOG << "~Balancer IS RUNNING gpioTerminate" << std::endl;
   gpioTerminate(); // Now that the MPU6050 is gone we can close pigpio
-
-  // Unlock and destroy mutex so that motors can run to completion
-  pthread_mutex_lock(&m_driver_mutex);
 }
 
 /*------------------------------------------------------------------------------
@@ -212,6 +223,9 @@ void Balancer::CallBack(int gyro_pitch, int gyro_yaw, float angle_gyro, float an
 
   // The gyro's angle is used to calculated the speed sent to the robot.
   // At this point we can calculate the dynamic offset of that angle
-
-  m_motors->AddGyroData(gyro_pitch, gyro_yaw, DynamicAngleCalc(angle_gyro), angle_acc);
+  if (m_motors_running) // Only if motors are running
+  {
+    m_motors->AddGyroData(gyro_pitch, gyro_yaw, angle_gyro, angle_acc);
+    // m_motors->AddGyroData(gyro_pitch, gyro_yaw, DynamicAngleCalc(angle_gyro), angle_acc);
+  }
 }

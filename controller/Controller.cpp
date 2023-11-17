@@ -20,17 +20,7 @@ Controller::Controller(double knee, int offset, double kp, double ki, double kd)
 {
   SLOG << "Controller::Controller()" << std::endl;
 
-  m_balancer = new Balancer(kp, ki, kd);
-  m_legs = new Legs();
-
-  // This should be in Balancer so it can adjust offset but is fine here for now
-  // knee angle, wheel offset
-  m_legs->Balance(-90, -30); // Knee bent back and wheel offset from robot center
-
-  sleep(2); // Let other threads start 
-  
-  // This should be in Balancer so it can adjust offset but is fine here for now
-  m_legs->Balance(knee, offset); // Knee bent back and wheel offset from robot center
+  m_balancer = new Balancer(knee, offset, kp, ki, kd);
 }
 
 /*------------------------------------------------------------------------------
@@ -41,5 +31,4 @@ Controller::~Controller()
   SLOG << "Controller::~Controller()" << std::endl;
 
   delete m_balancer;
-  delete m_legs;
 }

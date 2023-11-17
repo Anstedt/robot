@@ -8,7 +8,6 @@ PURPOSE: The robot has a controller for parts of the robot, balancer and legs
 
 /* INCLUDE ********************************************************************/
 #include "Balancer.h"
-#include "Legs.h"
 
 /* CLASSES ********************************************************************/
 /*------------------------------------------------------------------------------
@@ -38,7 +37,6 @@ private:
   Controller& operator=(const Controller& rhs);
   // Data fields
   Balancer* m_balancer;
-  Legs* m_legs;
   // Static (shared) class variables
 };
 

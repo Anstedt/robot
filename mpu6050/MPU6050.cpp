@@ -87,6 +87,7 @@ void MPU6050::calibrate(void)
     accel_raw = get_accel_Z();
     accel_raw_avg += accel_raw;
 
+    // Debug code used for logging
     if (accel_raw > accel_raw_max) accel_raw_max = accel_raw;
     if (accel_raw < accel_raw_min) accel_raw_min = accel_raw;
     
@@ -111,8 +112,17 @@ void MPU6050::calibrate(void)
   accel_raw_avg += m_acc_calibration_value;
   
   // Calculate the angle according to the accelerometer average
-  if (accel_raw_avg > 8200) accel_raw_avg = 8200;
-  if (accel_raw_avg < -8200) accel_raw_avg = -8200;
+  if (accel_raw_avg > 8200)
+  {
+    SLOG << "ERROR: accel_raw_avg=" << accel_raw_avg << " is out of range" << std::endl;
+    accel_raw_avg = 8200;
+  }
+  
+  if (accel_raw_avg < -8200)
+  {
+    SLOG << "ERROR: accel_raw_avg=" << accel_raw_avg << " is out of range" << std::endl;
+    accel_raw_avg = -8200;
+  }
 
   // Now calculate the Z value
   // The 57.296 is the conversions from radians to degrees. The - is so that

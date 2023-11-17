@@ -23,6 +23,9 @@ see ./robot -h
   WORKS if no motion since gyros should be 0 with NO motion.
   WORKS for accel as well if there is NOT motion
 
+- After testing remove Balancer::DynamicAngleCalc(float angle) if no
+  longer needed. Currently commented out.
+
 - CONSIDER IF THIS NEEDS TO BE FIXED:
   - Review MPU6060.cpp lines #90 and #91. What is the point of this code
   - #106 uses the assumed standing straight value which is a BAD
@@ -49,10 +52,10 @@ see ./robot -h
   - New Startup (Not Started, Maybe start Gryo in Controller, then after Gyro startup completes start Balancer passing in Gyro)
     - Controller
 	  - Balancer (RegisterForCallback, for data from Gyro)
-	    - Motors
-		- Gyro (Thread)
+		- Gyro (Thread) constructor calibrates MPU6060 before returning
 		  - MPU6050
 	  - Legs
+	  - Motors
   
 # ToDO
 - Fix all printing in Motors.cpp to be logging as needed
